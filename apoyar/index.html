@@ -8,6 +8,7 @@
 <link rel="canonical" href="https://pokesurvivor.com/apoyar/">
 <link rel="alternate" hreflang="es" href="https://pokesurvivor.com/apoyar/">
 <link rel="alternate" hreflang="en" href="https://pokesurvivor.com/en/support/">
+<link rel="alternate" hreflang="zh-CN" href="https://pokesurvivor.com/zh/support/">
 <link rel="alternate" hreflang="x-default" href="https://pokesurvivor.com/apoyar/">
 <meta name="theme-color" content="#0a1430">
 <meta property="og:type" content="website">
@@ -30,8 +31,8 @@
 </head>
 <body>
 <header class="top">
-  <a class="brand" href="../">PokéSurvivor</a>
-  <nav><a href="../guia/">Guía</a><a href="../pokedex/">Pokédex</a><a href="../legendarios/">Legendarios</a><a href="../movimientos/">Movimientos</a><a href="../tipos/">Tipos</a><a class="lang" hreflang="en" href="../en/support/">English</a><a class="play" href="../">Jugar gratis</a></nav>
+  <a class="brand" data-game-lang="es" href="../">PokéSurvivor</a>
+  <nav><a href="../guia/">Guía</a><a href="../pokedex/">Pokédex</a><a href="../legendarios/">Legendarios</a><a href="../movimientos/">Movimientos</a><a href="../tipos/">Tipos</a><a class="lang" hreflang="en" data-game-lang="en" href="../en/support/">English</a><a class="lang" hreflang="zh-CN" data-game-lang="zh-CN" href="../zh/support/">简体中文</a><a class="play" data-game-lang="es" href="../">Jugar gratis</a></nav>
 </header>
 <main>
 <article class="doc"><h1>Apoyar PokéSurvivor</h1>
@@ -44,12 +45,17 @@ puedes hacer una <b>donación voluntaria</b>. <b>Todo el dinero se usa para los 
 <h2>Cómo apoyar</h2>
 <p><a class="btn" href="https://ko-fi.com/jpter78" rel="noopener">Donar en Ko-fi</a><a class="btn ghost" href="https://github.com/sponsors/JPTER78" rel="noopener">GitHub Sponsors</a></p>
 <p>También ayuda mucho, y gratis: compartir el juego con tus amigos, recomendarlo y avisar de fallos.</p>
-<p class="cta"><a class="btn" href="../">Volver al juego</a></p></article>
+<p class="cta"><a class="btn" data-game-lang="es" href="../">Volver al juego</a></p></article>
 </main>
 <footer>
   <p><a href="../guia/">Guía</a> · <a href="../pokedex/">Pokédex</a> · <a href="../legendarios/">Legendarios y arenas</a> · <a href="../shinies/">Shinies</a> · <a href="../tipos/">Tabla de tipos</a> · <a href="../movimientos/">Movimientos</a> · <a href="../objetos/">Objetos</a> · <a href="../logros/">Logros</a> · <a href="../novedades/">Novedades</a> · <a href="../apoyar/">Apoyar el proyecto</a></p>
   <p>PokéSurvivor es un juego de fans <b>gratuito y sin ánimo de lucro</b>, sin anuncios ni compras (sólo donaciones voluntarias para los servidores). No está afiliado a Nintendo, Creatures, GAME FREAK ni The Pokémon Company; Pokémon y sus personajes son propiedad de sus respectivos dueños. Sprites de PMD SpriteCollab (CC BY-NC 4.0) · datos de PokéAPI · música y sonidos originales. No tiene ninguna criptomoneda ni token oficial: cualquiera que use su nombre es de terceros y no nos hacemos cargo de compras ni inversiones. <b>La única web oficial es pokesurvivor.com</b> y el juego es y será gratis: si alguien te pide pagar, no somos nosotros. Código bajo PolyForm Noncommercial 1.0.0 (hasta el 14-10-2026, MIT).</p>
   <p><a href="https://github.com/JPTER78/pokesurvivor">GitHub</a></p>
 </footer>
+<script>
+document.querySelectorAll('[data-game-lang]').forEach(a => a.addEventListener('click', () => {
+  try { localStorage.setItem('ps.lang', a.dataset.gameLang); } catch (e) {}
+}));
+</script>
 </body>
 </html>

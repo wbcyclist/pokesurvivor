@@ -33,6 +33,10 @@
   --font: 'Pixelify', 'Segoe UI', system-ui, sans-serif;
 }
 
+:root:lang(zh-CN) {
+  --font: 'Pixelify', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
+}
+
 * { box-sizing: border-box; }
 .hidden { display: none !important; }
 html, body { height: 100%; margin: 0; }

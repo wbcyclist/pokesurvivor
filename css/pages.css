@@ -73,7 +73,7 @@ table.list { border-collapse: collapse; width: 100%; font-size: 15px; }
 table.list th, table.list td { border-bottom: 1px solid rgba(244,248,255,.15); padding: 8px 6px; text-align: left; vertical-align: top; }
 table.list th { color: var(--gold); font-family: 'Pixelify', sans-serif; }
 table.list td.evo small { display: block; color: var(--muted); font-size: 13px; }
-ul.items { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+ul.items { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 8px; }
 ul.items li { background: rgba(5,10,30,.4); border: 2px solid rgba(244,248,255,.2); border-radius: 10px; padding: 10px 12px; margin: 0; }
 ul.items li b { display: block; color: var(--gold); }
 ul.items li span { display: block; color: #e6eeff; font-size: 15px; }
@@ -82,3 +82,11 @@ article.news { border-bottom: 1px solid rgba(244,248,255,.2); padding: 8px 0 14p
 article.news time { color: var(--muted); font-size: 14px; }
 article.news h2 { margin: 4px 0; font-size: 22px; }
 table.list td.num { text-align: right; white-space: nowrap; }
+
+:lang(zh-CN) body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
+:lang(zh-CN) :is(h1, h2, h3, .brand, .btn, .top nav a, .gens a, table.list th) { font-family: 'Pixelify', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
+:lang(zh-CN) h1 { line-height: 1.4; }
+:lang(zh-CN) .brand { white-space: nowrap; }
+:lang(zh-CN) table.moves { min-width: 720px; }
+:lang(zh-CN) table.moves th { white-space: nowrap; }
+:lang(zh-CN) table.moves td:first-child { min-width: 90px; }

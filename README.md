@@ -79,6 +79,16 @@ sitio, se pierde.
 En `videos/` hay grabaciones del juego (con su música): un combate contra un
 jefe, la captura de un shiny salvaje y un shiny en el gacha.
 
+## Idiomas
+
+El juego está disponible en español, inglés y chino simplificado. Detecta el
+idioma del navegador; se puede cambiar en **Ajustes > Gráficos > Idioma**.
+La elección se guarda en este dispositivo. Los nombres chinos de Pokémon,
+movimientos y objetos siguen la terminología oficial de los juegos.
+Las traducciones se incluyen localmente, sin servicios de traducción externos.
+Las guías y las páginas de datos también están disponibles en chino en `zh/`,
+con enlaces para cambiar de idioma. Véase [LOCALIZATION.md](docs/LOCALIZATION.md).
+
 ## Guardado en la nube y publicación
 
 - **Base de datos (Firebase):** cuentas con nombre + contraseña o Google, y la

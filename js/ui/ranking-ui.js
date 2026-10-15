@@ -11,10 +11,10 @@ G.RankingUI = (() => {
 
   function init() {
     const dl = $('rk-dl');
-    dl.innerHTML = G.DEX.map(p => `<option value="${esc(p.name)}">`).join('');
+    dl.innerHTML = G.DEX.map(p => `<option value="${esc(G.T(p.name))}">`).join('');
     $('rk-poke').onchange = () => {
       const v = $('rk-poke').value.trim().toLowerCase();
-      const p = G.DEX.find(x => x.name.toLowerCase() === v);
+      const p = G.DEX.find(x => (x.name.toLowerCase() === v || G.T(x.name).toLowerCase() === v));
       if (!v) { setDex(null); return; }
       if (!p) { G.UI.toast('No hay ningún Pokémon con ese nombre'); return; }
       setDex(p.dex);
@@ -94,6 +94,14 @@ G.RankingUI = (() => {
     const mon = dex ? G.DEX_BY[dex].name : '';
     const where = en ? (mode === 's' ? 'solo' : 'group') + (dex ? ' with ' + mon : '')
                      : (mode === 's' ? 'en solitario' : 'en grupo') + (dex ? ' con ' + mon : '');
+    if (G.I18n.lang === 'zh-CN') {
+      const context = [G.T(pn), G.T(mode === 's' ? 'en solitario' : 'en grupo') + (dex ? ' · ' + G.T(mon) : '')];
+      $('rk-me').innerHTML = !G.Social.me ? esc(G.T('Elige un apodo (en Amigos) para salir en el ranking.'))
+        : me && me.out ? esc(G.I18n.f('Aún no estás en el top 50 {x} {x}. Tu puesto exacto está en Histórico.', ...context))
+        : me ? esc(G.I18n.f('Tu mejor puesto {x} {x}:', ...context)) + ` <b class="gold">#${me.pos}</b> · ${fmt(me.t)}`
+        : esc(G.I18n.f('Aún no tienes marca {x} {x}.', ...context));
+      return;
+    }
     $('rk-me').innerHTML = !G.Social.me ? 'Elige un apodo (en Amigos) para salir en el ranking.'
       : me && me.out ? (en ? `<span translate="no">You're not in the top 50 ${where} ${pn} yet. Your exact rank is in All-time.</span>`
                            : `Aún no estás en el top 50 ${pn} ${where}. Tu puesto exacto está en Histórico.`)

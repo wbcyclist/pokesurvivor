@@ -1,6 +1,6 @@
-/* ============ i18n.js — idiomas (español / inglés) ============
- * El juego está escrito en español. Si el idioma es inglés, todo texto que
- * se enseña se traduce con el diccionario de js/data/lang-en.js, sin tener que
+/* ============ i18n.js — idiomas (español / inglés / chino simplificado) ============
+ * El juego está escrito en español. Los otros idiomas usan su diccionario
+ * en js/data/lang-*.js para traducir lo que se enseña, sin tener que
  * tocar cada pantalla:
  *   - el DOM (menús, cartas, avisos...) con un MutationObserver,
  *   - el canvas (HUD, avisos, números) envolviendo fillText/strokeText,
@@ -13,16 +13,17 @@
  *   3. trozos dentro de un texto más largo, sólo palabras enteras
  * Lo que escriben los jugadores (apodos) va marcado con translate="no".
  *
- * Idioma: el elegido en Ajustes; si no, /en/ en la dirección o el del navegador
- * (español si el navegador está en español, inglés en cualquier otro caso).
+ * Idioma: el elegido en Ajustes; si no, /en/ o /zh/ en la dirección o el del navegador
+ * (español, chino simplificado o inglés como idioma de respaldo).
  */
 G.I18n = (() => {
   const KEY = 'ps.lang';
   let saved = null;
   try { saved = localStorage.getItem(KEY); } catch (e) { /* nada */ }
-  const byPath = /\/en(\/|$)/.test(location.pathname) ? 'en' : null;
+  const byPath = /\/zh(\/|$)/.test(location.pathname) ? 'zh-CN' : /\/en(\/|$)/.test(location.pathname) ? 'en' : null;
   const nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'es').toLowerCase();
-  const lang = saved === 'es' || saved === 'en' ? saved : byPath || (nav.startsWith('es') ? 'es' : 'en');
+  const supported = ['es', 'en', 'zh-CN'];
+  const lang = supported.includes(saved) ? saved : byPath || (nav.startsWith('zh') ? 'zh-CN' : nav.startsWith('es') ? 'es' : 'en');
   document.documentElement.lang = lang;
 
   const exact = new Map(), exactLow = new Map();
@@ -32,22 +33,24 @@ G.I18n = (() => {
   const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
   /** Añade traducciones { 'texto en español': 'English text' }. */
-  function add(dict) {
+  function add(dict, locale = 'en') {
+    if (locale !== lang) return;
     const fr = [];
     for (const [es, en] of Object.entries(dict)) {
       if (!en || es === en) continue;
       if (es.includes('{x}')) {
         const parts = es.split('{x}').map(reEsc);
-        patterns.push({ re: new RegExp('^' + parts.join('(.+?)') + '$', 'u'), reI: new RegExp('^' + parts.join('(.+?)') + '$', 'iu'), en });
+        patterns.push({ re: new RegExp('^' + parts.join('(.+?)') + '$', 'u'), reI: new RegExp('^' + parts.join('(.+?)') + '$', 'iu'), en, specificity: es.replace(/\{x\}/g, '').length });
       } else {
         exact.set(es, en);
         exactLow.set(es.toLowerCase(), en);
-        if (es.length >= 4 || /\s/.test(es)) { fr.push(es); fragMap.set(es.toLowerCase(), en); }
+        if (es.length >= (lang === 'zh-CN' ? 2 : 4) || /\s/.test(es)) { fr.push(es); fragMap.set(es.toLowerCase(), en); }
       }
     }
     // Una sola expresión con todos los trozos (los más largos primero), sólo palabras enteras.
     const all = [...fragMap.keys()].sort((a, b) => b.length - a.length).map(reEsc).join('|');
     frag = all ? new RegExp(`(?<![${L}])(${all})(?![${L}])`, 'giu') : null;
+    patterns.sort((a, b) => b.specificity - a.specificity);
     cache.clear();
   }
 
@@ -125,11 +128,22 @@ G.I18n = (() => {
     while ((n = tw.nextNode())) { if (n.nodeType === 3) doText(n); else doEl(n); }
   }
 
+  const PAGE_PATHS = {
+    es: { guide: 'guia/', pokedex: 'pokedex/', support: 'apoyar/', contact: 'contacto/?lang=es' },
+    en: { guide: 'en/guide/', pokedex: 'en/pokedex/', support: 'en/support/', contact: 'contacto/?lang=en' },
+    'zh-CN': { guide: 'zh/guide/', pokedex: 'zh/pokedex/', support: 'zh/support/', contact: 'contacto/?lang=zh-CN' }
+  };
+  function pageLink(page) { return PAGE_PATHS[lang][page]; }
+
   function startDom() {
+    document.querySelectorAll('a[href]').forEach(a => {
+      const href = a.getAttribute('href');
+      for (const paths of Object.values(PAGE_PATHS)) {
+        const page = Object.keys(paths).find(key => paths[key] === href);
+        if (page) { a.setAttribute('href', pageLink(page)); break; }
+      }
+    });
     if (lang === 'es') return;
-    // Los enlaces a las páginas de la web, a su versión en inglés.
-    const EN_LINKS = { 'guia/': 'en/guide/', 'pokedex/': 'en/pokedex/' };
-    document.querySelectorAll('a[href]').forEach(a => { const h = a.getAttribute('href'); if (EN_LINKS[h]) a.setAttribute('href', EN_LINKS[h]); });
     walk(document.body);
     new MutationObserver(ms => {
       for (const m of ms) {
@@ -154,10 +168,11 @@ G.I18n = (() => {
   }
 
   function set(l) {
+    if (!supported.includes(l)) return;
     try { localStorage.setItem(KEY, l); } catch (e) { /* nada */ }
     location.reload();
   }
 
-  return { lang, add, t, f, set, startDom, walk };
+  return { lang, add, t, f, set, startDom, walk, pageLink };
 })();
 G.T = G.I18n.t;

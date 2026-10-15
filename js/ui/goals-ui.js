@@ -173,7 +173,7 @@
       const sel = document.createElement('select');
       sel.className = 'field';
       sel.style.maxWidth = '320px';
-      sel.innerHTML = `<option value="">(sin título)</option>` + titles.map(t => `<option ${t === P.title ? 'selected' : ''}>${esc(t)}</option>`).join('');
+      sel.innerHTML = `<option value="">(sin título)</option>` + titles.map(t => `<option value="${esc(t)}" ${t === P.title ? 'selected' : ''}>${esc(t)}</option>`).join('');
       sel.onchange = () => { P.title = sel.value; save(); };
       box.appendChild(sel);
       if (!titles.length) box.insertAdjacentHTML('beforeend', '<p class="note">Consigue logros para desbloquear títulos.</p>');
@@ -196,7 +196,7 @@
       const fill = q => {
         const g = $('fav-grid');
         g.innerHTML = '';
-        const mons = Object.keys(s.owned).map(Number).filter(d => G.DEX_BY[d] && (!q || G.DEX_BY[d].name.toLowerCase().includes(q)));
+        const mons = Object.keys(s.owned).map(Number).filter(d => G.DEX_BY[d] && (!q || (G.DEX_BY[d].name.toLowerCase().includes(q) || G.T(G.DEX_BY[d].name).toLowerCase().includes(q))));
         for (const d of mons.slice(0, 120)) {
           for (const shiny of G.DB.ownsShiny(d) ? [false, true] : [false]) {
             const c = document.createElement('div');
