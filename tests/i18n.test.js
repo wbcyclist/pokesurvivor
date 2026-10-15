@@ -7,7 +7,7 @@ const { test } = require('node:test');
 const root = path.join(__dirname, '..');
 const read = file => fs.readFileSync(path.join(root, file), 'utf8');
 
-function boot({ saved = null, language = 'zh-CN', pathname = '/', blocked = false } = {}) {
+function boot({ saved = null, language = 'zh-CN', pathname = '/', blocked = false, translations = true } = {}) {
   const calls = [];
   class Canvas {
     fillText(text) { calls.push(['fill', text]); }
@@ -26,27 +26,36 @@ function boot({ saved = null, language = 'zh-CN', pathname = '/', blocked = fals
     CanvasRenderingContext2D: Canvas,
     window: { confirm(text) { calls.push(['confirm', text]); return true; }, alert(text) { calls.push(['alert', text]); } }
   });
-  for (const file of ['js/core/i18n.js', 'js/data/lang-en.js', 'js/data/lang-zh-CN.js', 'js/data/names-zh-CN.js']) {
+  const files = ['js/core/i18n.js'];
+  if (translations) files.push('js/data/lang-en.js', 'js/data/lang-zh-CN.js', 'js/data/names-zh-CN.js', 'js/data/lang-zh-TW.js', 'js/data/names-zh-TW.js');
+  for (const file of files) {
     vm.runInContext(read(file), context, { filename: file });
   }
   return { ...context, calls, storage, Canvas };
 }
 
 test('detects Chinese and honors an explicit saved language before the path or browser', () => {
-  for (const language of ['zh', 'zh-CN', 'zh-SG', 'zh-Hans', 'zh-TW']) {
-    assert.equal(boot({ language }).G.I18n.lang, 'zh-CN');
+  const detect = options => boot({ ...options, translations: false });
+  for (const language of ['zh', 'zh-CN', 'zh-SG', 'zh-Hans', 'zh-Hans-HK']) {
+    assert.equal(detect({ language }).G.I18n.lang, 'zh-CN');
   }
-  assert.equal(boot({ saved: 'es' }).G.I18n.lang, 'es');
-  assert.equal(boot({ saved: 'en' }).G.I18n.lang, 'en');
-  assert.equal(boot({ saved: 'zh-CN', pathname: '/en/' }).G.I18n.lang, 'zh-CN');
-  assert.equal(boot({ pathname: '/en/' }).G.I18n.lang, 'en');
-  assert.equal(boot({ pathname: '/zh/', language: 'en' }).G.I18n.lang, 'zh-CN');
-  assert.equal(boot({ pathname: '/zh/index.html', language: 'es' }).G.I18n.lang, 'zh-CN');
-  assert.equal(boot({ pathname: '/zh/', saved: 'es' }).G.I18n.lang, 'es');
-  assert.equal(boot({ saved: 'invalid' }).G.I18n.lang, 'zh-CN');
-  assert.equal(boot({ language: 'es-MX' }).G.I18n.lang, 'es');
-  assert.equal(boot({ language: 'fr-FR' }).G.I18n.lang, 'en');
-  assert.equal(boot({ blocked: true }).document.documentElement.lang, 'zh-CN');
+  for (const language of ['zh-TW', 'zh-HK', 'zh-MO', 'zh-Hant', 'zh-Hant-CN']) {
+    assert.equal(detect({ language }).G.I18n.lang, 'zh-TW');
+  }
+  assert.equal(detect({ pathname: '/zh-tw/', language: 'en' }).G.I18n.lang, 'zh-TW');
+  assert.equal(detect({ pathname: '/zh-tw/', saved: 'zh-CN' }).G.I18n.lang, 'zh-CN');
+  assert.equal(detect({ pathname: '/zh/', saved: 'zh-TW' }).G.I18n.lang, 'zh-TW');
+  assert.equal(detect({ saved: 'es' }).G.I18n.lang, 'es');
+  assert.equal(detect({ saved: 'en' }).G.I18n.lang, 'en');
+  assert.equal(detect({ saved: 'zh-CN', pathname: '/en/' }).G.I18n.lang, 'zh-CN');
+  assert.equal(detect({ pathname: '/en/' }).G.I18n.lang, 'en');
+  assert.equal(detect({ pathname: '/zh/', language: 'en' }).G.I18n.lang, 'zh-CN');
+  assert.equal(detect({ pathname: '/zh/index.html', language: 'es' }).G.I18n.lang, 'zh-CN');
+  assert.equal(detect({ pathname: '/zh/', saved: 'es' }).G.I18n.lang, 'es');
+  assert.equal(detect({ saved: 'invalid' }).G.I18n.lang, 'zh-CN');
+  assert.equal(detect({ language: 'es-MX' }).G.I18n.lang, 'es');
+  assert.equal(detect({ language: 'fr-FR' }).G.I18n.lang, 'en');
+  assert.equal(detect({ blocked: true }).document.documentElement.lang, 'zh-CN');
 });
 
 test('loads only the active dictionary and preserves Spanish and English', () => {
@@ -77,9 +86,10 @@ test('translates templates, names, whitespace, uppercase text, canvas metrics, a
 test('Chinese covers every English dictionary key and preserves template arguments', () => {
   const dictionaries = {};
   const context = { G: { I18n: { add(dict, locale = 'en') { dictionaries[locale] = { ...dictionaries[locale], ...dict }; } } } };
-  for (const file of ['js/data/lang-en.js', 'js/data/lang-zh-CN.js']) vm.runInNewContext(read(file), context);
-  for (const key of Object.keys(dictionaries.en)) {
-    const value = dictionaries['zh-CN'][key];
+  for (const file of ['js/data/lang-en.js', 'js/data/lang-zh-CN.js', 'js/data/lang-zh-TW.js']) vm.runInNewContext(read(file), context);
+  for (const key of Object.keys(dictionaries.en)) assert.ok(dictionaries['zh-CN'][key], key);
+  for (const locale of ['zh-CN', 'zh-TW']) for (const key of Object.keys(dictionaries['zh-CN'])) {
+    const value = dictionaries[locale][key];
     assert.ok(value, `Missing translation: ${key}`);
     assert.equal((value.match(/\{x\}/g) || []).length, (key.match(/\{x\}/g) || []).length, key);
   }
@@ -120,11 +130,61 @@ test('uses the most specific template for HUD distances and timers', () => {
 });
 
 test('guide links follow the active language', () => {
-  for (const [saved, prefix] of [['es', ''], ['en', 'en/'], ['zh-CN', 'zh/']]) {
+  for (const [saved, prefix] of [['es', ''], ['en', 'en/'], ['zh-CN', 'zh/'], ['zh-TW', 'zh-tw/']]) {
     const { G } = boot({ saved });
     assert.equal(G.I18n.pageLink('guide'), prefix ? prefix + 'guide/' : 'guia/');
     assert.equal(G.I18n.pageLink('pokedex'), prefix + 'pokedex/');
     assert.equal(G.I18n.pageLink('support'), prefix ? prefix + 'support/' : 'apoyar/');
     assert.equal(G.I18n.pageLink('contact'), 'contacto/?lang=' + saved);
+  }
+});
+
+
+test('Traditional Chinese uses official names and does not load Simplified Chinese text', () => {
+  const { G, Canvas, calls } = boot({ saved: 'zh-TW' });
+  const terms = JSON.parse(read('tests/fixtures/official-zh-TW.json'));
+  for (const [source, expected] of Object.entries(terms)) assert.equal(G.T(source), expected, source);
+  vm.runInNewContext(read('js/data/pokedex.js'), { G });
+  for (const pokemon of G.DEX) assert.match(G.T(pokemon.name), /\p{Script=Han}/u, pokemon.name);
+  assert.equal(G.T('movimiento ·'), '招式 ·');
+  assert.equal(G.T('Shiny'), '異色');
+  assert.equal(G.T('¡Has conseguido a Pikachu shiny!'), '獲得了異色 皮卡丘！');
+  assert.equal(G.T('Destello a tu alrededor.'), '在周圍釋放閃光。');
+  assert.equal(G.T('Mimikyu'), '謎擬Ｑ');
+  assert.equal(G.T('Porygon-Z'), '多邊獸Ｚ');
+  assert.equal(G.T('Arceus'), '阿爾宙斯');
+  assert.equal(G.DEX_BY[778].name, 'Mimikyu');
+  const canvas = new Canvas();
+  canvas.fillText('Pausa'); canvas.measureText('Pausa');
+  assert.deepEqual(calls, [['fill', '暫停'], ['measure', '暫停']]);
+  for (const file of ['js/data/changelog.js', 'js/data/starters.js']) vm.runInNewContext(read(file), { G });
+  for (const day of G.CHANGELOG) for (const pair of [day.title, ...day.new || [], ...day.chg || [], ...day.fix || []]) {
+    assert.match(G.T(pair[0]), /\p{Script=Han}/u, pair[0]);
+  }
+  for (const trait of Object.keys(G.TRAIT_TEXT)) assert.match(G.T(trait), /\p{Script=Han}/u, trait);
+});
+
+test('Psychic move names are separate from Psychic type labels', () => {
+  for (const [saved, move, type] of [['zh-CN', '精神强念', '超能力'], ['zh-TW', '精神強念', '超能力'], ['en', 'Psychic', 'Psychic'], ['es', 'Psíquico', 'Psíquico']]) {
+    const { G } = boot({ saved });
+    assert.equal(G.I18n.moveName('Psíquico'), move);
+    assert.equal(G.T('Psíquico'), type);
+    assert.equal(G.I18n.moveName('Ascuas'), G.T('Ascuas'));
+  }
+});
+
+
+test('early boot and contact detect the same language as the game', () => {
+  for (const language of ['zh-Hant', 'zh-HK', 'zh-MO', 'zh-TW', 'zh-Hans-TW', 'en']) {
+    for (const saved of [null, 'zh-TW', 'zh-CN', 'en', 'es']) {
+      for (const file of ['dev.html', 'contacto/index.html']) {
+        const script = [...read(file).matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m => m[1]).find(s => s.includes("localStorage.getItem('ps.lang')"));
+        const paragraphs = [{}, {}];
+        const document = {documentElement: {}, querySelectorAll: () => paragraphs, querySelector: () => ({})};
+        const context = {document, URLSearchParams, navigator: {language, languages:[language]}, location:{pathname:'/',search:''}, localStorage:{getItem:()=>saved}};
+        vm.runInNewContext(script, context);
+        assert.equal(document.documentElement.lang, boot({language,saved,translations:false}).G.I18n.lang, `${file}: ${language}, ${saved}`);
+      }
+    }
   }
 });

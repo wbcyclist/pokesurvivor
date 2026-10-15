@@ -6,11 +6,13 @@
  * Cada línea en español y en inglés.
  */
 G.CHANGELOG = [
-  { d: '2026-10-15', title: ['Soporte de chino simplificado', 'Simplified Chinese support'], new: [
+  { d: '2026-10-15', title: ['Soporte de chino', 'Chinese language support'], new: [
     ['El juego ya está disponible en chino simplificado. Puedes elegirlo en Ajustes > Gráficos > Idioma.',
      'The game is now available in Simplified Chinese. Select it in Settings > Graphics > Language.'],
     ['Las guías y las páginas de datos también están disponibles en chino simplificado.',
-     'The guides and reference pages are also available in Simplified Chinese.']
+     'The guides and reference pages are also available in Simplified Chinese.'],
+    ['El juego y las guías ya están disponibles en chino tradicional. Selecciónalo en Ajustes > Gráficos > Idioma.',
+     'The game and guides now support Traditional Chinese. Select it in Settings > Graphics > Language.']
   ] },
   { d: '2026-10-14', title: ['Recupera tu cuenta con Gmail', 'Recover your account with Gmail'], new: [
     ['Si juegas con nombre y contraseña, puedes vincular tu Gmail: si un día olvidas la contraseña, entras con Google y es tu misma cuenta. Te lo ofrecemos al entrar.',

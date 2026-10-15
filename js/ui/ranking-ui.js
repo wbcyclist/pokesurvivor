@@ -94,7 +94,7 @@ G.RankingUI = (() => {
     const mon = dex ? G.DEX_BY[dex].name : '';
     const where = en ? (mode === 's' ? 'solo' : 'group') + (dex ? ' with ' + mon : '')
                      : (mode === 's' ? 'en solitario' : 'en grupo') + (dex ? ' con ' + mon : '');
-    if (G.I18n.lang === 'zh-CN') {
+    if (G.I18n.lang.startsWith('zh')) {
       const context = [G.T(pn), G.T(mode === 's' ? 'en solitario' : 'en grupo') + (dex ? ' · ' + G.T(mon) : '')];
       $('rk-me').innerHTML = !G.Social.me ? esc(G.T('Elige un apodo (en Amigos) para salir en el ranking.'))
         : me && me.out ? esc(G.I18n.f('Aún no estás en el top 50 {x} {x}. Tu puesto exacto está en Histórico.', ...context))

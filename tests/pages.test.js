@@ -11,7 +11,8 @@ const suffixes = ['', 'guide/', 'pokedex/', 'legendaries/', 'shinies/', 'types/'
 const routes = {
   es: ['', 'guia/', 'pokedex/', 'legendarios/', 'shinies/', 'tipos/', 'movimientos/', 'objetos/', 'logros/', 'novedades/', 'apoyar/'],
   en: suffixes.map(s => 'en/' + s),
-  'zh-CN': suffixes.map(s => 'zh/' + s)
+  'zh-CN': suffixes.map(s => 'zh/' + s),
+  'zh-TW': suffixes.map(s => 'zh-tw/' + s)
 };
 const attrs = tag => Object.fromEntries([...tag.matchAll(/([\w-]+)="([^"]*)"/g)].map(m => [m[1], m[2]]));
 const tags = (html, name) => [...html.matchAll(new RegExp(`<${name}\\b[^>]*>`, 'g'))].map(m => attrs(m[0]));
@@ -25,7 +26,7 @@ test('all language pages publish reciprocal alternates and matching canonical UR
       const links = tags(html, 'link');
       assert.equal(links.find(l => l.rel === 'canonical').href, site + route, route);
       const alts = links.filter(l => l.rel === 'alternate');
-      assert.equal(alts.length, 4, route);
+      assert.equal(alts.length, 5, route);
       for (const [other, otherPaths] of Object.entries(routes)) {
         assert.equal(alts.find(l => l.hreflang === other).href, site + otherPaths[i], route);
       }
@@ -41,7 +42,7 @@ test('all language pages publish reciprocal alternates and matching canonical UR
 });
 
 test('Chinese page links, stylesheets, scripts, and sprite paths resolve locally', () => {
-  for (const route of routes['zh-CN']) {
+  for (const route of [...routes['zh-CN'], ...routes['zh-TW']]) {
     const html = read(route + 'index.html');
     const base = new URL(tags(html, 'base')[0]?.href || '', site + route);
     for (const tag of ['a', 'link', 'script', 'img']) {
@@ -97,7 +98,7 @@ test('Chinese guides render without JavaScript and FAQ metadata matches visible 
 test('sitemap includes every language route and its alternates', () => {
   const xml = read('sitemap.xml');
   const entries = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(m => m[1]);
-  assert.equal(entries.length, 33);
+  assert.equal(entries.length, 44);
   for (const paths of Object.values(routes)) {
     paths.forEach((route, i) => {
       const entry = entries.find(e => e.includes(`<loc>${site + route}</loc>`));
@@ -107,4 +108,34 @@ test('sitemap includes every language route and its alternates', () => {
       }
     });
   }
+});
+
+
+test('Traditional Chinese references use regional official names and localized FAQ metadata', () => {
+  const names = {};
+  const G = { I18n: { add(dict) { Object.assign(names, dict); } } };
+  vm.runInNewContext(read('js/data/pokedex.js'), { G });
+  vm.runInNewContext(read('js/data/names-zh-TW.js'), { G });
+  const dex = read('zh-tw/pokedex/index.html');
+  assert.equal(tags(dex, 'li').length, G.DEX.length);
+  for (const pokemon of G.DEX) assert.ok(dex.includes(`<span class="nm">${names[pokemon.name]}</span>`), pokemon.name);
+  assert.match(dex, /謎擬Ｑ/);
+  assert.match(dex, /多邊獸Ｚ/);
+  assert.doesNotMatch(dex, /謎擬丘|多邊獸乙型/);
+  assert.match(read('zh-tw/moves/index.html'), /<b>精神強念<\/b>/);
+  assert.match(read('zh-tw/moves/index.html'), /十萬伏特/);
+  assert.match(read('zh-tw/items/index.html'), /氣勢披帶/);
+  for (const route of routes['zh-TW'].slice(1)) {
+    const html = read(route + 'index.html');
+    assert.match(html.match(/<main>([\s\S]*?)<\/main>/)[1], /[\u3400-\u9fff]/, route);
+    assert.equal(tags(html, 'script').filter(s => s.src).length, 0, route);
+    assert.equal(tags(html, 'meta').find(m => m.property === 'og:locale').content, 'zh_TW');
+  }
+  const guide = read('zh-tw/guide/index.html');
+  const ld = JSON.parse(guide.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const faq = ld['@graph'].find(n => n['@type'] === 'FAQPage');
+  assert.equal(faq.inLanguage, 'zh-TW');
+  assert.equal(faq.mainEntity.length, 10);
+  for (const question of faq.mainEntity) assert.ok(guide.includes(`<h3>${question.name}</h3><p>${question.acceptedAnswer.text}</p>`));
+  assert.match(read('zh-tw/index.html').match(/<noscript>([\s\S]*?)<\/noscript>/)[1], /遊戲指南/);
 });

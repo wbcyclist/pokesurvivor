@@ -81,12 +81,13 @@ jefe, la captura de un shiny salvaje y un shiny en el gacha.
 
 ## Idiomas
 
-El juego está disponible en español, inglés y chino simplificado. Detecta el
+El juego está disponible en español, inglés, chino simplificado y chino tradicional. Detecta el
 idioma del navegador; se puede cambiar en **Ajustes > Gráficos > Idioma**.
 La elección se guarda en este dispositivo. Los nombres chinos de Pokémon,
 movimientos y objetos siguen la terminología oficial de los juegos.
 Las traducciones se incluyen localmente, sin servicios de traducción externos.
-Las guías y las páginas de datos también están disponibles en chino en `zh/`,
+Las guías y las páginas de datos también están disponibles en chino simplificado en `zh/`
+y en chino tradicional en `zh-tw/`,
 con enlaces para cambiar de idioma. Véase [LOCALIZATION.md](docs/LOCALIZATION.md).
 
 ## Guardado en la nube y publicación

@@ -85,8 +85,11 @@ table.list td.num { text-align: right; white-space: nowrap; }
 
 :lang(zh-CN) body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
 :lang(zh-CN) :is(h1, h2, h3, .brand, .btn, .top nav a, .gens a, table.list th) { font-family: 'Pixelify', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
-:lang(zh-CN) h1 { line-height: 1.4; }
-:lang(zh-CN) .brand { white-space: nowrap; }
-:lang(zh-CN) table.moves { min-width: 720px; }
-:lang(zh-CN) table.moves th { white-space: nowrap; }
-:lang(zh-CN) table.moves td:first-child { min-width: 90px; }
+:lang(zh) h1 { line-height: 1.4; }
+:lang(zh) .brand { white-space: nowrap; }
+:lang(zh) table.moves { min-width: 720px; }
+:lang(zh) table.moves th { white-space: nowrap; }
+:lang(zh) table.moves td:first-child { min-width: 90px; }
+
+:lang(zh-TW) body { font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', system-ui, sans-serif; }
+:lang(zh-TW) :is(h1, h2, h3, .brand, .btn, .top nav a, .gens a, table.list th) { font-family: 'Pixelify', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', system-ui, sans-serif; }

@@ -25,7 +25,7 @@ G.NewsUI = (() => {
 
   function open() {
     const en = G.I18n.lang === 'en' ? 1 : 0;
-    const local = pair => G.I18n.lang === 'zh-CN' ? G.T(pair[0]) : pair[en];
+    const local = pair => G.I18n.lang.startsWith('zh') ? G.T(pair[0]) : pair[en];
     // Cada texto ya va en su idioma: translate="no" para que no lo toque i18n.
     const PARTS = [['new', ['Nuevo', 'New']], ['chg', ['Cambios', 'Changes']], ['fix', ['Arreglos', 'Fixes']]];
     $('news-body').innerHTML = G.CHANGELOG.map(v =>

@@ -1,4 +1,4 @@
-/* ============ i18n.js — idiomas (español / inglés / chino simplificado) ============
+/* ============ i18n.js — idiomas (español / inglés / chino simplificado / chino tradicional) ============
  * El juego está escrito en español. Los otros idiomas usan su diccionario
  * en js/data/lang-*.js para traducir lo que se enseña, sin tener que
  * tocar cada pantalla:
@@ -13,17 +13,18 @@
  *   3. trozos dentro de un texto más largo, sólo palabras enteras
  * Lo que escriben los jugadores (apodos) va marcado con translate="no".
  *
- * Idioma: el elegido en Ajustes; si no, /en/ o /zh/ en la dirección o el del navegador
- * (español, chino simplificado o inglés como idioma de respaldo).
+ * Idioma: el elegido en Ajustes; si no, /en/, /zh/ o /zh-tw/ en la dirección o el del navegador
+ * (español, chino simplificado, chino tradicional o inglés como idioma de respaldo).
  */
 G.I18n = (() => {
   const KEY = 'ps.lang';
   let saved = null;
   try { saved = localStorage.getItem(KEY); } catch (e) { /* nada */ }
-  const byPath = /\/zh(\/|$)/.test(location.pathname) ? 'zh-CN' : /\/en(\/|$)/.test(location.pathname) ? 'en' : null;
+  const byPath = /\/zh-tw(\/|$)/.test(location.pathname) ? 'zh-TW' : /\/zh(\/|$)/.test(location.pathname) ? 'zh-CN' : /\/en(\/|$)/.test(location.pathname) ? 'en' : null;
   const nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'es').toLowerCase();
-  const supported = ['es', 'en', 'zh-CN'];
-  const lang = supported.includes(saved) ? saved : byPath || (nav.startsWith('zh') ? 'zh-CN' : nav.startsWith('es') ? 'es' : 'en');
+  const supported = ['es', 'en', 'zh-CN', 'zh-TW'];
+  const chinese = nav.includes('-hant') || (!nav.includes('-hans') && /^zh-(tw|hk|mo)(-|$)/.test(nav)) ? 'zh-TW' : 'zh-CN';
+  const lang = supported.includes(saved) ? saved : byPath || (nav.startsWith('zh') ? chinese : nav.startsWith('es') ? 'es' : 'en');
   document.documentElement.lang = lang;
 
   const exact = new Map(), exactLow = new Map();
@@ -44,7 +45,7 @@ G.I18n = (() => {
       } else {
         exact.set(es, en);
         exactLow.set(es.toLowerCase(), en);
-        if (es.length >= (lang === 'zh-CN' ? 2 : 4) || /\s/.test(es)) { fr.push(es); fragMap.set(es.toLowerCase(), en); }
+        if (es.length >= (lang.startsWith('zh') ? 2 : 4) || /\s/.test(es)) { fr.push(es); fragMap.set(es.toLowerCase(), en); }
       }
     }
     // Una sola expresión con todos los trozos (los más largos primero), sólo palabras enteras.
@@ -99,6 +100,10 @@ G.I18n = (() => {
   /** Texto con huecos para el código: T('Nivel {x}', 5). */
   function f(es, ...vals) { let i = 0; return t(es).replace(/\{x\}/g, () => vals[i++]); }
 
+  function moveName(name) {
+    return t(name === 'Psíquico' && lang.startsWith('zh') ? 'Psíquico (movimiento)' : name);
+  }
+
   // ---------------- DOM ----------------
   const ATTRS = ['placeholder', 'title', 'alt', 'aria-label'];
   const skipEl = el => !!(el && el.closest && el.closest('[translate="no"], script, style, code'));
@@ -131,6 +136,7 @@ G.I18n = (() => {
   const PAGE_PATHS = {
     es: { guide: 'guia/', pokedex: 'pokedex/', support: 'apoyar/', contact: 'contacto/?lang=es' },
     en: { guide: 'en/guide/', pokedex: 'en/pokedex/', support: 'en/support/', contact: 'contacto/?lang=en' },
+    'zh-TW': { guide: 'zh-tw/guide/', pokedex: 'zh-tw/pokedex/', support: 'zh-tw/support/', contact: 'contacto/?lang=zh-TW' },
     'zh-CN': { guide: 'zh/guide/', pokedex: 'zh/pokedex/', support: 'zh/support/', contact: 'contacto/?lang=zh-CN' }
   };
   function pageLink(page) { return PAGE_PATHS[lang][page]; }
@@ -173,6 +179,6 @@ G.I18n = (() => {
     location.reload();
   }
 
-  return { lang, add, t, f, set, startDom, walk, pageLink };
+  return { lang, add, t, f, set, startDom, walk, pageLink, moveName };
 })();
 G.T = G.I18n.t;

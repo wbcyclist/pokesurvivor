@@ -1339,5 +1339,10 @@ G.I18n.add({
   "defensa": "防御",
   "experiencia": "经验",
   "recogida": "拾取范围",
-  "regeneración": "生命回复"
+  "regeneración": "生命回复",
+  "Soporte de chino": "中文语言支持",
+  "Soporte de chino tradicional": "繁体中文支持",
+  "Chino tradicional": "繁体中文",
+  "El juego y las guías ya están disponibles en chino tradicional. Selecciónalo en Ajustes > Gráficos > Idioma.": "游戏与指南现已支持繁体中文，可在“设置 > 画面 > 语言”中选择。",
+  "Psíquico (movimiento)": "精神强念"
 }, 'zh-CN');

@@ -1,9 +1,12 @@
 # Localization
 
-The game supports Spanish (`es`), English (`en`), and Simplified Chinese
-(`zh-CN`). The saved `ps.lang` choice takes priority. Without a saved choice,
-the `/en/` game entry selects English and `/zh/` selects Simplified Chinese; otherwise the browser language selects
-Chinese for `zh` variants, Spanish for `es` variants, and English as fallback.
+The game supports Spanish (`es`), English (`en`), Simplified Chinese (`zh-CN`),
+and Traditional Chinese (`zh-TW`). The saved `ps.lang` choice takes priority.
+Without a saved choice, `/en/`, `/zh/`, and `/zh-tw/` select their respective
+languages. Other entries use the browser language: `zh-Hant`, `zh-TW`, `zh-HK`,
+and `zh-MO` select Traditional Chinese; `zh-Hans` and other `zh` variants select
+Simplified Chinese. An explicit script tag takes priority over the region.
+Spanish browser locales select Spanish, with English as the fallback.
 Change the language in Settings > Graphics > Language. A change reloads the game.
 
 `js/core/i18n.js` translates Spanish source text in the DOM, canvas text and
@@ -45,14 +48,43 @@ English dictionary coverage, official terms, all playable Pokemon names, news,
 language selection, and canvas translation. Use browser checks for new screens,
 dynamic text, Chinese name search, and desktop/mobile layout.
 
+## Traditional Chinese
+
+- `js/data/lang-zh-TW.js`: interface translations adapted from the supplied
+  Traditional Chinese patch v1.3.3, with current UI and release notes added.
+- `js/data/names-zh-TW.js`: all playable names from PokeAPI language 4 (`zh-hant`).
+- `tests/fixtures/official-zh-TW.json`: official move, item, type, region, and
+  ability terms matched by their IDs to the Simplified Chinese fixtures.
+
+The two Chinese locales have distinct dictionaries. Use official Traditional
+Chinese names, including 謎擬Ｑ and 多邊獸Ｚ; these are not character conversions
+of the Simplified Chinese names. See the [Taiwan Pokedex](https://tw.portal-pokemon.com/pokedex/),
+including [Mimikyu](https://tw.portal-pokemon.com/pokedex/0778/) and
+[Porygon-Z](https://tw.portal-pokemon.com/pokedex/0474/).
+Use 異色 for Shiny, as in the [official Shiny Eternatus event](https://tw.portal-pokemon.com/topics/receive_shiny_eternatus/).
+Keep 閃光 for flashes and visual effects.
+
+Regenerate names with `python3 tools/fetch_zh_names.py --locale zh-TW`.
+The default command continues to generate Simplified Chinese names. Keep both
+dictionaries complete when adding source strings. Use `G.I18n.moveName(name)`
+when displaying moves: the Spanish label `Psíquico` means the Psychic type
+(超能力) or the Psychic move (精神强念 / 精神強念), depending on context.
+This helper changes display text only, not move definitions or save data.
+
+The reference userscript remains unchanged and is not loaded by the game.
+Only its translation data was adapted; its DOM hooks and frame messaging are
+not used. Attribution and its supplied MIT notice are in `THIRD_PARTY_NOTICES.md`.
+Static prose is maintained explicitly in the page generator. Neither gameplay
+nor builds require a Chinese conversion package or an external translation service.
+
 ## Static pages
 
-`tools/make_seo_pages.py` generates Spanish, English, and Simplified Chinese
-pages. Chinese pages live under `/zh/`: guide, Pokedex, legendaries, shinies,
-types, moves, items, achievements, news, and support. The `/zh/` game entry
-uses the same production bundle. Contact also follows the game language.
+`tools/make_seo_pages.py` generates Spanish, English, Simplified Chinese, and
+Traditional Chinese pages. Chinese pages live under `/zh/` and `/zh-tw/`: guide, Pokedex, legendaries, shinies,
+types, moves, items, achievements, news, and support. Both Chinese game entries
+use the same production bundle. Contact also follows the game language.
 
-Run `node tools/export_data.js` before the page generator. It exports both
+Run `node tools/export_data.js` before the page generator. It exports all
 translation dictionaries with the game data. Chinese data tables reuse the
 same names and descriptions as the game; a missing translation stops the
 build. Edit static prose in the generator, not in generated HTML.

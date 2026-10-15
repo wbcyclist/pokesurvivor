@@ -329,7 +329,7 @@ G.HUD = (() => {
         ctx.font = F(700, 10);
         ctx.textAlign = 'center';
         ctx.fillStyle = fused ? BOND : col;
-        ctx.fillText(fused ? m.name + ' +' + (g.length - 1) : m.name, x + S / 2, y - 7);
+        ctx.fillText(fused ? G.I18n.moveName(m.name) + ' +' + (g.length - 1) : G.I18n.moveName(m.name), x + S / 2, y - 7);
       }
     }
 
