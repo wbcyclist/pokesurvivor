@@ -1,6 +1,6 @@
 /* ============ camera.js — vista y transformación mundo<->pantalla ============
- * El ancho visible del mundo es constante (VIEW_W) sea cual sea el tamaño de
- * ventana, así el juego se siente igual en cualquier pantalla.
+ * La vista mínima es 768 × 420 en horizontal y 420 × 768 en vertical.
+ * Al girar, se conserva la escala del lado corto y el centro del mundo.
  */
 G.Camera = {
   x: 0, y: 0,
@@ -18,7 +18,9 @@ G.Camera = {
 
   resize(cssW, cssH, dpr = 1) {
     this.dpr = dpr;
-    this.scale = Math.min(cssW / this.VIEW_W, cssH / this.MIN_VIEW_H);
+    const portrait = cssH > cssW;
+    this.scale = Math.min(cssW / (portrait ? this.MIN_VIEW_H : this.VIEW_W),
+                          cssH / (portrait ? this.VIEW_W : this.MIN_VIEW_H));
     this.w = cssW / this.scale;
     this.h = cssH / this.scale;
   },

@@ -209,7 +209,7 @@ FAQ = {
  'es': [
   ('¿PokéSurvivor es gratis?', 'Sí, totalmente. Es un juego de fans sin ánimo de lucro: no tiene anuncios ni compras. Si quieres, puedes apoyarlo con una donación voluntaria, que se usa sólo para los servidores y no da ventajas.'),
   ('¿Hay que descargar algo?', 'No. Se juega en el navegador, en PC, tablet o móvil. Si quieres, puedes instalarlo como app con «Añadir a pantalla de inicio».'),
-  ('¿Se puede jugar en el móvil?', 'Sí, en horizontal. Pon el dedo en cualquier parte de la pantalla y arrastra para moverte (el joystick aparece donde tocas), toca un ataque para cambiarlo y el botón de arriba a la derecha para pausar.'),
+  ('¿Se puede jugar en el móvil?', 'Sí, en vertical o en horizontal. Pon el dedo en cualquier parte de la pantalla y arrastra para moverte (el joystick aparece donde tocas), toca un ataque para cambiarlo y el botón de arriba a la derecha para pausar.'),
   ('¿Está en inglés?', 'Sí: el juego está en español, inglés, chino simplificado y chino tradicional; puedes cambiar el idioma en Ajustes.'),
   ('¿Puedo jugar con mis amigos?', 'Sí: el modo cooperativo online admite hasta 4 jugadores. Añade a tus amigos por su apodo, invítalos a tu sala y empezad la partida. La experiencia se comparte y podéis revivir a un compañero caído quedándoos a su lado.'),
   ('¿Cuántos Pokémon hay?', f'{N} Pokémon de las 9 regiones (de Kanto a Paldea), todos jugables como compañero y con su versión shiny cuando existe.'),
@@ -220,7 +220,7 @@ FAQ = {
  'en': [
   ('Is PokéSurvivor free?', 'Yes, completely. It\'s a non-profit fan game with no ads or purchases. If you like, you can support it with a voluntary donation, which only pays for the servers and gives no advantages.'),
   ('Do I need to download anything?', 'No. You play in your browser on PC, tablet or phone. If you like, you can install it as an app with “Add to Home Screen”.'),
-  ('Can I play on my phone?', 'Yes, in landscape. Put your finger anywhere on the screen and drag to move (the joystick appears where you touch), tap a move to switch to it and the top-right button to pause.'),
+  ('Can I play on my phone?', 'Yes, in portrait or landscape. Put your finger anywhere on the screen and drag to move (the joystick appears where you touch), tap a move to switch to it and the top-right button to pause.'),
   ('Is it in English?', 'Yes: the game supports English, Spanish, Simplified Chinese and Traditional Chinese. You can change the language in Settings.'),
   ('Can I play with my friends?', 'Yes: online co-op supports up to 4 players. Add your friends by nickname, invite them to your room and start the game. Experience is shared and you can revive a fallen teammate by standing next to them.'),
   ('How many Pokémon are there?', f'{N} Pokémon from all 9 regions (Kanto to Paldea), all playable as your partner, with their shiny form when one exists.'),
@@ -232,7 +232,7 @@ FAQ = {
 FAQ['zh-CN'] = [
  ('PokéSurvivor 免费吗？', '完全免费。这是一款非营利同人游戏，没有广告或内购。你可以自愿捐赠以支持服务器费用，但不会获得任何游戏优势。'),
  ('需要下载吗？', '无需下载，在电脑、平板或手机的浏览器中即可游玩。也可以通过“添加到主屏幕”将其安装为应用。'),
- ('手机上能玩吗？', '可以，请横屏游玩。在屏幕上拖动手指即可移动，摇杆会出现在触摸位置；轻触招式图标即可切换，点击右上角按钮暂停。'),
+ ('手机上能玩吗？', '可以，支持竖屏和横屏游玩。在屏幕上拖动手指即可移动，摇杆会出现在触摸位置；轻触招式图标即可切换，点击右上角按钮暂停。'),
  ('支持哪些语言？', '支持简体中文、繁体中文、英语和西班牙语。首次进入时会按页面或浏览器语言选择，也可以在“设置 → 画面 → 语言”中切换。'),
  ('可以和朋友一起玩吗？', '可以，在线合作最多支持 4 人。按昵称添加好友，邀请加入房间后即可开始。队友共享经验值，站在倒下的队友身旁可以将其救起。'),
  ('共有多少只宝可梦？', f'共有来自关都至帕底亚 9 个地区的 {N} 只宝可梦，均可作为伙伴使用；有异色资源的宝可梦也可使用异色形态。'),
@@ -243,7 +243,7 @@ FAQ['zh-CN'] = [
 FAQ['zh-TW'] = [
  ('PokéSurvivor 免費嗎？', '完全免費。這是一款非營利同人遊戲，沒有廣告或內購。你可以自願捐贈分擔伺服器費用，但不會獲得任何遊戲優勢。'),
  ('需要下載嗎？', '無需下載，在電腦、平板或手機的瀏覽器中即可遊玩。也可以透過「加入主畫面」將遊戲安裝為應用程式。'),
- ('手機上能玩嗎？', '可以，請將裝置橫向擺放。在螢幕上拖動手指即可移動，搖桿會出現在觸控位置；輕觸招式圖示即可切換，點選右上角按鈕暫停。'),
+ ('手機上能玩嗎？', '可以，支援直向和橫向遊玩。在螢幕上拖動手指即可移動，搖桿會出現在觸控位置；輕觸招式圖示即可切換，點選右上角按鈕暫停。'),
  ('支援哪些語言？', '支援繁體中文、簡體中文、英語和西班牙語。首次進入時會按頁面或瀏覽器語言選擇，也可以在「設定 → 畫面 → 語言」中切換。'),
  ('可以和朋友一起玩嗎？', '可以，線上合作最多支援 4 人。按暱稱新增好友，邀請加入房間後即可開始。隊友共享經驗值，站在倒下的隊友身旁可以將其救起。'),
  ('共有多少隻寶可夢？', f'共有來自關都至帕底亞 9 個地區的 {N} 隻寶可夢，均可作為夥伴使用；有異色資源的寶可夢也可使用異色形態。'),
@@ -265,7 +265,7 @@ navegador: eliges un compañero, te mueves por un mapa infinito y tus ataques sa
 <h2>Cómo se juega</h2>
 <ul>
 <li><b>En PC:</b> muévete con <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> o las flechas. Cambia de ataque con <kbd>1</kbd>–<kbd>4</kbd>, <kbd>Q</kbd>/<kbd>E</kbd> o haciendo clic en su icono. Pausa con <kbd>Esc</kbd>.</li>
-<li><b>En móvil o tablet (horizontal):</b> arrastra el dedo en cualquier parte para moverte, toca un ataque para cambiarlo y el botón de arriba a la derecha para pausar.</li>
+<li><b>En móvil o tablet (vertical u horizontal):</b> arrastra el dedo en cualquier parte para moverte, toca un ataque para cambiarlo y el botón de arriba a la derecha para pausar.</li>
 <li>Tu Pokémon <b>ataca solo</b> con el movimiento activo. Tú te encargas de esquivar y de colocarte bien.</li>
 <li>Recoge la experiencia para <b>subir de nivel</b> y elige entre tres cartas: <a href="{lk('moves')}">movimientos</a> nuevos, mejorar los que tienes o potenciar a tu Pokémon.</li>
 </ul>
@@ -304,7 +304,7 @@ navegador: eliges un compañero, te mueves por un mapa infinito y tus ataques sa
 {cta(pid, lang, '立即免费游玩')}
 <h2>操作方法</h2><ul>
 <li><b>电脑：</b>使用 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 或方向键移动。使用 <kbd>1</kbd>–<kbd>4</kbd>、<kbd>Q</kbd>/<kbd>E</kbd> 或点击图标切换招式，按 <kbd>Esc</kbd> 暂停。</li>
-<li><b>手机或平板（横屏）：</b>在屏幕上拖动手指即可移动，轻触招式图标切换招式，点击右上角按钮暂停。</li>
+<li><b>手机或平板（竖屏或横屏）：</b>在屏幕上拖动手指即可移动，轻触招式图标切换招式，点击右上角按钮暂停。</li>
 <li>宝可梦会使用当前招式<b>自动攻击</b>，你需要专心躲避攻击、调整位置。</li>
 <li>收集经验值<b>提升等级</b>，从三张卡牌中选择一张：学习新<a href="{lk('moves')}">招式</a>、升级已有招式，或强化宝可梦。</li></ul>
 <h2>游戏内容</h2><ul class="feat">
@@ -333,7 +333,7 @@ navegador: eliges un compañero, te mueves por un mapa infinito y tus ataques sa
 {cta(pid, lang, '立即免費遊玩')}
 <h2>操作方法</h2><ul>
 <li><b>電腦：</b>使用 <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> 或方向鍵移動。使用 <kbd>1</kbd>–<kbd>4</kbd>、<kbd>Q</kbd>/<kbd>E</kbd> 或點選圖示切換招式，按 <kbd>Esc</kbd> 暫停。</li>
-<li><b>手機或平板（橫向）：</b>在螢幕上拖動手指即可移動，輕觸招式圖示切換招式，點選右上角按鈕暫停。</li>
+<li><b>手機或平板（直向或橫向）：</b>在螢幕上拖動手指即可移動，輕觸招式圖示切換招式，點選右上角按鈕暫停。</li>
 <li>寶可夢會使用目前招式<b>自動攻擊</b>，你需要專心躲避攻擊、調整位置。</li>
 <li>收集經驗值<b>提升等級</b>，從三張卡牌中選擇一張：學習新<a href="{lk('moves')}">招式</a>、升級已有招式，或強化寶可夢。</li></ul>
 <h2>遊戲內容</h2><ul class="feat">
@@ -365,7 +365,7 @@ How long can you last?</p>
 <h2>How to play</h2>
 <ul>
 <li><b>On PC:</b> move with <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or the arrow keys. Switch moves with <kbd>1</kbd>–<kbd>4</kbd>, <kbd>Q</kbd>/<kbd>E</kbd> or by clicking their icon. Pause with <kbd>Esc</kbd>.</li>
-<li><b>On phone or tablet (landscape):</b> drag your finger anywhere to move, tap a move to switch to it and the top-right button to pause.</li>
+<li><b>On phone or tablet (portrait or landscape):</b> drag your finger anywhere to move, tap a move to switch to it and the top-right button to pause.</li>
 <li>Your Pokémon <b>attacks on its own</b> with the active move. Your job is to dodge and position yourself well.</li>
 <li>Collect experience to <b>level up</b> and pick one of three cards: new <a href="{lk('moves')}">moves</a>, upgrades to the ones you have, or boosts for your Pokémon.</li>
 </ul>

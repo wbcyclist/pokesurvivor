@@ -605,3 +605,9 @@ G.I18n.add({
   'Ya has reportado esta marca': 'You already reported this record',
   '¿Reportar la marca de {x} como trampa?': "Report {x}'s record as cheating?", 'Gracias: la revisaremos': 'Thanks: we will review it'
 });
+
+G.I18n.add({
+  "Pon el dedo en cualquier parte y arrastra para moverte: el joystick aparece donde tocas. Toca un ataque de abajo para cambiarlo y el botón de arriba a la derecha para pausar. Puedes jugar en vertical o en horizontal.": "Put your finger anywhere and drag to move: the joystick appears where you touch. Tap a move at the bottom to switch to it and the top-right button to pause. You can play in portrait or landscape.",
+  "Los controles se guardan por separado en vertical y horizontal.": "Controls are saved separately for portrait and landscape.",
+  "Ahora puedes jugar en vertical o en horizontal. La cámara, los menús y los controles se adaptan al girar el móvil, sin interrumpir la partida.": "You can now play in portrait or landscape. The camera, menus, and controls adapt when you rotate your phone without interrupting the run."
+}, 'en');

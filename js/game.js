@@ -32,10 +32,10 @@ G.Game = (() => {
     resize();
     // Revisa también el siguiente fotograma si el tamaño transitorio vuelve al anterior.
     addEventListener('resize', () => { resize(); requestAnimationFrame(resize); });
-    // Safari puede actualizar 100dvh después del evento resize de la ventana.
+    // Safari puede terminar el cambio de tamaño después del evento resize de la ventana.
     if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(cv);
     G.Touch.init(cv);
-    // En móvil: al cambiar de app o girarlo en vertical, la partida se pausa.
+    // En móvil: al cambiar de app, la partida se pausa.
     document.addEventListener('visibilitychange', () => { if (document.hidden) autoPause(); });
     G.RunUI.wirePause(() => { state = 'playing'; G.UI.hideAll(); }, quitRun);
     Backdrop.init();
@@ -57,17 +57,6 @@ G.Game = (() => {
       G.Touch.reset();
       G.Touch.clearButtons();
     }
-    checkOrientation();
-  }
-
-  /** Móvil en vertical: aviso de girarlo (y pausa). */
-  function checkOrientation() {
-    const portrait = G.Touch.active && innerHeight > innerWidth;
-    const el = document.getElementById('rotate');
-    if (!el) return;
-    if (portrait && !document.getElementById('rotate-ico').innerHTML) document.getElementById('rotate-ico').innerHTML = G.Icons.html('phone', 48);
-    el.classList.toggle('hidden', !portrait);
-    if (portrait) autoPause();
   }
 
   /** Pausa sola (sólo en solitario: en grupo los demás siguen). */

@@ -7,6 +7,8 @@
  */
 G.CHANGELOG = [
   { d: '2026-10-15', title: ['Soporte de chino y mandos', 'Chinese language and gamepad support'], new: [
+    ["Ahora puedes jugar en vertical o en horizontal. La cámara, los menús y los controles se adaptan al girar el móvil, sin interrumpir la partida.",
+     "You can now play in portrait or landscape. The camera, menus, and controls adapt when you rotate your phone without interrupting the run."],
     ["El progreso de invitado se guarda automáticamente en este navegador y se recupera al recargar. Se conservan los Pokémon, monedas, mejoras y estadísticas; las partidas en curso no se reanudan.",
      "Guest progress now saves automatically in this browser and returns after a reload. Pokemon, coins, upgrades, and stats are kept; active runs do not resume."],
     ['Soporte de mandos: muévete con el stick izquierdo o la cruceta, cambia ataques con los botones superiores y usa Start para pausar. También puedes navegar por los menús y elegir cartas con el mando.',
@@ -23,6 +25,8 @@ G.CHANGELOG = [
     ['Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.',
      'Chinese text uses Fusion Pixel 12px proportional, including the guides.']
   ], fix: [
+    ["La imagen llena la pantalla al abrir el juego desde Inicio en iPhone, sin dejar una franja vacía abajo. Los controles respetan el área segura.",
+     "The game fills the screen when opened from the iPhone Home Screen, without a blank strip at the bottom. Controls stay within the safe area."],
     ["Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.",
      "Menus use A / circle to confirm and B / cross to go back. Attack prompts are larger badges below the icons. Settings keep controller focus when an option changes."],
     ["Las recompensas ocultan los atajos de teclado al usar mando. El botón superior derecho (RB / R1 / R) cambia las cartas y el botón de confirmar acepta la carta seleccionada.",

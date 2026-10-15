@@ -1,7 +1,7 @@
 /* Route gamepad actions to the visible screen or the active run. */
 G.GamepadUI = (() => {
   const TARGETS = 'button, a[href], input, select, .tab, .card, .cell, .answer, [role="button"], [tabindex]';
-  const PANELS = '.scr, #boot, #tap-start, #rotate, #pull-fx, #sound-panel, #invite-pop';
+  const PANELS = '.scr, #boot, #tap-start, #pull-fx, #sound-panel, #invite-pop';
   let scope = null, selected = null, active = false, blocking = false;
   let lastDirection = '', repeatAt = 0, waitDirection = false;
 

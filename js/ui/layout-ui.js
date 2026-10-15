@@ -2,34 +2,30 @@
  * Ajustes > Controles > Colocar los botones: se ven los ataques (con el
  * objeto), la pausa y, si es fijo, el joystick, y se arrastran a donde se
  * quiera. Se guarda el centro de cada cosa en proporción a la pantalla
- * (G.Settings 'pad'); lo que no se mueve se queda en su sitio de siempre.
+ * (G.Settings 'pad' o 'padPortrait'); lo que no se mueve se queda en su sitio de siempre.
  * El HUD (hud.js) y el joystick (touch.js) leen esas posiciones.
- * Las medidas copian las del HUD: si cambian allí, cambiarlas aquí.
+ * Comparte las medidas con el HUD mediante G.Touch.layout().
  */
 G.LayoutUI = (() => {
-  const S = 54, GAP = 9, ITEM_GAP = 18, N = 4, KEY_H = 26, KEY_GAP = 5;          // como en hud.js
-  const BAR_W = S + ITEM_GAP + N * S + (N - 1) * GAP;
   let el = null, pos = null, moved = null, mode = 'float';
 
-  /** Dónde está cada cosa ahora mismo (centro en px), con lo guardado o lo de siempre. */
-  function current(k, w, h) {
-    const p = G.Touch.spot(k);
-    if (k === 'stick') { const b = G.Touch.stickBase(w, h); return [b.x, b.y]; }
-    const sa = G.Touch.safeArea();
-    if (k === 'bar') {
-      if (p) return [p[0] * w, p[1] * h];
-      const totalW = N * S + (N - 1) * GAP;
-      const left = (w - totalW) / 2 - S - ITEM_GAP;
-      return [left + BAR_W / 2, h - S - KEY_H - KEY_GAP - 18 - Math.min(28, sa.bottom) + S / 2];
-    }
-    if (p) return [p[0] * w, p[1] * h];
-    return [w - 52 - Math.min(44, sa.right) + 20, 12 + Math.min(20, sa.top) + 20];
+  function viewport() {
+    const canvas = document.getElementById('game');
+    return { w: canvas.clientWidth, h: canvas.clientHeight };
   }
 
-  /** Lo mismo que hace el HUD para que no se salga de la pantalla. */
+  function current(k, w, h) {
+    const c = G.Touch.layout(w, h);
+    if (k === 'stick') { const b = G.Touch.stickBase(w, h); return [b.x, b.y]; }
+    const b = k === 'bar' ? c.bar : c.pause;
+    return [b.x + (b.width || b.size) / 2, b.y + (b.height || b.size) / 2];
+  }
+
   function fit(k, x, y, w, h) {
-    if (k === 'bar') return [G.U.clamp(x, 6 + BAR_W / 2, Math.max(6 + BAR_W / 2, w - BAR_W / 2 - 6)), G.U.clamp(y, 24 + S / 2, h - S / 2 - KEY_H - KEY_GAP - 6)];
-    if (k === 'pause') return [G.U.clamp(x, 24, w - 24), G.U.clamp(y, 30, h - 24)];
+    const c = G.Touch.layout(w, h), sa = c.safe;
+    if (k === 'bar') return [G.U.clamp(x, sa.left + 6 + c.bar.width / 2, w - sa.right - c.bar.width / 2 - 6),
+      G.U.clamp(y, sa.top + 24 + c.size / 2, h - c.bottom - c.size / 2 - c.keyHeight - c.keyGap - 6)];
+    if (k === 'pause') return [G.U.clamp(x, sa.left + 24, w - sa.right - 24), G.U.clamp(y, sa.top + 30, h - sa.bottom - 24)];
     const r = G.Touch.R();
     return [G.U.clamp(x, r + 4, w - r - 4), G.U.clamp(y, r + 4, h - r - 4)];
   }
@@ -38,14 +34,14 @@ G.LayoutUI = (() => {
     el = document.createElement('section');
     el.id = 'scr-layout';
     el.className = 'scr hidden';
-    const slots = Array.from({ length: N }, (_, i) => `<div class="lay-slot${i === 0 ? ' on' : ''}"><i>${i + 1}</i></div>`).join('');
+    const slots = Array.from({ length: 4 }, (_, i) => `<div class="lay-slot${i === 0 ? ' on' : ''}"><i>${i + 1}</i></div>`).join('');
     el.innerHTML = `
       <div class="lay-thing lay-bar" data-k="bar"><div class="lay-slot item"></div>${slots}<span class="lay-tag">Ataques</span></div>
       <div class="lay-thing lay-pause" data-k="pause"><b></b><b></b></div>
       <div class="lay-thing lay-stick" data-k="stick"><div class="knob"></div><span class="lay-tag">Joystick</span></div>
       <div class="box lay-panel">
         <h3>Arrastra los botones a donde quieras</h3>
-        <p class="lay-turn">Gira el móvil: se juega en horizontal.</p>
+        <p class="lay-turn">Los controles se guardan por separado en vertical y horizontal.</p>
         <div class="chips set-chips" id="lay-mode"><b>Joystick</b>
           <button class="chip" data-m="float">Flotante</button><button class="chip" data-m="fixed">Fijo</button>
         </div>
@@ -62,16 +58,17 @@ G.LayoutUI = (() => {
     el.querySelector('#lay-cancel').onclick = close;
     el.querySelector('#lay-reset').onclick = () => {
       moved = {}; mode = 'float';
-      const w = innerWidth, h = innerHeight, sa = G.Touch.safeArea();
-      const totalW = N * S + (N - 1) * GAP;
-      pos = { bar: [(w - totalW) / 2 - S - ITEM_GAP + BAR_W / 2, h - S - KEY_H - KEY_GAP - 18 - Math.min(28, sa.bottom) + S / 2],
-              pause: [w - 52 - Math.min(44, sa.right) + 20, 12 + Math.min(20, sa.top) + 20],
-              stick: [G.Touch.STICK_DEF[0] * w, G.Touch.STICK_DEF[1] * h] };
+      const { w, h } = viewport(), c = G.Touch.layout(w, h, 4, 4, false);
+      pos = { bar: [c.bar.x + c.bar.width / 2, c.bar.y + c.size / 2],
+              pause: [c.pause.x + 20, c.pause.y + 20],
+              stick: [G.Touch.STICK_DEF[0] * w, h > w ? Math.min(G.Touch.STICK_DEF[1] * h, c.bar.y - G.Touch.R() - 24) : G.Touch.STICK_DEF[1] * h] };
       for (const k in pos) pos[k] = fit(k, pos[k][0], pos[k][1], w, h);
       paint();
     };
     el.querySelector('#lay-save').onclick = save;
-    addEventListener('resize', () => { if (isOpen()) { load(); paint(); } });
+    const resize = () => { if (isOpen()) { load(); paint(); } };
+    addEventListener('resize', resize);
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(document.getElementById('game'));
   }
 
   function drag(node) {
@@ -85,7 +82,8 @@ G.LayoutUI = (() => {
     });
     node.addEventListener('pointermove', e => {
       if (!off) return;
-      pos[k] = fit(k, e.clientX - off[0], e.clientY - off[1], innerWidth, innerHeight);
+      const { w, h } = viewport();
+      pos[k] = fit(k, e.clientX - off[0], e.clientY - off[1], w, h);
       moved[k] = true;
       paint();
     });
@@ -95,12 +93,12 @@ G.LayoutUI = (() => {
   }
 
   function load() {
-    const w = innerWidth, h = innerHeight;
+    const { w, h } = viewport();
     pos = {}; moved = {};
     for (const k of ['bar', 'pause', 'stick']) {
       const c = current(k, w, h);
       pos[k] = fit(k, c[0], c[1], w, h);
-      moved[k] = !!G.Touch.spot(k);
+      moved[k] = !!G.Touch.spot(k, w, h);
     }
   }
 
@@ -112,17 +110,17 @@ G.LayoutUI = (() => {
       n.style.width = ww + 'px'; n.style.height = hh + 'px';
       return n;
     };
-    place('bar', BAR_W, S);
+    const { w, h } = viewport(), c = G.Touch.layout(w, h);
+    place('bar', c.bar.width, c.size).style.setProperty('--slot-size', c.size + 'px');
     place('pause', 40, 40);
     place('stick', r * 2, r * 2).classList.toggle('hidden', mode !== 'fixed');
     el.querySelectorAll('#lay-mode .chip').forEach(b => b.classList.toggle('on', b.dataset.m === mode));
-    el.querySelector('.lay-turn').classList.toggle('hidden', innerWidth >= innerHeight);
   }
 
   function save() {
-    const w = innerWidth, h = innerHeight, pad = {};
+    const { w, h } = viewport(), pad = {};
     for (const k in pos) if (moved[k]) pad[k] = [+(pos[k][0] / w).toFixed(4), +(pos[k][1] / h).toFixed(4)];
-    G.Settings.set('pad', Object.keys(pad).length ? pad : null);
+    G.Settings.set(G.Touch.padKey(w, h), Object.keys(pad).length ? pad : null);
     G.Settings.set('stickMode', mode);
     G.UI.toast('Botones colocados');
     close();

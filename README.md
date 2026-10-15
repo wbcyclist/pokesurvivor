@@ -62,7 +62,10 @@ siguen disponibles. En los menús, izquierda/derecha ajustan los deslizadores y
 selectores. Escribir texto, mover los controles táctiles y desbloquear el sonido
 puede requerir teclado, ratón o pantalla táctil.
 
-**En móvil o tablet** (en horizontal): pon el dedo en cualquier sitio y arrastra
+La orientación se puede cambiar sin abandonar la partida. Los controles personalizados
+se guardan por separado para cada orientación.
+
+**En móvil o tablet** (en vertical u horizontal): pon el dedo en cualquier sitio y arrastra
 para moverte (el joystick aparece donde tocas), toca un ataque de abajo para
 cambiarlo y el botón de arriba a la derecha para pausar. Se puede instalar como
 app ("Añadir a pantalla de inicio"). En **Ajustes** hay sonido, calidad gráfica

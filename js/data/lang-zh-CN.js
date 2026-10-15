@@ -1376,3 +1376,10 @@ G.I18n.add({
   "Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.": "中文文本改用 Fusion Pixel 12px 比例字体，指南页同步应用。",
   "Corregido el tamaño del juego y los controles táctiles al girar el móvil o cambiar el área visible en Safari. Los avisos ya no bloquean los botones de ataque.": "修复 Safari 中旋转手机或可视区域变化后，画面比例与触摸位置错位的问题。提示消息不再阻挡招式按钮。"
 }, 'zh-CN');
+
+G.I18n.add({
+  "Pon el dedo en cualquier parte y arrastra para moverte: el joystick aparece donde tocas. Toca un ataque de abajo para cambiarlo y el botón de arriba a la derecha para pausar. Puedes jugar en vertical o en horizontal.": "在任意位置按住并拖动即可移动，摇杆会出现在触碰处。点击底部招式进行切换，点击右上角按钮暂停。支持竖屏和横屏游玩。",
+  "Los controles se guardan por separado en vertical y horizontal.": "竖屏与横屏的触控布局分别保存。",
+  "Ahora puedes jugar en vertical o en horizontal. La cámara, los menús y los controles se adaptan al girar el móvil, sin interrumpir la partida.": "现在支持竖屏和横屏游玩。旋转手机时，镜头、菜单和触控布局会自动适配，游戏不会中断。",
+  "La imagen llena la pantalla al abrir el juego desde Inicio en iPhone, sin dejar una franja vacía abajo. Los controles respetan el área segura.": "从 iPhone 主屏幕打开游戏时，画面铺满屏幕，底部不再留白。操作按钮仍保持安全区间距。"
+}, 'zh-CN');

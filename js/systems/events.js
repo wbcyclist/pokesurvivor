@@ -298,7 +298,7 @@ G.Events = (() => {
   }
 
   /** Flecha en el borde hacia el Pokémon perdido (o hacia la marca, si ya te sigue). */
-  function drawHud(ctx, w, h, pl, F) {
+  function drawHud(ctx, w, h, pl, F, top = 112) {
     const cam = G.Camera;
     if (lost) {
       const L = lost, to = L.state === 'wait' ? [L.x, L.y - 10] : [L.tx, L.ty];
@@ -314,9 +314,9 @@ G.Events = (() => {
       ctx.save();
       ctx.font = F(800, 12); ctx.textAlign = 'center';
       ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,0,0,.8)';
-      ctx.strokeText(txt, w / 2, 112);
+      ctx.strokeText(txt, w / 2, top, w - 24);
       ctx.fillStyle = cur.id === 'gold' ? '#ffd23f' : G.U.TYPE_COLOR[cur.type] || '#fff';
-      ctx.fillText(txt, w / 2, 112);
+      ctx.fillText(txt, w / 2, top, w - 24);
       ctx.restore();
     }
   }

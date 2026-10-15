@@ -19,13 +19,44 @@ G.Touch = (() => {
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
   /** Dónde ha colocado el jugador una cosa ('bar', 'pause', 'stick'): [x, y] en 0..1, o null. */
-  function spot(k) { const p = G.Settings.get('pad'); return p && Array.isArray(p[k]) ? p[k] : null; }
+  function padKey(w = innerWidth, h = innerHeight) { return h > w ? 'padPortrait' : 'pad'; }
+  function spot(k, w = innerWidth, h = innerHeight) {
+    const p = G.Settings.get(padKey(w, h));
+    return p && Array.isArray(p[k]) ? p[k] : null;
+  }
   const STICK_DEF = [0.14, 0.72];
   const fixed = () => G.Settings.get('stickMode') === 'fixed';
   /** Centro del joystick fijo, en px de pantalla. */
   function stickBase(w = cv.clientWidth, h = cv.clientHeight) {
-    const p = spot('stick') || STICK_DEF, r = R();
-    return { x: clamp(p[0] * w, r + 4, w - r - 4), y: clamp(p[1] * h, r + 4, h - r - 4) };
+    const p = spot('stick', w, h), r = R();
+    const x = p ? p[0] * w : STICK_DEF[0] * w;
+    const y = p ? p[1] * h : h > w ? Math.min(h * STICK_DEF[1], layout(w, h).bar.y - r - 24) : STICK_DEF[1] * h;
+    return { x: clamp(x, r + 4, w - r - 4), y: clamp(y, r + 4, h - r - 4) };
+  }
+
+  /** Medidas compartidas por el HUD y el editor de controles. */
+  function layout(w, h, count = 4, maxMoves = 4, useSaved = true) {
+    const sa = safeArea(), portrait = h > w;
+    const size = Math.min(54, Math.floor((w - sa.left - sa.right - 12 - 18 - 27) / 5));
+    const gap = 9, keyWidth = 30, keyHeight = 26, keyGap = 5;
+    const bottom = portrait ? sa.bottom : Math.min(28, sa.bottom);
+    const saved = useSaved && spot('bar', w, h);
+    const n = saved ? Math.max(count, maxMoves) : count;
+    const movesWidth = n * size + (n - 1) * gap, width = size + 18 + movesWidth;
+    let x = portrait ? (w - width) / 2 : (w - movesWidth) / 2 - size - 18;
+    let y = h - size - keyHeight - keyGap - 18 - bottom;
+    if (saved) {
+      x = clamp(saved[0] * w - width / 2, sa.left + 6, Math.max(sa.left + 6, w - sa.right - width - 6));
+      y = clamp(saved[1] * h - size / 2, sa.top + 24, h - bottom - size - keyHeight - keyGap - 6);
+    }
+    const p = useSaved && spot('pause', w, h);
+    const pause = {
+      x: p ? clamp(p[0] * w - 20, sa.left + 4, w - sa.right - 44) : w - 52 - sa.right,
+      y: p ? clamp(p[1] * h - 20, sa.top + 10, h - sa.bottom - 44) : 12 + sa.top,
+      size: 40
+    };
+    return { size, gap, keyWidth, keyHeight, keyGap, bottom, safe: sa,
+      bar: { x, y, width, height: size }, moveX: x + size + 18, pause };
   }
 
   function init(canvas) {
@@ -157,6 +188,6 @@ G.Touch = (() => {
     ctx.restore();
   }
 
-  return { init, vector, draw, drawStick, clearButtons, addButton, reset, safeArea, spot, stickBase, R, STICK_DEF,
+  return { init, vector, padKey, layout, draw, drawStick, clearButtons, addButton, reset, safeArea, spot, stickBase, R, STICK_DEF,
            get active() { return active; }, get stick() { return stick; } };
 })();

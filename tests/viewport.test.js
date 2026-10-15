@@ -54,7 +54,7 @@ test('updates the canvas and camera when mobile layout settles after the window 
   events.get('resize')();
   assert.deepEqual([canvas.width, canvas.height], [1434, 1341]);
 
-  // Safari can update 100dvh after its last window resize event.
+  // Safari can finish layout after its last window resize event.
   canvas.clientHeight = 440;
   app.layout();
   assert.deepEqual([canvas.width, canvas.height], [1434, 660]);
@@ -95,4 +95,26 @@ test('keeps valid canvas and camera dimensions through a temporary zero-size lay
   app.canvas.clientWidth = 956; app.canvas.clientHeight = 440;
   app.layout();
   assert.deepEqual([app.canvas.width, app.canvas.height], [1434, 660]);
+});
+
+test('keeps the same minimum world area when rotating between portrait and landscape', () => {
+  const { context, canvas, events } = boot(), camera = context.G.Camera;
+  camera.x = 120; camera.y = -80;
+  for (const [width, height] of [[390, 844], [320, 568], [844, 390], [768, 1024]]) {
+    canvas.clientWidth = width; canvas.clientHeight = height; events.get('resize')();
+    const portrait = height > width;
+    assert.ok(camera.w >= (portrait ? 420 : 768) - 1e-6);
+    assert.ok(camera.h >= (portrait ? 768 : 420) - 1e-6);
+    assert.equal(camera.scale, Math.min(width / (portrait ? 420 : 768), height / (portrait ? 768 : 420)));
+    assert.deepEqual([camera.x, camera.y], [120, -80]);
+  }
+});
+
+test('uses the full canvas size when an installed app reports a shorter window height', () => {
+  const app = boot();
+  app.canvas.clientHeight = 956;
+  app.layout();
+  assert.equal(app.context.innerHeight, 894);
+  assert.deepEqual([app.canvas.width, app.canvas.height], [660, 1434]);
+  assert.equal(app.context.G.Camera.h * app.context.G.Camera.scale, 956);
 });
