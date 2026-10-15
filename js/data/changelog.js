@@ -16,6 +16,9 @@ G.CHANGELOG = [
   ], chg: [
     ['Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.',
      'Chinese text uses Fusion Pixel 12px proportional, including the guides.']
+  ], fix: [
+    ['Corregido el tamaño del juego y los controles táctiles al girar el móvil o cambiar el área visible en Safari. Los avisos ya no bloquean los botones de ataque.',
+     'Fixed game scaling and touch controls when rotating a phone or changing the visible area in Safari. Notifications no longer block move buttons.']
   ] },
   { d: '2026-10-14', title: ['Recupera tu cuenta con Gmail', 'Recover your account with Gmail'], new: [
     ['Si juegas con nombre y contraseña, puedes vincular tu Gmail: si un día olvidas la contraseña, entras con Google y es tu misma cuenta. Te lo ofrecemos al entrar.',

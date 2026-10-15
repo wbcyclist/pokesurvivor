@@ -1345,5 +1345,6 @@ G.I18n.add({
   "Chino tradicional": "繁体中文",
   "El juego y las guías ya están disponibles en chino tradicional. Selecciónalo en Ajustes > Gráficos > Idioma.": "游戏与指南现已支持繁体中文，可在“设置 > 画面 > 语言”中选择。",
   "Psíquico (movimiento)": "精神强念",
-  "Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.": "中文文本改用 Fusion Pixel 12px 比例字体，指南页同步应用。"
+  "Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.": "中文文本改用 Fusion Pixel 12px 比例字体，指南页同步应用。",
+  "Corregido el tamaño del juego y los controles táctiles al girar el móvil o cambiar el área visible en Safari. Los avisos ya no bloquean los botones de ataque.": "修复 Safari 中旋转手机或可视区域变化后，画面比例与触摸位置错位的问题。提示消息不再阻挡招式按钮。"
 }, 'zh-CN');

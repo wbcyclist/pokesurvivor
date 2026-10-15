@@ -30,7 +30,10 @@ G.Game = (() => {
     cv = document.getElementById('game');
     ctx = cv.getContext('2d');
     resize();
-    addEventListener('resize', resize);
+    // Revisa también el siguiente fotograma si el tamaño transitorio vuelve al anterior.
+    addEventListener('resize', () => { resize(); requestAnimationFrame(resize); });
+    // Safari puede actualizar 100dvh después del evento resize de la ventana.
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(resize).observe(cv);
     G.Touch.init(cv);
     // En móvil: al cambiar de app o girarlo en vertical, la partida se pausa.
     document.addEventListener('visibilitychange', () => { if (document.hidden) autoPause(); });
@@ -43,11 +46,17 @@ G.Game = (() => {
   function resize() {
     // Resolución interna como mucho ×1,5: en pantallas ×2 dibujar el doble de
     // píxeles era de lo que más costaba, y con el pixel art no se nota.
-    dpr = Math.min(1.5, window.devicePixelRatio || 1);
-    w = cv.clientWidth; h = cv.clientHeight;
-    cv.width = Math.round(w * dpr);
-    cv.height = Math.round(h * dpr);
-    G.Camera.resize(w, h, dpr);
+    const nextDpr = Math.min(1.5, window.devicePixelRatio || 1);
+    const nextW = cv.clientWidth, nextH = cv.clientHeight;
+    if (nextW <= 0 || nextH <= 0) return;
+    if (w !== nextW || h !== nextH || dpr !== nextDpr) {
+      dpr = nextDpr; w = nextW; h = nextH;
+      cv.width = Math.round(w * dpr);
+      cv.height = Math.round(h * dpr);
+      G.Camera.resize(w, h, dpr);
+      G.Touch.reset();
+      G.Touch.clearButtons();
+    }
     checkOrientation();
   }
 

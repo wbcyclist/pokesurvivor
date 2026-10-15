@@ -703,6 +703,8 @@ def ach_page(lang):
 
 # ================= novedades =================
 NEWS = [
+ ('2026-10-15', ('Escala y controles en Safari', 'Safari scaling and controls', 'Safari 画面与触摸修复', 'Safari 畫面與觸控修正'),
+  ('Corregido el tamaño del juego y los controles táctiles al girar el móvil o cambiar el área visible en Safari. Los avisos ya no bloquean los botones de ataque.', 'Fixed game scaling and touch controls when rotating a phone or changing the visible area in Safari. Notifications no longer block move buttons.', '修复 Safari 中旋转手机或可视区域变化后，画面比例与触摸位置错位的问题。提示消息不再阻挡招式按钮。', '修正 Safari 中旋轉手機或可視區域變化後，畫面比例與觸控位置錯位的問題。提示訊息不再擋住招式按鈕。')),
  ('2026-10-15', ('Fuente pixel para el chino', 'Pixel font for Chinese', '中文像素字体', '中文像素字型'),
   ('Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.', 'Chinese text uses Fusion Pixel 12px proportional, including the guides.', '中文文本改用 Fusion Pixel 12px 比例字体，指南页同步应用。', '中文文字改用 Fusion Pixel 12px 比例字型，指南頁同步套用。')),
  ('2026-10-15', ('Soporte de chino tradicional', 'Traditional Chinese support', '繁体中文支持', '繁體中文支援'),
