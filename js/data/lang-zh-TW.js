@@ -4,6 +4,22 @@
  * Spanish source keys and save identifiers stay unchanged.
  */
 G.I18n.add({
+  "Estilo de botones": "按鍵提示樣式",
+  "Auto detecta modelos conocidos. Puedes cambiar los símbolos sin cambiar la posición de los botones. Las flechas indican las posiciones de los cuatro botones derechos.": "自動識別已知型號。更換符號不會改變按鍵位置，箭頭表示右側四個按鍵的位置。",
+  "Posiciones": "位置",
+  "Elegir ataque 1–4": "選擇招式 1–4",
+  "Stick / cruceta: moverse · {x}: ataques · {x}: pausa": "搖桿／方向鍵：移動 · {x}：招式 · {x}：暫停",
+  "En combate, los cuatro botones derechos del mando eligen los ataques 1–4. Los iconos cambian según el mando y puedes elegir su estilo en Ajustes > Controles.": "戰鬥中，控制器右側四個按鍵可直接選擇招式 1–4。按鍵提示會隨控制器型號變化，也可在設定 > 操作中手動選擇樣式。",
+  "Mando": "控制器",
+  "Conecta un mando compatible con el mapeo estándar del navegador y pulsa un botón. Usa HTTPS o localhost.": "連接支援瀏覽器標準對應的控制器並按下任意按鈕。請使用 HTTPS 或 localhost。",
+  "Stick izquierdo / cruceta": "左搖桿／方向鍵",
+  "Moverse / navegar": "移動／導覽",
+  "Confirmar": "確認",
+  "Cambiar cartas": "重抽卡片",
+  "En los menús, izquierda y derecha también ajustan los deslizadores y selectores. Para escribir o activar el sonido, puede hacer falta el teclado o tocar la pantalla.": "在選單中，左右方向也可調整滑桿及下拉選項。輸入文字或啟用聲音可能需要鍵盤或觸控。",
+  "Mando desconectado. Puedes seguir con teclado o pantalla táctil.": "控制器已中斷連線。你可以繼續使用鍵盤或觸控操作。",
+  "Soporte de chino y mandos": "中文與控制器支援",
+  "Soporte de mandos: muévete con el stick izquierdo o la cruceta, cambia ataques con los botones superiores y usa Start para pausar. También puedes navegar por los menús y elegir cartas con el mando.": "新增控制器支援：用左搖桿或方向鍵移動，用肩鍵切換招式，按 Start 暫停。也可以使用控制器瀏覽選單及選擇卡片。",
   "Las guías y las páginas de datos también están disponibles en chino simplificado.": "指南與資料頁也已支援簡體中文。",
   "Acero": "鋼",
   "Agua": "水",

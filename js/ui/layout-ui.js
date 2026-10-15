@@ -51,7 +51,7 @@ G.LayoutUI = (() => {
         </div>
         <small class="lay-help">Flotante: aparece donde pones el dedo. Fijo: siempre en el mismo sitio.</small>
         <div class="row wrap lay-btns">
-          <button class="btn small ghost" id="lay-cancel">Cancelar</button>
+          <button class="btn small ghost" id="lay-cancel" data-gamepad-back>Cancelar</button>
           <button class="btn small" id="lay-reset">Restablecer</button>
           <button class="btn small gold" id="lay-save">Guardar</button>
         </div>

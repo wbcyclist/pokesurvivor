@@ -134,7 +134,7 @@ G.UI = (() => {
         <p class="sub">Se borrarán tu cuenta y toda tu partida, para siempre. Para confirmarlo, escribe tu contraseña.</p>
         <input class="field" type="password" maxlength="64" autocomplete="current-password" style="width:100%">
         <div style="display:flex;gap:8px;margin-top:12px;justify-content:center;flex-wrap:wrap">
-          <button class="btn ghost" data-a="no">Cancelar</button>
+          <button class="btn ghost" data-a="no" data-gamepad-back>Cancelar</button>
           <button class="btn danger" data-a="yes">Borrar para siempre</button>
         </div></div>`;
       document.body.appendChild(el);

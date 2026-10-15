@@ -87,7 +87,21 @@ G.SettingsUI = (() => {
              <button class="btn small" id="set-full">${isFull() ? 'Salir' : 'Activar'}</button></div>`
            : iosTip() ? `<div class="set-row"><div class="grow"><b>Pantalla completa</b><small>${esc(IOS_TIP)}</small></div></div>` : '');
     } else if (tab === 'ctl') {
-      box.innerHTML = section('En móvil o tablet')
+      box.innerHTML = section('Mando')
+        + section('Estilo de botones', 'Auto detecta modelos conocidos. Puedes cambiar los símbolos sin cambiar la posición de los botones. Las flechas indican las posiciones de los cuatro botones derechos.')
+        + choice('gamepadLayout', [['auto', 'Auto'], ['xbox', 'Xbox'], ['playstation', 'PlayStation'], ['nintendo', 'Nintendo'], ['generic', 'Posiciones']])
+        + `<p class="sub">Conecta un mando compatible con el mapeo estándar del navegador y pulsa un botón. Usa HTTPS o localhost.</p>
+           <div class="keys">
+             <div>Stick izquierdo / cruceta</div><span>Moverse / navegar</span>
+             <div data-gamepad-label="faces" translate="no">${[0, 1, 2, 3].map(i => G.Gamepad.faceLabel(i)).join(' / ')}</div><span>Elegir ataque 1–4</span>
+             <div><span data-gamepad-label="previous" translate="no">${G.Gamepad.label('previous')}</span> / <span data-gamepad-label="next" translate="no">${G.Gamepad.label('next')}</span></div><span>ataque anterior / siguiente</span>
+             <div data-gamepad-label="confirm" translate="no">${G.Gamepad.label('confirm')}</div><span>Confirmar</span>
+             <div data-gamepad-label="back" translate="no">${G.Gamepad.label('back')}</div><span>Volver</span>
+             <div data-gamepad-label="reroll" translate="no">${G.Gamepad.label('reroll')}</div><span>Cambiar cartas</span>
+             <div data-gamepad-label="pause" translate="no">${G.Gamepad.label('pause')}</div><span>pausa</span>
+           </div>
+           <p class="sub">En los menús, izquierda y derecha también ajustan los deslizadores y selectores. Para escribir o activar el sonido, puede hacer falta el teclado o tocar la pantalla.</p>`
+        + section('En móvil o tablet')
         + `<p class="sub">Pon el dedo en cualquier parte y arrastra para moverte: el joystick aparece donde tocas. Toca un ataque de abajo para cambiarlo y el botón de arriba a la derecha para pausar. Se juega en horizontal.</p>`
         + `<div class="set-row"><div class="grow"><b>Tamaño del joystick</b><small>Cuánto hay que arrastrar el dedo.</small></div></div>`
         + choice('stick', [[0.8, 'Pequeño'], [1, 'Normal'], [1.25, 'Grande']])

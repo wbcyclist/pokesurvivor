@@ -6,7 +6,9 @@
  * Cada línea en español y en inglés.
  */
 G.CHANGELOG = [
-  { d: '2026-10-15', title: ['Soporte de chino', 'Chinese language support'], new: [
+  { d: '2026-10-15', title: ['Soporte de chino y mandos', 'Chinese language and gamepad support'], new: [
+    ['Soporte de mandos: muévete con el stick izquierdo o la cruceta, cambia ataques con los botones superiores y usa Start para pausar. También puedes navegar por los menús y elegir cartas con el mando.',
+     'Gamepad support: move with the left stick or D-pad, switch attacks with the shoulder buttons, and press Start to pause. You can also navigate menus and choose cards with the controller.'],
     ['El juego ya está disponible en chino simplificado. Puedes elegirlo en Ajustes > Gráficos > Idioma.',
      'The game is now available in Simplified Chinese. Select it in Settings > Graphics > Language.'],
     ['Las guías y las páginas de datos también están disponibles en chino simplificado.',
@@ -14,6 +16,8 @@ G.CHANGELOG = [
     ['El juego y las guías ya están disponibles en chino tradicional. Selecciónalo en Ajustes > Gráficos > Idioma.',
      'The game and guides now support Traditional Chinese. Select it in Settings > Graphics > Language.']
   ], chg: [
+    ['En combate, los cuatro botones derechos del mando eligen los ataques 1–4. Los iconos cambian según el mando y puedes elegir su estilo en Ajustes > Controles.',
+     'In combat, the four face buttons select attacks 1–4. Button prompts match the controller, and you can change their style in Settings > Controls.'],
     ['Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.',
      'Chinese text uses Fusion Pixel 12px proportional, including the guides.']
   ], fix: [

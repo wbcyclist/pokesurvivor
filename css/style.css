@@ -63,6 +63,7 @@ input { font: inherit; }
   animation: fade .2s ease-out;
 }
 .scr.hidden { display: none; }
+.gamepad-focus { outline: 3px solid var(--gold) !important; outline-offset: 3px; }
 /* Pantallas que se abren con la barra superior a la vista: empiezan debajo de ella. */
 @media (min-height: 521px) {
   #scr-goals, #scr-dex, #scr-upgrades, #scr-gacha, #scr-friends, #scr-rank, #scr-lobby, #scr-profile { padding-top: 66px; }
@@ -709,6 +710,9 @@ body.touch kbd, body.touch .card .key, body.touch .kbd-hint { display: none !imp
 .row.wrap { flex-wrap: wrap; }
 .touch-hint { display: none; }
 body.touch .touch-hint { display: block; }
+.gamepad-hint { display: none; }
+body.gamepad-mode .gamepad-hint { display: block; }
+body.gamepad-mode .kbd-hint, body.gamepad-mode .touch-hint { display: none !important; }
 #pause-sound + .row, #scr-pause .row { flex-wrap: wrap; }
 a.btn { text-decoration: none; display: inline-block; color: var(--ink); }
 

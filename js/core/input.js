@@ -34,7 +34,8 @@ G.Input = (() => {
       if (MOVE_KEYS.right.some(k => down.has(k))) x += 1;
       if (MOVE_KEYS.up.some(k => down.has(k))) y -= 1;
       if (MOVE_KEYS.down.some(k => down.has(k))) y += 1;
-      return G.U.norm(x, y);
+      if (x || y) return G.U.norm(x, y);
+      return G.Gamepad && !(G.GamepadUI && G.GamepadUI.blocking) ? G.Gamepad.axis() : [0, 0];
     },
     held(c) { return down.has(c); },
     /** true sólo en el frame en que se pulsó. */

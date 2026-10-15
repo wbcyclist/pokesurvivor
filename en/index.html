@@ -117,7 +117,7 @@
       <button id="btn-google" class="btn google grow hidden" type="button">Entrar con Google</button>
     </div>
     <div class="row" style="margin-top:10px">
-      <button id="btn-guest" class="btn ghost grow" type="button">Jugar como invitado</button>
+      <button id="btn-guest" data-gamepad-default class="btn ghost grow" type="button">Jugar como invitado</button>
     </div>
     <p class="note center" id="login-mode"></p>
     <p class="note center"><a href="en/guide/">Guía</a> · <a href="en/pokedex/">Pokédex</a> · <a href="#" class="legal-link" data-legal>Aviso legal y privacidad</a></p>
@@ -143,7 +143,7 @@
     <canvas id="res-stage" class="stage" width="200" height="150"></canvas>
     <h3>Tu compañero: <span class="gold" id="res-name"></span></h3>
     <div class="row" style="justify-content:center;margin-top:14px">
-      <button id="res-ok" class="btn gold">¡Vamos juntos!</button>
+      <button id="res-ok" data-gamepad-default class="btn gold">¡Vamos juntos!</button>
       <button id="res-other" class="btn">Elegir otro</button>
     </div>
   </div>
@@ -156,9 +156,9 @@
     <p class="sub">Los iniciales de todas las regiones, y dos amigos más.</p>
     <div class="grid" id="starter-grid"></div>
     <div class="row between" style="margin-top:14px">
-      <button id="starter-back" class="btn ghost">Volver</button>
+      <button id="starter-back" data-gamepad-back class="btn ghost">Volver</button>
       <span id="starter-info" class="grow" style="color:var(--muted)"></span>
-      <button id="starter-ok" class="btn gold" disabled>Elegir</button>
+      <button id="starter-ok" data-gamepad-default class="btn gold" disabled>Elegir</button>
     </div>
   </div>
 </section>
@@ -213,7 +213,7 @@
 <!-- ====== Novedades (cambios del juego) ====== -->
 <section id="scr-news" class="scr dim hidden">
   <div class="box news-box">
-    <div class="row between"><h2>Novedades</h2><button class="btn small ghost" id="news-close">Cerrar</button></div>
+    <div class="row between"><h2>Novedades</h2><button class="btn small ghost" id="news-close" data-gamepad-back>Cerrar</button></div>
     <div id="news-body" class="news-body"></div>
   </div>
 </section>
@@ -226,7 +226,7 @@
     <p class="err" id="rec-err"></p>
     <div class="row" style="gap:8px;flex-wrap:wrap">
       <button class="btn gold grow" id="rec-link" type="button">Vincular mi Gmail</button>
-      <button class="btn ghost" id="rec-later" type="button">Ahora no</button>
+      <button class="btn ghost" id="rec-later" data-gamepad-back type="button">Ahora no</button>
     </div>
     <p class="note center"><a href="#" id="rec-never">No volver a preguntar</a></p>
   </div>
@@ -235,7 +235,7 @@
 <!-- ====== Apoyar el proyecto (donaciones) ====== -->
 <section id="scr-support" class="scr dim hidden">
   <div class="box support">
-    <div class="row between"><h2>Apoyar el proyecto</h2><button class="btn small ghost" id="sup-close">Cerrar</button></div>
+    <div class="row between"><h2>Apoyar el proyecto</h2><button class="btn small ghost" id="sup-close" data-gamepad-back>Cerrar</button></div>
     <div id="sup-body"></div>
   </div>
 </section>
@@ -243,7 +243,7 @@
 <!-- ====== Ajustes ====== -->
 <section id="scr-settings" class="scr dim hidden">
   <div class="box settings">
-    <div class="row between"><h2>Ajustes</h2><button class="btn small ghost" id="set-close">Cerrar</button></div>
+    <div class="row between"><h2>Ajustes</h2><button class="btn small ghost" id="set-close" data-gamepad-back>Cerrar</button></div>
     <div class="tabs" id="set-tabs">
       <button class="gen-tab" data-t="sound">Sonido</button>
       <button class="gen-tab" data-t="gfx">Gráficos</button>
@@ -258,7 +258,7 @@
 <!-- ====== Aviso legal y privacidad ====== -->
 <section id="scr-legal" class="scr dim hidden">
   <div class="box legal" style="width:min(640px,100%)">
-    <div class="row between"><h2>Aviso legal</h2><button class="btn small ghost" id="legal-close">Cerrar</button></div>
+    <div class="row between"><h2>Aviso legal</h2><button class="btn small ghost" id="legal-close" data-gamepad-back>Cerrar</button></div>
     <h3>Proyecto de fan</h3>
     <p><b>PokéSurvivor</b> es un juego hecho por fans, <b>gratuito y sin ánimo de lucro</b>.
       No tiene anuncios ni compras. Se puede apoyar con donaciones voluntarias, que se usan sólo para pagar los servidores y el dominio, y que no dan ninguna ventaja en el juego.</p>
@@ -356,7 +356,7 @@
       <p id="nick-err" class="err"></p>
       <div class="row"><button id="nick-ok" class="btn gold grow" type="submit">Guardar apodo</button></div>
     </form>
-    <div class="row" style="margin-top:8px"><button id="nick-later" class="btn ghost grow" type="button">Ahora no</button></div>
+    <div class="row" style="margin-top:8px"><button id="nick-later" data-gamepad-back class="btn ghost grow" type="button">Ahora no</button></div>
   </div>
 </section>
 
@@ -411,7 +411,7 @@
 <!-- ====== Moderación del ranking (sólo la cuenta de admin, ver js/ui/mod-ui.js) ====== -->
 <section id="scr-mod" class="scr dim hidden">
   <div class="box wide">
-    <div class="row between"><h2>Moderación</h2><span class="row" style="gap:6px"><button class="btn small danger" id="mod-purge">Quitar marcas de más de 1 hora</button><button class="btn small ghost" id="mod-back">Volver</button></span></div>
+    <div class="row between"><h2>Moderación</h2><span class="row" style="gap:6px"><button class="btn small danger" id="mod-purge">Quitar marcas de más de 1 hora</button><button class="btn small ghost" id="mod-back" data-gamepad-back>Volver</button></span></div>
     <div class="tabs" id="mod-tabs">
       <div class="tab on" data-tab="rep">Reportes</div>
       <div class="tab" data-tab="sus">Baneados</div>
@@ -436,7 +436,7 @@
 <!-- ====== Perfil público de un jugador ====== -->
 <section id="scr-profile" class="scr dim hidden">
   <div class="box profile-box">
-    <div class="row end"><button class="btn small ghost" id="prof-close">Cerrar</button></div>
+    <div class="row end"><button class="btn small ghost" id="prof-close" data-gamepad-back>Cerrar</button></div>
     <div id="prof-body"></div>
   </div>
 </section>
@@ -512,7 +512,7 @@
 <div id="pull-fx" class="hidden">
   <canvas id="slot" width="176" height="170" title="Clic para acelerar"></canvas>
   <div class="pull-results" id="pull-results"></div>
-  <button id="pull-close" class="btn gold hidden">Continuar</button>
+  <button id="pull-close" data-gamepad-back class="btn gold hidden">Continuar</button>
 </div>
 
 <!-- ====== Durante la run ====== -->
@@ -532,7 +532,7 @@
     <p class="sub bond-hint">Los movimientos unidos se lanzan a la vez y ocupan un solo hueco</p>
     <p id="bond-sub" class="sub"></p>
     <div id="bond-cards" class="cards"></div>
-    <div class="row" style="justify-content:center"><button id="bond-back" class="btn hidden">Atrás</button></div>
+    <div class="row" style="justify-content:center"><button id="bond-back" data-gamepad-back class="btn hidden">Atrás</button></div>
   </div>
 </section>
 
@@ -549,10 +549,11 @@
     <h2>Pausa</h2>
     <p class="sub kbd-hint"><kbd>WASD</kbd> moverse · <kbd>1</kbd>–<kbd>4</kbd> movimiento · <kbd>Q</kbd>/<kbd>E</kbd> ciclar · <kbd>Esc</kbd> pausa</p>
     <p class="sub touch-hint">Arrastra el dedo para moverte · toca un ataque para cambiarlo</p>
+    <div class="sub gamepad-hint"><span>Stick izquierdo / cruceta</span> · <span data-gamepad-label="faces" translate="no"></span>: <span>Elegir ataque 1–4</span> · <span data-gamepad-label="pause" translate="no"></span>: <span>pausa</span></div>
     <p id="pause-coop" class="note hidden">Partida en grupo: el juego sigue mientras estás aquí.</p>
     <div id="pause-sound" class="sound-inline"></div>
     <div class="row" style="justify-content:center">
-      <button id="btn-resume" class="btn gold">Continuar</button>
+      <button id="btn-resume" data-gamepad-default data-gamepad-back class="btn gold">Continuar</button>
       <button id="btn-pause-settings" class="btn">Ajustes</button>
       <button id="btn-quit" class="btn">Abandonar run</button>
     </div>
@@ -563,11 +564,11 @@
   <div class="box center" style="width:min(480px,100%)">
     <h2 id="over-title">Has caído…</h2>
     <div id="over-stats" class="stats"></div>
-    <button id="btn-again" class="btn gold">Volver al menú</button>
+    <button id="btn-again" data-gamepad-default data-gamepad-back class="btn gold">Volver al menú</button>
   </div>
 </section>
 
 <!-- datos generados -->
-<script defer src="js/app.min.js?v=be3c6a8833"></script>
+<script defer src="js/app.min.js?v=d024e9b375"></script>
 </body>
 </html>

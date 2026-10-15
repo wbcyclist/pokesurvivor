@@ -4,6 +4,22 @@
  * son los oficiales en inglés.
  */
 G.I18n.add({
+  "Estilo de botones": "Button prompt style",
+  "Auto detecta modelos conocidos. Puedes cambiar los símbolos sin cambiar la posición de los botones. Las flechas indican las posiciones de los cuatro botones derechos.": "Auto detects known models. You can change symbols without changing button positions. Arrows show the positions of the four face buttons.",
+  "Posiciones": "Positions",
+  "Elegir ataque 1–4": "Select attack 1–4",
+  "Stick / cruceta: moverse · {x}: ataques · {x}: pausa": "Stick / D-pad: move · {x}: attacks · {x}: pause",
+  "En combate, los cuatro botones derechos del mando eligen los ataques 1–4. Los iconos cambian según el mando y puedes elegir su estilo en Ajustes > Controles.": "In combat, the four face buttons select attacks 1–4. Button prompts match the controller, and you can change their style in Settings > Controls.",
+  "Mando": "Gamepad",
+  "Conecta un mando compatible con el mapeo estándar del navegador y pulsa un botón. Usa HTTPS o localhost.": "Connect a controller with browser standard mapping and press a button. Use HTTPS or localhost.",
+  "Stick izquierdo / cruceta": "Left stick / D-pad",
+  "Moverse / navegar": "Move / navigate",
+  "Confirmar": "Confirm",
+  "Cambiar cartas": "Reroll cards",
+  "En los menús, izquierda y derecha también ajustan los deslizadores y selectores. Para escribir o activar el sonido, puede hacer falta el teclado o tocar la pantalla.": "In menus, left and right also adjust sliders and select options. Text entry and audio may require the keyboard or a screen tap.",
+  "Mando desconectado. Puedes seguir con teclado o pantalla táctil.": "Controller disconnected. You can continue with the keyboard or touch controls.",
+  "Soporte de chino y mandos": "Chinese language and gamepad support",
+  "Soporte de mandos: muévete con el stick izquierdo o la cruceta, cambia ataques con los botones superiores y usa Start para pausar. También puedes navegar por los menús y elegir cartas con el mando.": "Gamepad support: move with the left stick or D-pad, switch attacks with the shoulder buttons, and press Start to pause. You can also navigate menus and choose cards with the controller.",
   // ---------------- tipos y regiones ----------------
   'Acero': 'Steel', 'Agua': 'Water', 'Bicho': 'Bug', 'Dragón': 'Dragon', 'Eléctrico': 'Electric', 'Fantasma': 'Ghost',
   'Fuego': 'Fire', 'Hada': 'Fairy', 'Hielo': 'Ice', 'Lucha': 'Fighting', 'Planta': 'Grass', 'Psíquico': 'Psychic',

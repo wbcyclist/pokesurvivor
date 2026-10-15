@@ -33,6 +33,25 @@ de personalidad y a la mazmorra.
 | `Q` / `E` | Ciclar movimientos |
 | `Esc` / `P` | Pausa |
 
+**Con mando** (mapeo estándar del navegador, por HTTPS o localhost): conecta el
+mando y pulsa y suelta un botón. Stick izquierdo o cruceta para moverte y navegar;
+`LB/RB` (`L1/R1`) para cambiar ataque; `Start/Options` para pausar.
+En combate, los cuatro botones derechos eligen los ataques 1–4 por posición:
+abajo, derecha, izquierda y arriba. Las etiquetas son `A/B/X/Y` en Xbox,
+`×/○/□/△` en PlayStation y `B/A/Y/X` en Nintendo. En los menús, el botón inferior
+confirma, el derecho vuelve y el izquierdo cambia las cartas de nivel.
+El juego detecta modelos conocidos. Puedes elegir **Auto / Xbox / PlayStation /
+Nintendo / Posiciones** en **Ajustes > Controles > Estilo de botones**. Esta opción
+se guarda en el dispositivo y cambia sólo los símbolos. Un modelo desconocido o
+un Joy-Con individual usa flechas de posición; nunca se intercambian los índices
+de entrada de Nintendo. El HUD vuelve a mostrar `1–4` al usar teclado, ratón o táctil.
+El stick conserva la velocidad
+analógica y tiene una zona muerta del 20 %. Al desconectar el mando se pausa la
+partida en solitario; en cooperativo la partida sigue. El teclado y el táctil
+siguen disponibles. En los menús, izquierda/derecha ajustan los deslizadores y
+selectores. Escribir texto, mover los controles táctiles y desbloquear el sonido
+puede requerir teclado, ratón o pantalla táctil.
+
 **En móvil o tablet** (en horizontal): pon el dedo en cualquier sitio y arrastra
 para moverte (el joystick aparece donde tocas), toca un ataque de abajo para
 cambiarlo y el botón de arriba a la derecha para pausar. Se puede instalar como
