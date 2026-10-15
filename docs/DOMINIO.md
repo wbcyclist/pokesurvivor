@@ -84,7 +84,8 @@ Cuando el DNS funcione, lo hago todo yo:
 **Ojo con las partidas de invitado:** se guardan en el navegador y van ligadas a la
 dirección. Quien juegue como invitado en `jpter78.github.io` no verá esa partida en
 `pokesurvivor.com` (las cuentas registradas sí, porque están en la nube). Si alguien
-te lo pregunta: que cree una cuenta antes del cambio.
+te lo pregunta: el progreso de invitado no se transfiere a otra dirección ni se
+fusiona con el de una cuenta al registrarse.
 
 ## Paso 4 · Google Search Console y Bing (TÚ, después del paso 3)
 

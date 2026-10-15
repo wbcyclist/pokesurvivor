@@ -1,5 +1,17 @@
 /* Simplified Chinese. Spanish source text is the key; {x} preserves argument order. */
 G.I18n.add({
+  "Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.": "自动识别已知型号。样式决定按键符号和确认、取消键，招式按键的位置保持固定。箭头表示右侧四个按键的位置。",
+  "Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.": "菜单中使用 A / ○ 确认、B / × 取消。招式按键提示已移到图标下方，采用更大的带背景和边框徽标。修改设置后，手柄焦点会保留在当前选项。",
+  "Invitado: guardado en este navegador": "游客：已保存在此浏览器",
+  "No se pudo guardar en este navegador. Revisa el almacenamiento antes de cerrar.": "无法在此浏览器保存。关闭前请检查存储空间和权限。",
+  "Tu progreso de invitado se guarda automáticamente en este navegador. Al recargar vuelves al menú; no se reanuda la partida en curso.": "游客进度会自动保存在此浏览器。刷新后返回菜单，不会续玩正在进行的一局。",
+  "El progreso de invitado y el de tu cuenta se guardan por separado. Borrar los datos del sitio elimina el progreso local.": "游客存档与账号存档分别保存。清除网站数据会删除本地进度。",
+  "Con cuenta, tu progreso se guarda en la nube. Como invitado, sólo se guarda en este navegador.": "账号进度保存在云端，游客进度仅保存在此浏览器。",
+  "Este navegador no permite guardar datos. El progreso de invitado se perderá al cerrar.": "此浏览器不允许保存数据，关闭后将丢失游客进度。",
+  "No se pudo guardar el progreso más reciente. ¿Salir de todos modos?": "最新进度未能保存，仍要退出吗？",
+  "Modo invitado: guardado en este navegador": "游客模式：已保存在此浏览器",
+  "El progreso de invitado se guarda automáticamente en este navegador y se recupera al recargar. Se conservan los Pokémon, monedas, mejoras y estadísticas; las partidas en curso no se reanudan.": "游客进度现已自动保存在此浏览器，刷新后可恢复宝可梦、宝可币、强化和统计；不支持单局续玩。",
+  "Las recompensas ocultan los atajos de teclado al usar mando. El botón superior derecho (RB / R1 / R) cambia las cartas y el botón de confirmar acepta la carta seleccionada.": "使用手柄时，奖励界面隐藏键盘快捷键。右肩键（RB / R1 / R）可重抽卡片，确认键可选择当前高亮的卡片。",
   "Estilo de botones": "按键提示样式",
   "Auto detecta modelos conocidos. Puedes cambiar los símbolos sin cambiar la posición de los botones. Las flechas indican las posiciones de los cuatro botones derechos.": "自动识别已知型号。更换符号不会改变按键位置，箭头表示右侧四个按键的位置。",
   "Posiciones": "位置",

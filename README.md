@@ -26,6 +26,13 @@ HTML + CSS + JavaScript vanilla sobre Canvas 2D. Sin build, sin dependencias y
 Doble clic en `index.html`. Crea una cuenta o entra como invitado, haz el test
 de personalidad y a la mazmorra.
 
+El progreso de invitado se guarda automáticamente en este navegador y se restaura
+al recargar: Pokémon, monedas, mejoras, tickets y estadísticas. Se vuelve al menú;
+la partida en curso no se reanuda. Salir conserva el progreso para la próxima vez
+que elijas jugar como invitado. Las cuentas tienen su propia partida; no se fusionan
+con la de invitado. El guardado local depende del navegador y de la dirección web:
+borrar los datos del sitio o cambiar de navegador o de dirección no conserva esa copia.
+
 | Tecla | Acción |
 |---|---|
 | `W` `A` `S` `D` / flechas | Moverse |
@@ -38,11 +45,14 @@ mando y pulsa y suelta un botón. Stick izquierdo o cruceta para moverte y naveg
 `LB/RB` (`L1/R1`) para cambiar ataque; `Start/Options` para pausar.
 En combate, los cuatro botones derechos eligen los ataques 1–4 por posición:
 abajo, derecha, izquierda y arriba. Las etiquetas son `A/B/X/Y` en Xbox,
-`×/○/□/△` en PlayStation y `B/A/Y/X` en Nintendo. En los menús, el botón inferior
-confirma, el derecho vuelve y el izquierdo cambia las cartas de nivel.
+`×/○/□/△` en PlayStation y `B/A/Y/X` en Nintendo. En los menús, `A` confirma y `B` vuelve en Xbox y Nintendo;
+`○` confirma y `×` vuelve en PlayStation. El botón superior derecho (`RB` / `R1` / `R`)
+cambia las cartas de nivel. Las recompensas se eligen con el stick o la cruceta
+y se aceptan con el botón de confirmar; los números se ocultan al usar el mando.
 El juego detecta modelos conocidos. Puedes elegir **Auto / Xbox / PlayStation /
 Nintendo / Posiciones** en **Ajustes > Controles > Estilo de botones**. Esta opción
-se guarda en el dispositivo y cambia sólo los símbolos. Un modelo desconocido o
+se guarda en el dispositivo y define los símbolos y los botones de confirmar y
+volver, sin cambiar las posiciones de los ataques. Un modelo desconocido o
 un Joy-Con individual usa flechas de posición; nunca se intercambian los índices
 de entrada de Nintendo. El HUD vuelve a mostrar `1–4` al usar teclado, ratón o táctil.
 El stick conserva la velocidad

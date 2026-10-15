@@ -407,7 +407,7 @@ label { display: block; font-size: 14px; color: var(--muted); margin: 8px 0 4px;
 .stats > div > span:first-child { display: block; color: var(--muted); font-size: 12px; text-transform: uppercase; }
 .stats b { font-size: 22px; }
 
-kbd {
+kbd, .gamepad-key {
   display: inline-block; padding: 0 6px; border: 2px solid rgba(244,248,255,.4); border-bottom-width: 3px;
   border-radius: 5px; font: inherit; font-size: 13px; text-shadow: none;
 }
@@ -676,7 +676,7 @@ body.touch kbd, body.touch .card .key, body.touch .kbd-hint { display: none !imp
 .lay-slot { position: relative; width: 54px; height: 54px; flex: none; border-radius: 12px; background: rgba(10,16,28,.8); border: 1.2px solid rgba(140,170,210,.4); }
 .lay-slot.on { border: 2.5px solid var(--gold); }
 .lay-slot.item { margin-right: 9px; background: rgba(10,16,28,.55); }
-.lay-slot i { position: absolute; left: 4px; top: 2px; font-style: normal; font-size: 10px; color: rgba(180,200,230,.7); }
+.lay-slot i { position: absolute; left: 50%; top: 57px; transform: translateX(-50%); width: 30px; height: 26px; display: grid; place-items: center; border: 2px solid #a8bfe9; border-radius: 6px; background: #294779; box-shadow: 0 3px #101e3b; font-style: normal; font-size: 18px; font-weight: 800; color: #fff; }
 .lay-tag { position: absolute; left: 50%; top: -18px; transform: translateX(-50%); font-size: 11px; color: var(--gold); white-space: nowrap; pointer-events: none; }
 .lay-pause { border-radius: 10px; background: rgba(10,16,28,.7); border: 2px solid rgba(244,248,255,.8); box-sizing: border-box; }
 .lay-pause b { position: absolute; top: 9px; width: 5px; height: 18px; background: #f4f8ff; }
@@ -710,9 +710,10 @@ body.touch kbd, body.touch .card .key, body.touch .kbd-hint { display: none !imp
 .row.wrap { flex-wrap: wrap; }
 .touch-hint { display: none; }
 body.touch .touch-hint { display: block; }
-.gamepad-hint { display: none; }
+.gamepad-hint, .gamepad-inline { display: none; }
 body.gamepad-mode .gamepad-hint { display: block; }
-body.gamepad-mode .kbd-hint, body.gamepad-mode .touch-hint { display: none !important; }
+body.gamepad-mode .gamepad-inline { display: inline; }
+body.gamepad-mode kbd, body.gamepad-mode .card .key, body.gamepad-mode .kbd-hint, body.gamepad-mode .touch-hint { display: none !important; }
 #pause-sound + .row, #scr-pause .row { flex-wrap: wrap; }
 a.btn { text-decoration: none; display: inline-block; color: var(--ink); }
 

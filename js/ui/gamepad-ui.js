@@ -49,6 +49,12 @@ G.GamepadUI = (() => {
   function initial(list) {
     return list.find(el => el.matches('[data-gamepad-default], .card, .answer, .menu-item.play')) || list[0];
   }
+  function replacement(list) {
+    if (!selected) return null;
+    if (selected.id) return list.find(el => el.id === selected.id);
+    const { k, v } = selected.dataset;
+    return k ? list.find(el => el.dataset.k === k && el.dataset.v === v) : null;
+  }
   function adjust(el, direction) {
     if (!['left', 'right'].includes(direction)) return false;
     const step = direction === 'right' ? 1 : -1;
@@ -135,7 +141,7 @@ G.GamepadUI = (() => {
     const move = direction && !waitDirection && (direction !== lastDirection || ts >= repeatAt);
     if (!needsFocus && !move && !['confirm', 'back', 'reroll'].some(action => pad.tap(action))) return;
     const list = targets();
-    if (needsFocus) focus(initial(list));
+    if (needsFocus) focus(replacement(list) || initial(list));
     if (pad.tap('back')) { back(list); return; }
     if (pad.tap('reroll') && scope.id === 'scr-levelup') { G.RunUI.reroll(); return; }
     if (move) {

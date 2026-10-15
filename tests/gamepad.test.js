@@ -64,6 +64,23 @@ test('emits one action per press and ignores buttons held while connecting', () 
   pad.buttons[9].pressed = true; app.pad.poll(); assert.equal(app.pad.tap('pause'), true);
 });
 
+test('rerolls with the right shoulder and shows the matching controller label', () => {
+  const app = boot(), pad = device(); app.connect(pad);
+  for (const [layout, label] of [['xbox', 'RB'], ['playstation', 'R1'], ['nintendo', 'R'], ['generic', 'R']]) {
+    app.context.G.Settings = { get: () => layout };
+    assert.equal(app.pad.label('reroll'), label);
+    pad.buttons[5].pressed = true; app.pad.poll();
+    assert.equal(app.pad.tap('reroll'), true);
+    assert.equal(app.pad.tap('next'), true);
+    assert.equal(app.pad.tap('confirm'), false);
+    app.pad.poll(); assert.equal(app.pad.tap('reroll'), false);
+    pad.buttons[5].pressed = false; app.pad.poll();
+    pad.buttons[2].pressed = true; app.pad.poll();
+    assert.equal(app.pad.tap('reroll'), false);
+    pad.buttons[2].pressed = false; app.pad.poll();
+  }
+});
+
 test('clears movement on disconnect and keeps one controller active through sparse slots', () => {
   const app = boot(), first = device(1), second = device(3);
   app.connect(null, first, null, second);
@@ -116,6 +133,26 @@ test('keeps face button positions fixed for every label style', () => {
   }
 });
 
+test('uses A or circle to confirm and B or cross to cancel without changing combat slots', () => {
+  const app = boot(), pad = device(); app.connect(pad);
+  for (const [layout, confirm, back, confirmLabel, backLabel] of [
+    ['xbox', 0, 1, 'A', 'B'], ['playstation', 1, 0, '○', '×'],
+    ['nintendo', 1, 0, 'A', 'B'], ['generic', 0, 1, '↓', '→']
+  ]) {
+    app.context.G.Settings = { get: () => layout };
+    assert.equal(app.pad.label('confirm'), confirmLabel);
+    assert.equal(app.pad.label('back'), backLabel);
+    for (const [action, index] of [['confirm', confirm], ['back', back]]) {
+      pad.buttons[index].pressed = true; app.pad.poll();
+      assert.equal(app.pad.tap(action), true);
+      assert.equal(app.pad.tap(action === 'confirm' ? 'back' : 'confirm'), false);
+      assert.equal(app.pad.faceTap(index), true);
+      app.pad.poll(); assert.equal(app.pad.tap(action), false);
+      pad.buttons[index].pressed = false; app.pad.poll();
+    }
+  }
+});
+
 test('detects known IDs before names and uses generic positions for uncertain devices', () => {
   for (const [id, expected] of [
     ['Wireless Controller (STANDARD GAMEPAD Vendor: 054c Product: 09cc)', 'playstation'],
@@ -134,7 +171,7 @@ test('detects known IDs before names and uses generic positions for uncertain de
   }
 });
 
-test('manual labels override device detection without rebinding the buttons', () => {
+test('manual button styles override detection and fall back for auto or invalid settings', () => {
   const app = boot(), pad = device(); pad.id = 'Xbox Wireless Controller'; app.connect(pad);
   const styles = { xbox: ['A', 'B', 'X', 'Y'], playstation: ['×', '○', '□', '△'], nintendo: ['B', 'A', 'Y', 'X'], generic: ['↓', '→', '←', '↑'] };
   for (const [style, labels] of Object.entries(styles)) {

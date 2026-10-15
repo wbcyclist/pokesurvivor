@@ -68,7 +68,7 @@ G.SettingsUI = (() => {
   function render() {
     document.querySelectorAll('#set-tabs .gen-tab').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
     const box = $('set-body');
-    box.scrollTop = 0;
+    const scrollTop = box.querySelector('.gamepad-focus') ? box.scrollTop : 0;
     if (tab === 'sound') {
       box.innerHTML = section('Sonido') + '<div id="set-sound" class="sound-inline"></div>';
       G.UI.soundControls($('set-sound'));
@@ -88,7 +88,7 @@ G.SettingsUI = (() => {
            : iosTip() ? `<div class="set-row"><div class="grow"><b>Pantalla completa</b><small>${esc(IOS_TIP)}</small></div></div>` : '');
     } else if (tab === 'ctl') {
       box.innerHTML = section('Mando')
-        + section('Estilo de botones', 'Auto detecta modelos conocidos. Puedes cambiar los símbolos sin cambiar la posición de los botones. Las flechas indican las posiciones de los cuatro botones derechos.')
+        + section('Estilo de botones', 'Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.')
         + choice('gamepadLayout', [['auto', 'Auto'], ['xbox', 'Xbox'], ['playstation', 'PlayStation'], ['nintendo', 'Nintendo'], ['generic', 'Posiciones']])
         + `<p class="sub">Conecta un mando compatible con el mapeo estándar del navegador y pulsa un botón. Usa HTTPS o localhost.</p>
            <div class="keys">
@@ -136,14 +136,16 @@ G.SettingsUI = (() => {
            </div>`;
     }
     wire(box);
+    box.scrollTop = scrollTop;
   }
 
   function renderAccount(box) {
     const st = G.DB.guest ? 'guest' : G.DB.syncState;
     const SYNC = { ok: 'Guardado en la nube', syncing: 'Guardando…', pending: 'Pendiente de subir (se sube al salir del juego)',
-                   offline: 'Sin conexión: se subirá al volver', local: 'Guardado sólo en este navegador', guest: 'Invitado: no se guarda' };
+                   offline: 'Sin conexión: se subirá al volver', local: 'Guardado sólo en este navegador', guest: 'Invitado: guardado en este navegador' };
     if (G.DB.guest) {
-      box.innerHTML = section('Cuenta', 'Estás jugando como <b>invitado</b>: tu progreso no se guarda al salir.')
+      box.innerHTML = section('Cuenta', G.DB.storageOk ? 'Tu progreso de invitado se guarda automáticamente en este navegador. Al recargar vuelves al menú; no se reanuda la partida en curso.' : 'No se pudo guardar en este navegador. Revisa el almacenamiento antes de cerrar.')
+        + `<p class="note">El progreso de invitado y el de tu cuenta se guardan por separado. Borrar los datos del sitio elimina el progreso local.</p>`
         + `<button class="btn gold" id="set-login">Crear cuenta o entrar</button>`;
       return;
     }
@@ -185,7 +187,7 @@ G.SettingsUI = (() => {
 
   /** Cerrar sesión (si estás en una partida, se abandona). */
   function leave() {
-    if (G.DB.guest && !confirm('Eres invitado: se perderá todo el progreso. ¿Salir?')) return;
+    if (G.DB.guest && !G.DB.commit() && !confirm('No se pudo guardar el progreso más reciente. ¿Salir de todos modos?')) return;
     if (G.Game.state !== 'ui') G.Game.quit && G.Game.quit();
     G.Audio.music(null);
     G.DB.logout().then(() => G.Flow.toLogin());

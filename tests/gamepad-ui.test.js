@@ -7,7 +7,7 @@ const { test } = require('node:test');
 function element(id, { tags = ['button'], y = 0, z = 20 } = {}) {
   const classes = new Set();
   return {
-    id, tags, children: [], disabled: false, clicks: 0, style: { zIndex: z, visibility: 'visible', pointerEvents: 'auto' },
+    id, tags, dataset: {}, children: [], disabled: false, clicks: 0, style: { zIndex: z, visibility: 'visible', pointerEvents: 'auto' },
     classList: { add: c => classes.add(c), remove: c => classes.delete(c), contains: c => classes.has(c) },
     closest: () => classes.has('hidden') ? {} : null,
     getClientRects: () => [1], getAttribute: () => null, hasAttribute: () => false,
@@ -101,6 +101,22 @@ test('selects level cards, rerolls, and resumes only from the pause screen', () 
   assert.deepEqual(app.calls, [['reroll']]);
   level.classList.add('hidden'); app.panel('scr-pause', []);
   app.update(3, 'pause'); assert.deepEqual(app.calls.at(-1), ['pause']);
+});
+
+test('keeps focus on the same setting after its DOM node is replaced', () => {
+  for (const [id, dataset] of [['', { k: 'quality', v: 'high' }], ['', { k: 'fps' }], ['set-full', {}]]) {
+    const app = boot(), close = element('set-close'), old = element(id, { y: 50 });
+    old.dataset = dataset;
+    const panel = app.panel('scr-settings', [close, old]);
+    const replacement = element(id, { y: 50 }); replacement.dataset = { ...dataset };
+    old.onclick = () => { old.getClientRects = () => []; panel.children = [close, replacement]; };
+    app.update(0, 'reroll'); app.pad.direction = 'down'; app.update(1);
+    app.pad.direction = ''; app.update(2, 'confirm'); app.update(3);
+    assert.equal(replacement.classList.contains('gamepad-focus'), true);
+    assert.equal(close.classList.contains('gamepad-focus'), false);
+    app.update(4, 'confirm'); assert.equal(replacement.clicks, 1);
+    assert.equal(close.clicks, 0);
+  }
 });
 
 test('disconnect pauses through the game policy and removes stale focus and movement blocking', () => {

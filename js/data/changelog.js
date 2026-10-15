@@ -7,6 +7,8 @@
  */
 G.CHANGELOG = [
   { d: '2026-10-15', title: ['Soporte de chino y mandos', 'Chinese language and gamepad support'], new: [
+    ["El progreso de invitado se guarda automáticamente en este navegador y se recupera al recargar. Se conservan los Pokémon, monedas, mejoras y estadísticas; las partidas en curso no se reanudan.",
+     "Guest progress now saves automatically in this browser and returns after a reload. Pokemon, coins, upgrades, and stats are kept; active runs do not resume."],
     ['Soporte de mandos: muévete con el stick izquierdo o la cruceta, cambia ataques con los botones superiores y usa Start para pausar. También puedes navegar por los menús y elegir cartas con el mando.',
      'Gamepad support: move with the left stick or D-pad, switch attacks with the shoulder buttons, and press Start to pause. You can also navigate menus and choose cards with the controller.'],
     ['El juego ya está disponible en chino simplificado. Puedes elegirlo en Ajustes > Gráficos > Idioma.',
@@ -21,6 +23,10 @@ G.CHANGELOG = [
     ['Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.',
      'Chinese text uses Fusion Pixel 12px proportional, including the guides.']
   ], fix: [
+    ["Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.",
+     "Menus use A / circle to confirm and B / cross to go back. Attack prompts are larger badges below the icons. Settings keep controller focus when an option changes."],
+    ["Las recompensas ocultan los atajos de teclado al usar mando. El botón superior derecho (RB / R1 / R) cambia las cartas y el botón de confirmar acepta la carta seleccionada.",
+     "Rewards hide keyboard shortcuts when using a controller. The right shoulder button (RB / R1 / R) rerolls cards, and the confirm button accepts the selected card."],
     ['Corregido el tamaño del juego y los controles táctiles al girar el móvil o cambiar el área visible en Safari. Los avisos ya no bloquean los botones de ataque.',
      'Fixed game scaling and touch controls when rotating a phone or changing the visible area in Safari. Notifications no longer block move buttons.']
   ] },

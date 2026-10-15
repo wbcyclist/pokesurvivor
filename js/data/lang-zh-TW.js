@@ -4,6 +4,18 @@
  * Spanish source keys and save identifiers stay unchanged.
  */
 G.I18n.add({
+  "Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.": "自動識別已知型號。樣式決定按鍵符號及確認、取消鍵，招式按鍵的位置保持固定。箭頭表示右側四個按鍵的位置。",
+  "Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.": "選單中使用 A / ○ 確認、B / × 取消。招式按鍵提示已移到圖示下方，採用更大的背景與外框標記。修改設定後，控制器焦點會保留在目前選項。",
+  "Invitado: guardado en este navegador": "訪客：已儲存在此瀏覽器",
+  "No se pudo guardar en este navegador. Revisa el almacenamiento antes de cerrar.": "無法在此瀏覽器儲存。關閉前請檢查儲存空間及權限。",
+  "Tu progreso de invitado se guarda automáticamente en este navegador. Al recargar vuelves al menú; no se reanuda la partida en curso.": "訪客進度會自動儲存在此瀏覽器。重新整理後返回選單，不會接續進行中的遊戲。",
+  "El progreso de invitado y el de tu cuenta se guardan por separado. Borrar los datos del sitio elimina el progreso local.": "訪客存檔與帳號存檔分開儲存。清除網站資料會刪除本機進度。",
+  "Con cuenta, tu progreso se guarda en la nube. Como invitado, sólo se guarda en este navegador.": "帳號進度儲存在雲端，訪客進度僅儲存在此瀏覽器。",
+  "Este navegador no permite guardar datos. El progreso de invitado se perderá al cerrar.": "此瀏覽器不允許儲存資料，關閉後將遺失訪客進度。",
+  "No se pudo guardar el progreso más reciente. ¿Salir de todos modos?": "最新進度無法儲存，仍要離開嗎？",
+  "Modo invitado: guardado en este navegador": "訪客模式：已儲存在此瀏覽器",
+  "El progreso de invitado se guarda automáticamente en este navegador y se recupera al recargar. Se conservan los Pokémon, monedas, mejoras y estadísticas; las partidas en curso no se reanudan.": "訪客進度現已自動儲存在此瀏覽器，重新整理後可恢復寶可夢、金幣、強化及統計；不支援接續進行中的遊戲。",
+  "Las recompensas ocultan los atajos de teclado al usar mando. El botón superior derecho (RB / R1 / R) cambia las cartas y el botón de confirmar acepta la carta seleccionada.": "使用控制器時，獎勵畫面隱藏鍵盤快捷鍵。右肩鍵（RB / R1 / R）可重抽卡片，確認鍵可選擇目前反白的卡片。",
   "Estilo de botones": "按鍵提示樣式",
   "Auto detecta modelos conocidos. Puedes cambiar los símbolos sin cambiar la posición de los botones. Las flechas indican las posiciones de los cuatro botones derechos.": "自動識別已知型號。更換符號不會改變按鍵位置，箭頭表示右側四個按鍵的位置。",
   "Posiciones": "位置",

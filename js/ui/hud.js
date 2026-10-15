@@ -242,12 +242,12 @@ G.HUD = (() => {
     }
 
     // ---------- ranura de movimientos ----------
-    const S = 54, GAP = 9;
+    const S = 54, GAP = 9, KEY_W = 30, KEY_H = 26, KEY_GAP = 5;
     const n = Math.max(1, pl.slots.length);
     const totalW = n * S + (n - 1) * GAP;
     let sx = (w - totalW) / 2;
     // Por encima de la barra de inicio del iPhone (allí los toques a veces no llegan).
-    let sy = h - S - 18 - (touch ? Math.min(28, G.Touch.safeArea().bottom) : 0);
+    let sy = h - S - KEY_H - KEY_GAP - 18 - (touch ? Math.min(28, G.Touch.safeArea().bottom) : 0);
     // En móvil, donde la haya puesto el jugador: el bloque objeto + todos los
     // huecos (aunque aún no estén llenos), por su centro, como en el editor
     // (layout-ui.js); los ataques nuevos van saliendo hacia la derecha.
@@ -255,7 +255,7 @@ G.HUD = (() => {
     if (pb) {
       const nAll = Math.max(n, pl.maxMoves), bw = S + 18 + nAll * S + (nAll - 1) * GAP;
       sx = G.U.clamp(pb[0] * w - bw / 2, 6, Math.max(6, w - bw - 6)) + S + 18;
-      sy = G.U.clamp(pb[1] * h - S / 2, 24, h - S - 6);
+      sy = G.U.clamp(pb[1] * h - S / 2, 24, h - S - KEY_H - KEY_GAP - 6);
     }
     const BOND = '#ff8ad8';
     const cdOf = m => m.kind === 'orbit' ? 0 : G.U.clamp(m.t / (m.cd * pl.cdMul), 0, 1);
@@ -268,7 +268,7 @@ G.HUD = (() => {
       const x = sx + i * (S + GAP);
       const y = on ? sy - 6 : sy;
       // Tocar (o hacer clic en) un icono activa ese movimiento.
-      if (m) G.Touch.addButton(x, y, S, S, () => { if (G.Game.state === 'playing' && pl.active !== i) { pl.setActive(i); G.Audio.sfx('click'); } }, GAP / 2 + 3);
+      if (m) G.Touch.addButton(x, y, S, S + KEY_GAP + KEY_H, () => { if (G.Game.state === 'playing' && pl.active !== i) { pl.setActive(i); G.Audio.sfx('click'); } }, GAP / 2 + 3);
       const col = m ? G.U.TYPE_COLOR[m.type] : '#4a5468';
 
       // fondo
@@ -319,11 +319,18 @@ G.HUD = (() => {
         }
       }
 
-      // tecla
-      ctx.font = F(800, 9);
-      ctx.fillStyle = fused ? BOND : on ? col : 'rgba(180,200,230,.6)';
-      ctx.textAlign = 'left';
-      ctx.fillText(gamepad ? G.Gamepad.faceLabel(i) : String(i + 1), x + 3, y + 10);
+      // Tecla con fondo propio para que se lea sobre cualquier terreno.
+      const kx = x + (S - KEY_W) / 2, ky = y + S + KEY_GAP;
+      roundRect(ctx, kx, ky + 3, KEY_W, KEY_H, 6);
+      ctx.fillStyle = '#101e3b'; ctx.fill();
+      roundRect(ctx, kx, ky, KEY_W, KEY_H, 6);
+      ctx.fillStyle = '#294779'; ctx.fill();
+      ctx.strokeStyle = '#a8bfe9'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.save();
+      ctx.font = F(800, 18); ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(gamepad ? G.Gamepad.faceLabel(i) : String(i + 1), x + S / 2, ky + KEY_H / 2);
+      ctx.restore();
 
       // nombre encima del activo (con un vínculo: "Ascuas +2")
       if (on) {

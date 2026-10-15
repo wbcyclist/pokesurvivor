@@ -24,7 +24,7 @@ G.MenuUI = (() => {
     document.querySelectorAll('[data-back]').forEach(b => { b.onclick = open; });
     G.Social.on(() => { if (G.UI.isOpen('scr-menu')) socialLine(); });
     $('btn-logout').onclick = () => {
-      if (G.DB.guest && !confirm('Eres invitado: se perderá todo el progreso. ¿Salir?')) return;
+      if (G.DB.guest && !G.DB.commit() && !confirm('No se pudo guardar el progreso más reciente. ¿Salir de todos modos?')) return;
       G.Audio.music(null);
       G.DB.logout().then(() => G.Flow.toLogin());
     };
@@ -66,7 +66,7 @@ G.MenuUI = (() => {
     $('menu-stats').innerHTML =
       `Runs <b style="color:#fff">${st.runs}</b> · Mejor tiempo <b style="color:#fff">${G.U.mmss(st.bestTime)}</b><br>` +
       `Mejor nivel <b style="color:#fff">${st.bestLevel}</b> · Derrotados <b style="color:#fff">${st.totalKills.toLocaleString('es')}</b>` +
-      (G.DB.guest ? '<br><span style="color:#ffb0b8">Modo invitado: no se guarda</span>' : '');
+      (G.DB.guest ? '<br><span style="color:var(--muted)">' + (G.DB.storageOk ? 'Modo invitado: guardado en este navegador' : 'No se pudo guardar en este navegador. Revisa el almacenamiento antes de cerrar.') + '</span>' : '');
 
     socialLine();
     // Premios de misiones por recoger.

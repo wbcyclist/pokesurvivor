@@ -1,6 +1,6 @@
 /* Standard Gamepad API input. Poll once before each game frame. */
 G.Gamepad = (() => {
-  const BUTTONS = { confirm: 0, back: 1, reroll: 2, previous: 4, next: 5, pause: 9 };
+  const BUTTONS = { confirm: 0, back: 1, reroll: 5, previous: 4, next: 5, pause: 9 };
   const LABELS = {
     xbox: { face: ['A', 'B', 'X', 'Y'], previous: 'LB', next: 'RB', pause: 'Start' },
     playstation: { face: ['×', '○', '□', '△'], previous: 'L1', next: 'R1', pause: 'Options' },
@@ -35,6 +35,13 @@ G.Gamepad = (() => {
   function layout() {
     const choice = G.Settings && G.Settings.get('gamepadLayout');
     return Object.prototype.hasOwnProperty.call(LABELS, choice) ? choice : detectedLayout;
+  }
+  function button(action) {
+    const style = layout();
+    if ((style === 'playstation' || style === 'nintendo') && (action === 'confirm' || action === 'back')) {
+      return action === 'confirm' ? 1 : 0;
+    }
+    return BUTTONS[action];
   }
   function otherInput() { usingGamepad = false; activityVector = vector; }
   addEventListener('keydown', otherInput);
@@ -97,10 +104,10 @@ G.Gamepad = (() => {
   }
 
   return {
-    poll, axis: () => vector, tap: action => pressed.has(BUTTONS[action]),
+    poll, axis: () => vector, tap: action => pressed.has(button(action)),
     faceTap: index => index >= 0 && index < 4 && pressed.has(index),
     faceLabel: index => LABELS[layout()].face[index],
-    label(action) { const labels = LABELS[layout()]; return labels.face[BUTTONS[action]] || labels[action] || ''; },
+    label(action) { const labels = LABELS[layout()]; return labels.face[button(action)] || labels[action === 'reroll' ? 'next' : action] || ''; },
     get layout() { return layout(); },
     get mode() { return !!current && usingGamepad; },
     get connected() { return !!current; },

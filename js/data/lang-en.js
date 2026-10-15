@@ -4,6 +4,18 @@
  * son los oficiales en inglés.
  */
 G.I18n.add({
+  "Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.": "Auto detects known models. The style sets symbols and confirm and back buttons. Attack positions stay fixed. Arrows show the positions of the four face buttons.",
+  "Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.": "Menus use A / circle to confirm and B / cross to go back. Attack prompts are larger badges below the icons. Settings keep controller focus when an option changes.",
+  "Invitado: guardado en este navegador": "Guest: saved in this browser",
+  "No se pudo guardar en este navegador. Revisa el almacenamiento antes de cerrar.": "Could not save in this browser. Check storage before closing.",
+  "Tu progreso de invitado se guarda automáticamente en este navegador. Al recargar vuelves al menú; no se reanuda la partida en curso.": "Guest progress saves automatically in this browser. Reloading returns to the menu; the active run does not resume.",
+  "El progreso de invitado y el de tu cuenta se guardan por separado. Borrar los datos del sitio elimina el progreso local.": "Guest and account progress are saved separately. Clearing site data removes local progress.",
+  "Con cuenta, tu progreso se guarda en la nube. Como invitado, sólo se guarda en este navegador.": "With an account, progress saves in the cloud. Guest progress saves only in this browser.",
+  "Este navegador no permite guardar datos. El progreso de invitado se perderá al cerrar.": "This browser does not allow saving. Guest progress will be lost when you close it.",
+  "No se pudo guardar el progreso más reciente. ¿Salir de todos modos?": "Could not save the latest progress. Leave anyway?",
+  "Modo invitado: guardado en este navegador": "Guest mode: saved in this browser",
+  "El progreso de invitado se guarda automáticamente en este navegador y se recupera al recargar. Se conservan los Pokémon, monedas, mejoras y estadísticas; las partidas en curso no se reanudan.": "Guest progress now saves automatically in this browser and returns after a reload. Pokemon, coins, upgrades, and stats are kept; active runs do not resume.",
+  "Las recompensas ocultan los atajos de teclado al usar mando. El botón superior derecho (RB / R1 / R) cambia las cartas y el botón de confirmar acepta la carta seleccionada.": "Rewards hide keyboard shortcuts when using a controller. The right shoulder button (RB / R1 / R) rerolls cards, and the confirm button accepts the selected card.",
   "Estilo de botones": "Button prompt style",
   "Auto detecta modelos conocidos. Puedes cambiar los símbolos sin cambiar la posición de los botones. Las flechas indican las posiciones de los cuatro botones derechos.": "Auto detects known models. You can change symbols without changing button positions. Arrows show the positions of the four face buttons.",
   "Posiciones": "Positions",

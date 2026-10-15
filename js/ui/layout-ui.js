@@ -7,7 +7,7 @@
  * Las medidas copian las del HUD: si cambian allí, cambiarlas aquí.
  */
 G.LayoutUI = (() => {
-  const S = 54, GAP = 9, ITEM_GAP = 18, N = 4;          // como en hud.js
+  const S = 54, GAP = 9, ITEM_GAP = 18, N = 4, KEY_H = 26, KEY_GAP = 5;          // como en hud.js
   const BAR_W = S + ITEM_GAP + N * S + (N - 1) * GAP;
   let el = null, pos = null, moved = null, mode = 'float';
 
@@ -20,7 +20,7 @@ G.LayoutUI = (() => {
       if (p) return [p[0] * w, p[1] * h];
       const totalW = N * S + (N - 1) * GAP;
       const left = (w - totalW) / 2 - S - ITEM_GAP;
-      return [left + BAR_W / 2, h - S - 18 - Math.min(28, sa.bottom) + S / 2];
+      return [left + BAR_W / 2, h - S - KEY_H - KEY_GAP - 18 - Math.min(28, sa.bottom) + S / 2];
     }
     if (p) return [p[0] * w, p[1] * h];
     return [w - 52 - Math.min(44, sa.right) + 20, 12 + Math.min(20, sa.top) + 20];
@@ -28,7 +28,7 @@ G.LayoutUI = (() => {
 
   /** Lo mismo que hace el HUD para que no se salga de la pantalla. */
   function fit(k, x, y, w, h) {
-    if (k === 'bar') return [G.U.clamp(x, 6 + BAR_W / 2, Math.max(6 + BAR_W / 2, w - BAR_W / 2 - 6)), G.U.clamp(y, 24 + S / 2, h - S / 2 - 6)];
+    if (k === 'bar') return [G.U.clamp(x, 6 + BAR_W / 2, Math.max(6 + BAR_W / 2, w - BAR_W / 2 - 6)), G.U.clamp(y, 24 + S / 2, h - S / 2 - KEY_H - KEY_GAP - 6)];
     if (k === 'pause') return [G.U.clamp(x, 24, w - 24), G.U.clamp(y, 30, h - 24)];
     const r = G.Touch.R();
     return [G.U.clamp(x, r + 4, w - r - 4), G.U.clamp(y, r + 4, h - r - 4)];
@@ -64,7 +64,7 @@ G.LayoutUI = (() => {
       moved = {}; mode = 'float';
       const w = innerWidth, h = innerHeight, sa = G.Touch.safeArea();
       const totalW = N * S + (N - 1) * GAP;
-      pos = { bar: [(w - totalW) / 2 - S - ITEM_GAP + BAR_W / 2, h - S - 18 - Math.min(28, sa.bottom) + S / 2],
+      pos = { bar: [(w - totalW) / 2 - S - ITEM_GAP + BAR_W / 2, h - S - KEY_H - KEY_GAP - 18 - Math.min(28, sa.bottom) + S / 2],
               pause: [w - 52 - Math.min(44, sa.right) + 20, 12 + Math.min(20, sa.top) + 20],
               stick: [G.Touch.STICK_DEF[0] * w, G.Touch.STICK_DEF[1] * h] };
       for (const k in pos) pos[k] = fit(k, pos[k][0], pos[k][1], w, h);
