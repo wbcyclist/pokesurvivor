@@ -442,7 +442,7 @@ G.I18n.add({
   'No está afiliado, patrocinado ni aprobado por Nintendo, Creatures Inc., GAME FREAK ni The Pokémon Company. Pokémon y todos los nombres y personajes relacionados son marcas y propiedad de sus respectivos dueños.': 'It is not affiliated with, sponsored or endorsed by Nintendo, Creatures Inc., GAME FREAK or The Pokémon Company. Pokémon and all related names and characters are trademarks and property of their respective owners.',
   'Contenido de terceros': 'Third-party content', 'Sprites de': 'Sprites from',
   '(CC BY-NC 4.0, créditos completos en CREDITS.md del repositorio). Datos de la Pokédex de': '(CC BY-NC 4.0, full credits in the repository\'s CREDITS.md). Pokédex data from',
-  '. Fuente Pixelify Sans (OFL). La música y los efectos de sonido son originales del proyecto.': '. Pixelify Sans font (OFL). The music and sound effects are original to the project.',
+  '. Fuente Pixelify Sans + Fusion Pixel (OFL). La música y los efectos de sonido son originales del proyecto.': '. Pixelify Sans and Fusion Pixel fonts (OFL). The music and sound effects are original to the project.',
   'Contacto y retirada de contenido': 'Contact and content removal',
   'Si eres titular de derechos y quieres que retiremos algo, escríbenos y lo quitaremos lo antes posible:': 'If you are a rights holder and want something removed, write to us and we\'ll take it down as soon as possible:',
   'Código fuente:': 'Source code:', 'Privacidad': 'Privacy',

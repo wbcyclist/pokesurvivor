@@ -13,6 +13,9 @@ G.CHANGELOG = [
      'The guides and reference pages are also available in Simplified Chinese.'],
     ['El juego y las guías ya están disponibles en chino tradicional. Selecciónalo en Ajustes > Gráficos > Idioma.',
      'The game and guides now support Traditional Chinese. Select it in Settings > Graphics > Language.']
+  ], chg: [
+    ['Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.',
+     'Chinese text uses Fusion Pixel 12px proportional, including the guides.']
   ] },
   { d: '2026-10-14', title: ['Recupera tu cuenta con Gmail', 'Recover your account with Gmail'], new: [
     ['Si juegas con nombre y contraseña, puedes vincular tu Gmail: si un día olvidas la contraseña, entras con Google y es tu misma cuenta. Te lo ofrecemos al entrar.',

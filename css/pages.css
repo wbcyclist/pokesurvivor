@@ -1,20 +1,22 @@
 /* ============ pages.css — páginas de texto (guía, Pokédex, 404) ============
  * Mismo estilo que el juego (azul de Mundo Misterioso, dorado y fuente pixel),
  * pero pensadas para leer cómodamente en PC y móvil. */
+@import url('fonts.css');
+
 @font-face { font-family: 'Pixelify'; src: url('../assets/fonts/PixelifyPS-400.ttf') format('truetype'); font-weight: 400 550; font-display: swap; }
 @font-face { font-family: 'Pixelify'; src: url('../assets/fonts/PixelifyPS-700.ttf') format('truetype'); font-weight: 551 900; font-display: swap; }
-:root { --navy: #0a1430; --box1: #2c519f; --box2: #1a3170; --edge: #f4f8ff; --gold: #ffd23f; --muted: #b9cbf0; --ink: #fff; }
+:root { --font-body: system-ui, 'Segoe UI', Roboto, sans-serif; --font-display: 'Pixelify', system-ui, sans-serif; --navy: #0a1430; --box1: #2c519f; --box2: #1a3170; --edge: #f4f8ff; --gold: #ffd23f; --muted: #b9cbf0; --ink: #fff; }
 * { box-sizing: border-box; }
 html { background: var(--navy); }
-body { margin: 0; color: var(--ink); font: 17px/1.6 system-ui, 'Segoe UI', Roboto, sans-serif;
+body { margin: 0; color: var(--ink); font: 17px/1.6 var(--font-body);
   background: radial-gradient(circle at 50% 0, #1a2f6a, var(--navy) 60%) fixed; }
 a { color: #9fd4ff; }
-h1, h2, h3, .brand, .btn, .top nav a { font-family: 'Pixelify', system-ui, sans-serif; }
+h1, h2, h3, .brand, .btn, .top nav a { font-family: var(--font-display); }
 h1 { color: var(--gold); font-size: clamp(28px, 5vw, 44px); line-height: 1.15; margin: 0 0 14px; text-shadow: 3px 3px 0 #a55f00, 5px 5px 0 #050914; }
 h2 { color: var(--gold); font-size: 26px; margin: 34px 0 10px; text-shadow: 2px 2px 0 #050914; }
 h2 small { color: var(--muted); font-size: 15px; font-weight: 400; }
 h3 { font-size: 19px; margin: 20px 0 4px; }
-kbd { font: 700 14px 'Pixelify', monospace; background: #26468f; border: 2px solid var(--edge); border-radius: 5px; padding: 0 6px; margin: 0 1px; }
+kbd { font: 700 14px var(--font-display); background: #26468f; border: 2px solid var(--edge); border-radius: 5px; padding: 0 6px; margin: 0 1px; }
 
 .top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 10px 18px; background: rgba(10, 20, 48, .92); border-bottom: 3px solid var(--edge); }
@@ -38,7 +40,7 @@ main { padding: 24px 16px 40px; }
 .btn.ghost { background: linear-gradient(180deg, #3d67c0, #26468f); color: var(--ink); }
 
 .gens { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
-.gens a { background: rgba(255,255,255,.1); padding: 4px 12px; border-radius: 20px; text-decoration: none; color: var(--ink); font-family: 'Pixelify', sans-serif; }
+.gens a { background: rgba(255,255,255,.1); padding: 4px 12px; border-radius: 20px; text-decoration: none; color: var(--ink); font-family: var(--font-display); }
 .dexgrid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
 .dexgrid li { margin: 0; background: rgba(5, 10, 30, .45); border: 2px solid rgba(244,248,255,.25); border-radius: 10px;
   padding: 8px; display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 150px; }
@@ -71,7 +73,7 @@ table.chart td.x03 { background: rgba(10,10,10,.55); color: #ff9aa4; font-weight
 table.chart .hl, table.chart tr.hl th { outline: 2px solid var(--gold); }
 table.list { border-collapse: collapse; width: 100%; font-size: 15px; }
 table.list th, table.list td { border-bottom: 1px solid rgba(244,248,255,.15); padding: 8px 6px; text-align: left; vertical-align: top; }
-table.list th { color: var(--gold); font-family: 'Pixelify', sans-serif; }
+table.list th { color: var(--gold); font-family: var(--font-display); }
 table.list td.evo small { display: block; color: var(--muted); font-size: 13px; }
 ul.items { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 8px; }
 ul.items li { background: rgba(5,10,30,.4); border: 2px solid rgba(244,248,255,.2); border-radius: 10px; padding: 10px 12px; margin: 0; }
@@ -83,13 +85,9 @@ article.news time { color: var(--muted); font-size: 14px; }
 article.news h2 { margin: 4px 0; font-size: 22px; }
 table.list td.num { text-align: right; white-space: nowrap; }
 
-:lang(zh-CN) body { font-family: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
-:lang(zh-CN) :is(h1, h2, h3, .brand, .btn, .top nav a, .gens a, table.list th) { font-family: 'Pixelify', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif; }
+:root:lang(zh) { --font-body: var(--font-chinese); --font-display: var(--font-chinese); }
 :lang(zh) h1 { line-height: 1.4; }
 :lang(zh) .brand { white-space: nowrap; }
 :lang(zh) table.moves { min-width: 720px; }
 :lang(zh) table.moves th { white-space: nowrap; }
 :lang(zh) table.moves td:first-child { min-width: 90px; }
-
-:lang(zh-TW) body { font-family: 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', system-ui, sans-serif; }
-:lang(zh-TW) :is(h1, h2, h3, .brand, .btn, .top nav a, .gens a, table.list th) { font-family: 'Pixelify', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', system-ui, sans-serif; }

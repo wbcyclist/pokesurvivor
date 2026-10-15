@@ -39,8 +39,14 @@ Name sources:
 Regenerate Pokemon names with `python3 tools/fetch_zh_names.py`. This reads the
 local Pokedex and downloads PokeAPI CSV files into `tools/cache/` only when they
 are absent. All translations ship in the local game bundle. Gameplay does not
-call a translation service or download a Chinese font. Chinese glyphs use the
-device's font fallback, while Latin text keeps Pixelify.
+call a translation service. Both Chinese locales use local Fusion Pixel 12px
+proportional fonts: `zh_hans` for Simplified Chinese and `zh_tw` for Traditional
+Chinese. The original font files come from release `2026.09.25`; they are not
+subsetted or converted. Existing UI sizes stay unchanged. Other locales keep
+Pixelify. CSS and canvas share the active font stack. Startup loads the font
+at normal and bold UI weights before opening the game. Font loading failures
+fall back to system fonts. Static guides and Contact use the same Chinese
+fonts. See `THIRD_PARTY_NOTICES.md` for sources, hashes, and licenses.
 
 Each `{x}` placeholder must retain its source order and count. Add a complete
 sentence or a specific template before relying on word fragments. Tests check

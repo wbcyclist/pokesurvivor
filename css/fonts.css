@@ -1,0 +1,23 @@
+/* Fusion Pixel 12px proportional, release 2026.09.25 (OFL-1.1). */
+@font-face {
+  font-family: 'Fusion Pixel SC';
+  src: url('../assets/fonts/fusion-pixel-12px-2026.09.25/fusion-pixel-12px-proportional-zh_hans.otf.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fusion Pixel TC';
+  src: url('../assets/fonts/fusion-pixel-12px-2026.09.25/fusion-pixel-12px-proportional-zh_tw.otf.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:lang(zh-CN) {
+  --font-chinese: 'Fusion Pixel SC', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
+}
+:lang(zh-TW) {
+  --font-chinese: 'Fusion Pixel TC', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', system-ui, sans-serif;
+}
+[lang|='zh'] { font-family: var(--font-chinese); }

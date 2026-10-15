@@ -703,6 +703,8 @@ def ach_page(lang):
 
 # ================= novedades =================
 NEWS = [
+ ('2026-10-15', ('Fuente pixel para el chino', 'Pixel font for Chinese', '中文像素字体', '中文像素字型'),
+  ('Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.', 'Chinese text uses Fusion Pixel 12px proportional, including the guides.', '中文文本改用 Fusion Pixel 12px 比例字体，指南页同步应用。', '中文文字改用 Fusion Pixel 12px 比例字型，指南頁同步套用。')),
  ('2026-10-15', ('Soporte de chino tradicional', 'Traditional Chinese support', '繁体中文支持', '繁體中文支援'),
   ('El juego y las guías ya están disponibles en chino tradicional.', 'The game and guides now support Traditional Chinese.', '游戏与指南现已支持繁体中文。', '遊戲與指南現已支援繁體中文。')),
  ('2026-10-15', ('Guías en chino simplificado', 'Simplified Chinese guides', '简体中文指南', '簡體中文指南'),

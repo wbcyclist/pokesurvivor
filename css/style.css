@@ -1,3 +1,5 @@
+@import url('fonts.css');
+
 /* ============ PokéSurvivor — interfaz estilo Mundo Misterioso ============
  * Cajas azules con doble borde blanco, como los menús de PMD, y fuente pixel
  * local (Pixelify Sans, OFL).
@@ -33,12 +35,8 @@
   --font: 'Pixelify', 'Segoe UI', system-ui, sans-serif;
 }
 
-:root:lang(zh-CN) {
-  --font: 'Pixelify', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
-}
-
-:root:lang(zh-TW) {
-  --font: 'Pixelify', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', system-ui, sans-serif;
+:root:lang(zh) {
+  --font: var(--font-chinese);
 }
 
 * { box-sizing: border-box; }

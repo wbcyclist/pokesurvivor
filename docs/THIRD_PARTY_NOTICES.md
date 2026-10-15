@@ -1,5 +1,25 @@
 # Third-party notices
 
+## Fusion Pixel Font
+
+Chinese text uses unmodified Fusion Pixel 12px proportional WOFF2 files from
+[release 2026.09.25](https://github.com/TakWolf/fusion-pixel-font/releases/tag/2026.09.25).
+The `zh_hans` variant serves `zh-CN`; the Taiwan `zh_tw` variant serves `zh-TW`.
+The fonts are served locally and loaded only when used by the active language.
+
+Copyright (c) 2022, TakWolf (https://takwolf.com).
+The fonts use SIL Open Font License 1.1. The full license and the release's
+upstream font notices are included in `assets/fonts/fusion-pixel-12px-2026.09.25/`.
+
+Source archive: `fusion-pixel-font-12px-proportional-otf.woff2-v2026.09.25.zip`.
+Its SHA-256 matches the GitHub release asset digest:
+`44b456f6f920d700f98d5865e03152d6a7357ed0a8ee388376ac0530d2d57072`.
+
+| Font file | SHA-256 |
+| --- | --- |
+| `fusion-pixel-12px-proportional-zh_hans.otf.woff2` | `0ebd99e6f1e9b650a793a3f759c1c3dfa99f0c5b6502e78569b48ddb43767e40` |
+| `fusion-pixel-12px-proportional-zh_tw.otf.woff2` | `3672c85ec9fdeb0024152acf8426fc6c6cd268852d7a8e7730fcf1c9a399083a` |
+
 ## Traditional Chinese translation reference
 
 `js/data/lang-zh-TW.js` adapts interface translations from the user-provided

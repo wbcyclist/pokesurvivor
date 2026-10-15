@@ -963,7 +963,7 @@ G.I18n.add({
   "Contenido de terceros": "第三方內容",
   "Sprites de": "精靈圖來自",
   "(CC BY-NC 4.0, créditos completos en CREDITS.md del repositorio). Datos de la Pokédex de": "（CC BY-NC 4.0，完整名單見原始碼中的 CREDITS.md）。圖鑑資料來自",
-  ". Fuente Pixelify Sans (OFL). La música y los efectos de sonido son originales del proyecto.": "。Pixelify Sans 字型（OFL）。音樂與音效為本專案原創。",
+  ". Fuente Pixelify Sans + Fusion Pixel (OFL). La música y los efectos de sonido son originales del proyecto.": "。Pixelify Sans 與 Fusion Pixel 字型（OFL）。音樂與音效為本專案原創。",
   "Contacto y retirada de contenido": "聯絡與內容移除",
   "Si eres titular de derechos y quieres que retiremos algo, escríbenos y lo quitaremos lo antes posible:": "若你是權利人且希望移除內容，請來信，我們會儘速處理：",
   "Código fuente:": "原始碼：",
@@ -1348,5 +1348,6 @@ G.I18n.add({
   "Chino tradicional": "繁體中文",
   "El juego y las guías ya están disponibles en chino tradicional. Selecciónalo en Ajustes > Gráficos > Idioma.": "遊戲與指南現已支援繁體中文，可在「設定 → 畫面 → 語言」中選擇。",
   "Soporte de chino": "中文語言支援",
-  "Psíquico (movimiento)": "精神強念"
+  "Psíquico (movimiento)": "精神強念",
+  "Los textos en chino usan Fusion Pixel de 12 píxeles en modo proporcional, también en las guías.": "中文文字改用 Fusion Pixel 12px 比例字型，指南頁同步套用。"
 }, 'zh-TW');
