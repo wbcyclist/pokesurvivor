@@ -4,8 +4,9 @@ Bullet-heaven con Pokémon al estilo de Survivor.io y Megabonk, con sprites de
 *Pokémon Mundo Misterioso*, capa roguelike, **966 Pokémon de las 9 generaciones**,
 shinies y gacha por región. Música y efectos compuestos para el juego.
 
-HTML + CSS + JavaScript vanilla sobre Canvas 2D. Sin build, sin dependencias y
-**todo local**: no necesita internet para jugar.
+HTML + CSS + JavaScript vanilla sobre Canvas 2D. El juego en solitario funciona
+sin instalar dependencias y no necesita internet. El servidor de red local usa
+Node.js y `ws`.
 
 > **Aviso sobre criptomonedas / Crypto disclaimer**
 >
@@ -110,6 +111,35 @@ sitio, se pierde.
 
 En `videos/` hay grabaciones del juego (con su música): un combate contra un
 jefe, la captura de un shiny salvaje y un shiny en el gacha.
+
+## Jugar en red local (2–4 personas)
+
+En un ordenador con Node.js 22 o posterior, desde la carpeta del juego:
+
+```bash
+npm ci
+npm run start:lan
+```
+
+La instalación inicial necesita internet; después, el servidor y el juego funcionan
+sin conexión exterior. Deja la terminal abierta. En todos los dispositivos, abre
+la misma dirección de red que muestra la terminal, entra como invitado y elige
+**Red local**. Una persona crea la sala y comparte su código; las demás lo introducen
+para unirse. El anfitrión empieza cuando hay entre 2 y 4 jugadores.
+
+El anfitrión debe mantener el juego en primer plano. Si sale o pierde la conexión,
+la partida termina para los demás y cada navegador guarda el progreso ganado.
+Para otra partida, todos vuelven a la sala desde el resumen. No hay entrada a mitad
+de partida ni cambio automático de anfitrión. El progreso local depende del navegador
+y de la dirección usada; conviene mantener la misma dirección y puerto.
+
+Para desarrollar con recarga automática, usa `npm run dev:lan`. Abre la dirección
+que muestra la terminal en cada dispositivo. Los cambios del frontend recargan
+las páginas; los del servidor lo reinician y después recargan los navegadores.
+No hace falta compilar. La recarga termina la partida y cierra la sala; crea otra
+para seguir probando. `npm run start:lan` mantiene su funcionamiento habitual.
+
+Configuración, pruebas y solución de problemas: [LAN.md](docs/LAN.md).
 
 ## Idiomas
 

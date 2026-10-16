@@ -7,7 +7,7 @@ const { test } = require('node:test');
 const source = fs.readFileSync(path.join(__dirname, '../js/core/db.js'), 'utf8');
 const SAVE = 'ps.guest.save', ACTIVE = 'ps.guest.active';
 
-function boot(data = new Map(), { cloud = false, user = null, remote = null, failSDK = false, transaction = null } = {}) {
+function boot(data = new Map(), { cloud = false, lan = false, user = null, remote = null, failSDK = false, transaction = null } = {}) {
   const events = {}, documentEvents = {}, requests = [], timers = new Map();
   let timerId = 0, now = Date.now(), read = null;
   let blocked = false;
@@ -24,7 +24,7 @@ function boot(data = new Map(), { cloud = false, user = null, remote = null, fai
   };
   const authFactory = Object.assign(() => auth, { Auth: { Persistence: { LOCAL: 'local' } } });
   const context = vm.createContext({
-    G: { FIREBASE_CONFIG: cloud ? { apiKey: 'test', projectId: 'test' } : null,
+    G: { Lan: { enabled: lan }, FIREBASE_CONFIG: cloud ? { apiKey: 'test', projectId: 'test' } : null,
       DEX_BY: { 1: {}, 4: {} }, Upgrades: { BY: { hp: { max: 5 } } } },
     localStorage: storage, location: { protocol: 'http:', hostname: 'localhost' }, navigator: { onLine: true },
     window: {}, TextEncoder, Uint8Array, Date: class extends Date { static now() { return now; } }, console: { warn() {} },
@@ -53,6 +53,18 @@ function progress(db) {
   db.save.coins = 734; db.save.pupg = { 1: { hp: 2 } }; db.save.tickets.t1 = 3;
   db.save.ach.first = 123; db.save.stats.runs = 2; db.save.stats.bestTime = 97;
 }
+
+test('LAN mode skips Firebase even on localhost and preserves local guest saves', async () => {
+  const app = boot(new Map(), { cloud: true, lan: true });
+  app.context.document.head.appendChild = () => { assert.fail('LAN must not load a cloud SDK'); };
+  assert.equal(await app.db.ready(), false);
+  assert.equal(app.db.mode, 'local'); assert.equal(app.db.localReason, 'lan');
+  app.db.playAsGuest(); progress(app.db); app.db.commit('run');
+  const next = boot(app.data, { cloud: true, lan: true });
+  assert.equal(await next.db.ready(), true);
+  assert.equal(next.db.save.coins, 734); assert.equal(next.db.online, false);
+  assert.deepEqual(app.requests, []);
+});
 
 test('a fresh browser stays at login, then guest progress survives a new page', async () => {
   const app = boot(); assert.equal(await app.db.ready(), false); assert.equal(app.data.has(SAVE), false);

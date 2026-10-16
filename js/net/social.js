@@ -157,12 +157,13 @@ G.Social = (() => {
     lastBeat = Date.now();
     fb.fs.collection('pres').doc(uid).set({ on, at: fts(), room: room ? room.id : '', play: playing }).catch(() => {});
   }
-  function setPlaying(p) { if (playing !== !!p) { playing = !!p; writeStatus(); } }
+  function setPlaying(p) { if (G.Lan.enabled) return G.Lan.setPlaying(p); if (playing !== !!p) { playing = !!p; writeStatus(); } }
   // Al volver a la pestaña tras un rato, un latido; al cerrarla, "desconectado".
   function onVisible() { if (document.visibilityState === 'visible' && Date.now() - lastBeat > BEAT) writeStatus(); }
   function onHide() { writeStatus(false); }
 
   async function stop(why) {
+    if (G.Lan.enabled) { G.Lan.close(); return; }
     if (!started) return;
     await leaveRoom().catch(() => {});
     if (unFriends) { unFriends(); unFriends = null; }
@@ -384,6 +385,7 @@ G.Social = (() => {
   }
 
   async function leaveRoom() {
+    if (G.Lan.enabled) return G.Lan.leaveRoom();
     if (!room) return;
     const r = room;
     detachRoom();
@@ -399,11 +401,13 @@ G.Social = (() => {
 
   /** El anfitrión cierra la sala a nuevos jugadores al empezar la partida. */
   function setOpen(open) {
+    if (G.Lan.enabled) return G.Lan.setOpen(open);
     if (room && room.isHost) fb.rtdb.ref('rooms/' + room.id + '/open').set(!!open).catch(() => {});
   }
 
   /** Actualiza tu Pokémon en la sala (si cambias de compañero). */
   function refreshMember() {
+    if (G.Lan.enabled) return G.Lan.refreshMember();
     if (room && me) fb.rtdb.ref('rooms/' + room.id + '/m/' + uid).update(
       { dex: G.DB.save.partner, shiny: !!G.DB.save.partnerShiny && G.DB.ownsShiny(G.DB.save.partner) }).catch(() => {});
   }
@@ -518,18 +522,19 @@ G.Social = (() => {
 
   // Al cerrar sesión o borrar la cuenta.
   G.DB.onLeave(why => stop(why));
+  G.Lan.on(emit);
 
   return {
     start, stop, claimNick, request, accept, remove, publishProfile, getProfile, profileData,
     createRoom, joinRoom, leaveRoom, setOpen, refreshMember, setPlaying, refreshPresence,
     invite, acceptInvite, declineInvite,
     on(fn) { listeners.add(fn); }, off(fn) { listeners.delete(fn); },
-    get me() { return me; },
+    get me() { return G.Lan.enabled ? G.Lan.me : me; },
     get started() { return started; },
     get friends() { return [...friends.values()]; },
     get invites() { return [...invites.values()]; },
-    get room() { return room; },
-    get uid() { return uid; },
+    get room() { return G.Lan.enabled ? G.Lan.room : room; },
+    get uid() { return G.Lan.enabled ? G.Lan.uid : uid; },
     /** La hora real (corrige el reloj del aparato si va desfasado). */
     now,
     VALID, MAX_PLAYERS

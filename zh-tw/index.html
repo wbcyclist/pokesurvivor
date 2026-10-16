@@ -221,6 +221,7 @@
         <button class="menu-item" data-go="upgrades">Mejoras<small>Haz más fuerte cada run</small></button>
         <button class="menu-item" data-go="gacha">Gacha<small>9 regiones · Pokémon y shinies</small></button>
         <button class="menu-item" data-go="goals">Misiones<small id="menu-goals-sub">Misiones, logros y perfil</small></button>
+        <button class="menu-item" data-go="lan">Red local<small>2–4 jugadores · sin cuenta ni internet</small></button>
         <button class="menu-item" data-go="friends">Amigos<small id="menu-friends-sub">Juega en grupo, hasta 4</small></button>
         <button class="menu-item" data-go="rank">Ranking<small>Quién aguanta más</small></button>
         <button class="menu-item" data-go="settings">Ajustes<small>Sonido, gráficos, controles y cuenta</small></button>
@@ -388,6 +389,32 @@
   </div>
 </section>
 
+<!-- ====== Red local ====== -->
+<section id="scr-lan" class="scr dim hidden">
+  <div class="box">
+    <div class="row between"><h2>Red local</h2><button class="btn small ghost" data-back>Volver</button></div>
+    <p class="sub">Juega con hasta 4 personas en la misma red. El anfitrión debe mantener el juego abierto.</p>
+    <div id="lan-setup" class="hidden">
+      <p>Inicia el servidor local en un ordenador y abre su dirección en todos los dispositivos.</p>
+      <pre translate="no">npm ci
+npm run start:lan</pre>
+      <p class="note">La terminal muestra la dirección que debes compartir. No uses localhost en los otros dispositivos.</p>
+    </div>
+    <div id="lan-controls">
+      <label for="lan-name">Nombre en la sala</label>
+      <input id="lan-name" class="field" maxlength="16" autocomplete="nickname" spellcheck="false">
+      <button id="lan-create" class="btn gold" style="margin:12px 0">Crear sala</button>
+      <form id="lan-join-form" class="row" autocomplete="off">
+        <label for="lan-code">Código de sala</label>
+        <input id="lan-code" class="field grow" maxlength="6" autocapitalize="characters" spellcheck="false" placeholder="Código de 6 caracteres">
+        <button id="lan-join" class="btn gold" type="submit">Unirme</button>
+      </form>
+      <p class="note">El progreso se guarda en este navegador y en esta dirección.</p>
+    </div>
+    <p id="lan-error" class="note" role="status"></p>
+  </div>
+</section>
+
 <!-- ====== Amigos ====== -->
 <section id="scr-friends" class="scr dim hidden">
   <div class="box wide">
@@ -409,6 +436,12 @@
     <div class="row between"><h2>Sala</h2>
       <div class="row"><button id="lobby-menu" class="btn small ghost">Menú</button><button id="lobby-leave" class="btn small ghost">Salir de la sala</button></div></div>
     <p class="sub" id="lobby-sub"></p>
+    <div id="lobby-lan" class="hidden">
+      <p><span>Código de sala</span>: <strong id="lobby-code" translate="no"></strong></p>
+      <label for="lobby-link">Dirección para los otros dispositivos</label>
+      <textarea id="lobby-link" class="field" readonly wrap="off" translate="no" rows="1" style="width:100%;resize:none"></textarea>
+      <p class="note">Comparte una dirección de tu red y el código. Todos deben usar el mismo servidor.</p>
+    </div>
     <div id="lobby-members" class="lobby-members"></div>
     <h3 id="lobby-inv-title" style="margin:14px 0 6px">Invitar amigos</h3>
     <div id="lobby-invite" class="fr-list"></div>
@@ -598,6 +631,6 @@
 </section>
 
 <!-- datos generados -->
-<script defer src="js/app.min.js?v=6a69969340"></script>
+<script defer src="js/app.min.js?v=ad7925a6cf"></script>
 </body>
 </html>

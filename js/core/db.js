@@ -429,6 +429,7 @@ G.DB = (() => {
   const HOSTS = ['pokesurvivor.com', 'www.pokesurvivor.com', 'jpter78.github.io', 'localhost', '127.0.0.1'];
 
   async function initCloud() {
+    if (G.Lan && G.Lan.enabled) { localReason = 'lan'; return false; }
     const cfg = G.FIREBASE_CONFIG;
     if (!/^https?:$/.test(location.protocol)) { localReason = 'file'; return false; }
     if (cfg && !cfg.emulator && !HOSTS.includes(location.hostname)) { localReason = 'host'; return false; }

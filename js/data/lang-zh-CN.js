@@ -1401,3 +1401,30 @@ G.I18n.add({
   "Ahora puedes jugar en vertical o en horizontal. La cámara, los menús y los controles se adaptan al girar el móvil, sin interrumpir la partida.": "现在支持竖屏和横屏游玩。旋转手机时，镜头、菜单和触控布局会自动适配，游戏不会中断。",
   "La imagen llena la pantalla al abrir el juego desde Inicio en iPhone, sin dejar una franja vacía abajo. Los controles respetan el área segura.": "从 iPhone 主屏幕打开游戏时，画面铺满屏幕，底部不再留白。操作按钮仍保持安全区间距。"
 }, 'zh-CN');
+
+G.I18n.add({
+  "Red local": "局域网联机",
+  "2–4 jugadores · sin cuenta ni internet": "2–4 人合作 · 无需账号或外网",
+  "Juega con hasta 4 personas en la misma red. El anfitrión debe mantener el juego abierto.": "最多 4 人在同一局域网合作。房主需要保持游戏开启。",
+  "Inicia el servidor local en un ordenador y abre su dirección en todos los dispositivos.": "在一台电脑上启动本地服务，再在所有设备上打开它的地址。",
+  "La terminal muestra la dirección que debes compartir. No uses localhost en los otros dispositivos.": "终端会显示可分享的地址。其他设备不能使用 localhost。",
+  "Nombre en la sala": "房间内昵称",
+  "Crear sala": "创建房间",
+  "Código de sala": "房间码",
+  "Código de 6 caracteres": "6 位房间码",
+  "El progreso se guarda en este navegador y en esta dirección.": "进度保存在当前浏览器中，并与此网址绑定。",
+  "Dirección para los otros dispositivos": "其他设备的连接地址",
+  "Comparte una dirección de tu red y el código. Todos deben usar el mismo servidor.": "分享所在网络的地址和房间码。所有人都需要连接同一个服务。",
+  "Conectado (red local)": "已连接（局域网）",
+  "Escribe un nombre de 1 a 16 letras, números o espacios.": "请输入 1–16 个字的昵称，可使用文字、数字或空格。",
+  "Escribe el código de 6 caracteres de la sala.": "请输入 6 位房间码。",
+  "Sólo el anfitrión puede empezar la partida.": "只有房主可以开始游戏。",
+  "Esperando a que todos vuelvan a la sala.": "等待所有玩家返回房间。",
+  "La versión no coincide. Reinicia el servidor local y recarga todos los dispositivos.": "游戏版本不一致，请重启本地服务并刷新所有设备。",
+  "El servidor local está lleno. Inténtalo de nuevo más tarde.": "本地服务已满，请稍后重试。",
+  "No se pudo conectar al servidor local. Comprueba la dirección y la red.": "无法连接本地服务，请检查地址和网络。",
+  "Sal de tu sala antes de entrar en otra.": "请先离开当前房间，再加入其他房间。",
+  "Red local: juega como invitado. El progreso se guarda sólo en este navegador.": "局域网模式：以游客身份游玩，进度仅保存在当前浏览器中。",
+  "Comparte el código de sala con hasta 3 compañeros y empezad cuando estéis.": "把房间码分享给最多 3 位伙伴，人员到齐后即可开始。",
+  "Ahora puedes jugar en red local con 2–4 personas mediante un código de sala, sin cuenta ni conexión a internet.": "现在可以通过房间码进行 2–4 人局域网合作，无需账号或外网连接。"
+}, 'zh-CN');

@@ -18,7 +18,7 @@
  *       broadcast(msg) · on(fn(from, msg)) · onPeer(fn(uid, state))
  *       peers() · mode(uid) -> 'connecting' | 'direct' | 'relay' | 'closed'
  */
-G.Net = (() => {
+G.Net = G.Lan.enabled ? G.Lan.net : (() => {
   const ICE = [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }];
   const DIRECT_TIMEOUT = 9000;     // ms para conseguir canal directo antes de usar el relé
   // Relé por la Realtime Database APAGADO (12-10-2026): a 1 $ el GB era lo que más

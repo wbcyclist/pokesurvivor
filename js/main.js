@@ -4,8 +4,8 @@
   // avisar que arrancar a medias.
   const NEED = ['U', 'I18n', 'Fonts', 'Settings', 'DB', 'Audio', 'Input', 'Gamepad', 'GamepadUI', 'Touch', 'Sprites', 'Camera', 'Moves', 'Enemies', 'Upgrades', 'Items',
                 'World', 'FX', 'Projectiles', 'EnemyMgr', 'Pickups', 'Player', 'Combat', 'Spawner', 'LevelUp', 'Gacha',
-                'Rift', 'Weather', 'Progress', 'Hazards', 'Social', 'Net', 'Coop', 'Ranking', 'Icons', 'UI', 'HUD',
-                'MenuUI', 'RunUI', 'SettingsUI', 'Funding', 'SupportUI', 'Game', 'Flow'];
+                'Rift', 'Weather', 'Progress', 'Hazards', 'Lan', 'Social', 'Net', 'Coop', 'Ranking', 'Icons', 'UI', 'HUD',
+                'MenuUI', 'LanUI', 'RunUI', 'SettingsUI', 'Funding', 'SupportUI', 'Game', 'Flow'];
   function broken() {
     // (En la versión publicada G no está en window: va encerrado, ver tools/build.js.)
     const miss = NEED.filter(k => typeof G !== 'object' || !G[k]);
@@ -45,7 +45,7 @@
   else boot();
 
   // Instalable como app (PWA). Sólo con http(s): abierto con doble clic (file://) no hace falta.
-  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  if ('serviceWorker' in navigator && !G.Lan.enabled && location.protocol.startsWith('http')) {
     addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(e => console.warn('[PWA]', e.message)));
   }
 })();

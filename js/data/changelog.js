@@ -6,7 +6,10 @@
  * Cada línea en español y en inglés.
  */
 G.CHANGELOG = [
-  { d: '2026-10-16', title: ['Estabilidad y rendimiento', 'Stability and performance'], new: [], chg: [
+  { d: '2026-10-16', title: ['Estabilidad y rendimiento', 'Stability and performance'], new: [
+    ['Ahora puedes jugar en red local con 2–4 personas mediante un código de sala, sin cuenta ni conexión a internet.',
+     'You can now play on a local network with 2–4 people using a room code, without an account or internet connection.']
+  ], chg: [
     ["Las recompensas de monedas del resumen de partida se duplican.",
      "Run summary coin rewards are doubled."],
     ["Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.",

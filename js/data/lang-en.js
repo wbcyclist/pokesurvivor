@@ -622,3 +622,30 @@ G.I18n.add({
   "Los controles se guardan por separado en vertical y horizontal.": "Controls are saved separately for portrait and landscape.",
   "Ahora puedes jugar en vertical o en horizontal. La cámara, los menús y los controles se adaptan al girar el móvil, sin interrumpir la partida.": "You can now play in portrait or landscape. The camera, menus, and controls adapt when you rotate your phone without interrupting the run."
 }, 'en');
+
+G.I18n.add({
+  "Red local": "Local network",
+  "2–4 jugadores · sin cuenta ni internet": "2–4 players · no account or internet",
+  "Juega con hasta 4 personas en la misma red. El anfitrión debe mantener el juego abierto.": "Play with up to 4 people on the same network. The host must keep the game open.",
+  "Inicia el servidor local en un ordenador y abre su dirección en todos los dispositivos.": "Start the local server on a computer and open its address on every device.",
+  "La terminal muestra la dirección que debes compartir. No uses localhost en los otros dispositivos.": "Share the address shown in the terminal. Do not use localhost on other devices.",
+  "Nombre en la sala": "Room name tag",
+  "Crear sala": "Create room",
+  "Código de sala": "Room code",
+  "Código de 6 caracteres": "6-character code",
+  "El progreso se guarda en este navegador y en esta dirección.": "Progress is saved in this browser at this address.",
+  "Dirección para los otros dispositivos": "Address for other devices",
+  "Comparte una dirección de tu red y el código. Todos deben usar el mismo servidor.": "Share an address on your network and the room code. Everyone must use the same server.",
+  "Conectado (red local)": "Connected (local network)",
+  "Escribe un nombre de 1 a 16 letras, números o espacios.": "Enter a name with 1–16 letters, numbers, or spaces.",
+  "Escribe el código de 6 caracteres de la sala.": "Enter the 6-character room code.",
+  "Sólo el anfitrión puede empezar la partida.": "Only the host can start the run.",
+  "Esperando a que todos vuelvan a la sala.": "Waiting for everyone to return to the lobby.",
+  "La versión no coincide. Reinicia el servidor local y recarga todos los dispositivos.": "The versions do not match. Restart the local server and reload all devices.",
+  "El servidor local está lleno. Inténtalo de nuevo más tarde.": "The local server is full. Try again later.",
+  "No se pudo conectar al servidor local. Comprueba la dirección y la red.": "Cannot connect to the local server. Check the address and network.",
+  "Sal de tu sala antes de entrar en otra.": "Leave your room before joining another.",
+  "Red local: juega como invitado. El progreso se guarda sólo en este navegador.": "Local network: play as a guest. Progress is saved only in this browser.",
+  "Comparte el código de sala con hasta 3 compañeros y empezad cuando estéis.": "Share the room code with up to 3 teammates, then start when everyone is ready.",
+  "Ahora puedes jugar en red local con 2–4 personas mediante un código de sala, sin cuenta ni conexión a internet.": "You can now play on a local network with 2–4 people using a room code, without an account or internet connection."
+}, 'en');
