@@ -101,11 +101,8 @@ G.Player = class Player {
     if (this.slots.length >= this.maxMoves || this.hasMove(id)) return false;
     const m = G.Moves.instance(id, 1);
     this.moves.push(m);
-    const group = [m];
-    this.slots.push(group);
+    this.slots.push([m]);
     this.arrange();
-    // Se cambia al nuevo, salvo si estás usando un vínculo (no te quita el grupo).
-    if (!(this.slots[this.active] && this.slots[this.active].length > 1)) this.setActive(this.slots.indexOf(group));
     return true;
   }
 

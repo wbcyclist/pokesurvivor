@@ -66,7 +66,6 @@ G.Touch = (() => {
     cv.addEventListener('pointermove', move);
     cv.addEventListener('pointerup', up);
     cv.addEventListener('pointercancel', up);
-    cv.addEventListener('contextmenu', e => e.preventDefault());
     // iPhone: la pulsación larga sobre el juego abría la lupa y el menú de
     // "Copiar / Seleccionar todo". Cortar el toque aquí lo evita (los eventos
     // pointer, que son los que usa el joystick, siguen llegando).
@@ -78,9 +77,21 @@ G.Touch = (() => {
       if (!active) { active = true; document.body.classList.add('touch'); }
       for (const t of e.changedTouches) { const b = hit(t.clientX, t.clientY); if (b) press(b); }
     }, { passive: false });
-    document.addEventListener('selectstart', e => {
-      if (!e.target.closest || !e.target.closest('input, textarea, [contenteditable]')) e.preventDefault();
-    });
+    const prevent = e => { if (e.cancelable) e.preventDefault(); };
+    const options = { passive: false, capture: true };
+    for (const name of ['selectstart', 'contextmenu', 'dragstart', 'dblclick']) {
+      document.addEventListener(name, e => {
+        const target = e.target.nodeType === 1 ? e.target : e.target.parentElement;
+        if (!target || !(target.closest('input, textarea') || target.isContentEditable)) prevent(e);
+      }, options);
+    }
+    for (const name of ['gesturestart', 'gesturechange', 'gestureend']) {
+      document.addEventListener(name, prevent, options);
+    }
+    for (const name of ['touchstart', 'touchmove']) {
+      document.addEventListener(name, e => { if (e.touches.length > 1) prevent(e); }, options);
+    }
+    document.addEventListener('wheel', e => { if (e.ctrlKey) prevent(e); }, options);
     addEventListener('blur', reset);
     document.addEventListener('visibilitychange', reset);
   }

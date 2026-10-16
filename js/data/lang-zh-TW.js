@@ -4,6 +4,8 @@
  * Spanish source keys and save identifiers stay unchanged.
  */
 G.I18n.add({
+  "Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.": "遊戲內停用手勢縮放、長按選單和瀏覽器拖曳，同時保留選單捲動與輸入欄位編輯。",
+  "Aprender un movimiento nuevo mantiene el ataque activo. Puedes cambiarlo manualmente cuando quieras.": "學會新招式後保持目前的攻擊招式，可手動切換。",
   "El marcador de premios del gacha usa una fuente china nativa de 8 píxeles, sin negrita, para mantener los trazos legibles.": "抽獎機獎品顯示區改用原生 8 px 中文字型並取消粗體，避免筆畫擠在一起。",
   "Estabilidad y rendimiento": "穩定性與效能最佳化",
   "Al cambiar de cuenta o entrar como invitado, una sincronización anterior ya no mezcla el progreso de otra sesión.": "切換帳號或進入訪客模式後，舊工作階段的同步結果不會再混入目前存檔。",

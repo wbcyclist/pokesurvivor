@@ -7,6 +7,10 @@
  */
 G.CHANGELOG = [
   { d: '2026-10-16', title: ['Estabilidad y rendimiento', 'Stability and performance'], new: [], chg: [
+    ["Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.",
+     "The game blocks gesture zoom, long-press menus, and browser dragging. Menus still scroll and text fields remain editable."],
+    ["Aprender un movimiento nuevo mantiene el ataque activo. Puedes cambiarlo manualmente cuando quieras.",
+     "Learning a new move keeps the current attack active. You can switch moves manually."],
     ["Se limita la memoria de los sprites y sus destellos, y se eliminan versiones antiguas de la caché del navegador.",
      "Sprite and hit-flash memory is bounded, and old versions are removed from the browser cache."],
     ["Los proyectiles teledirigidos buscan enemigos cercanos con menos trabajo por fotograma.",

@@ -658,11 +658,12 @@ a.plink:hover { color: var(--gold); }
 
 /* ================= móvil y táctil ================= */
 html, body { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
-body { touch-action: manipulation; }
+html, body { touch-action: pan-x pan-y; }
 /* iPhone: sin esto, mantener el dedo en el joystick sacaba "Copiar / Seleccionar
    todo" (Safari sólo hace caso a la versión -webkit- y no lo hereda bien). */
 body, body * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-input, textarea, [contenteditable] { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+input, textarea, :read-write { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+img, a, canvas { -webkit-user-drag: none; }
 /* Con táctil no tienen sentido las pistas de teclas. */
 body.touch kbd, body.touch .card .key, body.touch .kbd-hint { display: none !important; }
 /* ---------- ajustes ---------- */
