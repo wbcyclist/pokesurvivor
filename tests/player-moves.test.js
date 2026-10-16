@@ -9,7 +9,7 @@ function boot() {
   const G = {
     LIFT: 8,
     U: { TYPE_COLOR: {} },
-    Sprites: { Animator: class {}, bodyRadius: () => 8, bodyHeight: () => 16 },
+    Sprites: { Animator: class {}, hovers: () => false, bodyRadius: () => 8, bodyHeight: () => 16 },
     Projectiles: { clearOrbs: () => effects.push('clearOrbs') },
     Audio: { sfx: sound => effects.push(sound) },
     FX: { ring: () => effects.push('ring'), dmgText: () => effects.push('dmgText') }

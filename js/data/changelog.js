@@ -7,6 +7,8 @@
  */
 G.CHANGELOG = [
   { d: '2026-10-16', title: ['Estabilidad y rendimiento', 'Stability and performance'], new: [], chg: [
+    ["Las recompensas de monedas del resumen de partida se duplican.",
+     "Run summary coin rewards are doubled."],
     ["Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.",
      "The game blocks gesture zoom, long-press menus, and browser dragging. Menus still scroll and text fields remain editable."],
     ["Aprender un movimiento nuevo mantiene el ataque activo. Puedes cambiarlo manualmente cuando quieras.",
@@ -16,6 +18,8 @@ G.CHANGELOG = [
     ["Los proyectiles teledirigidos buscan enemigos cercanos con menos trabajo por fotograma.",
      "Homing projectiles search nearby enemies with less work per frame."]
   ], fix: [
+    ["Si tu Pokémon vuela o flota en su sprite, el agua y el pantano no lo ralentizan y el hielo no lo hace resbalar. La lava, el veneno y el suelo eléctrico mantienen su daño y sus inmunidades por tipo.",
+     "Flying and hovering partners ignore water and swamp slowdown and ice sliding. Lava, poison, and electric terrain keep their damage and type immunities."],
     ["El marcador de premios del gacha usa una fuente china nativa de 8 píxeles, sin negrita, para mantener los trazos legibles.",
      "The gacha prize display uses a native 8px Chinese font without bold, so strokes stay readable."],
     ["Al cambiar de cuenta o entrar como invitado, una sincronización anterior ya no mezcla el progreso de otra sesión.",

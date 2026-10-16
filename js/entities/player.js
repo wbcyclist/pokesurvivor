@@ -11,6 +11,7 @@ G.Player = class Player {
   constructor(mon, perks = {}, shiny = false) {
     this.mon = mon;
     this.dex = mon.dex;
+    this.flying = G.Sprites.hovers(mon.dex);
     this.shiny = shiny && G.Sprites.hasShiny(mon.dex);
     this.anim = new G.Sprites.Animator(mon.dex, 1, this.shiny);
     this.x = 0; this.y = 0;
@@ -90,7 +91,7 @@ G.Player = class Player {
   get spd() {
     const s = this.baseSpd * this.spdMul * (1 + this.buffs.spd.n * this.buffs.spd.amount) * (this.slowT > 0 ? 0.5 : 1);
     const w = G.Weather.speedFor(this.mon.types);
-    const slow = this.inLiquid ? G.World.liquidEffect(this.mon.types).slow || 1 : 1;
+    const slow = this.inLiquid && !this.flying ? G.World.liquidEffect(this.mon.types).slow || 1 : 1;
     return s * slow * w;
   }
   get reduction() { return Math.min(0.8, this.dmgReduce + this.buffs.def.n * this.buffs.def.amount); }
@@ -331,7 +332,7 @@ G.Player = class Player {
     this.walking = ax !== 0 || ay !== 0;
     const s = this.spd;
     // Hielo: resbalas (la velocidad cambia despacio).
-    const slide = this.inLiquid && G.World.liquidEffect(this.mon.types).slide;
+    const slide = this.inLiquid && !this.flying && G.World.liquidEffect(this.mon.types).slide;
     this.svx = slide ? G.U.damp(this.svx || 0, ax * s * 1.15, 1.6, dt) : ax * s;
     this.svy = slide ? G.U.damp(this.svy || 0, ay * s * 1.15, 1.6, dt) : ay * s;
     this.x += this.svx * dt;

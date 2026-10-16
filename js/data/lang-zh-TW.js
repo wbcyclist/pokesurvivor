@@ -4,6 +4,8 @@
  * Spanish source keys and save identifiers stay unchanged.
  */
 G.I18n.add({
+  "Las recompensas de monedas del resumen de partida se duplican.": "單局結算的寶可幣獎勵提高至 2 倍。",
+  "Si tu Pokémon vuela o flota en su sprite, el agua y el pantano no lo ralentizan y el hielo no lo hace resbalar. La lava, el veneno y el suelo eléctrico mantienen su daño y sus inmunidades por tipo.": "處於飛行或懸浮姿態的夥伴免受水面和沼澤減速、冰面滑行影響；熔岩、毒地和電地的傷害及屬性免疫規則保持不變。",
   "Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.": "遊戲內停用手勢縮放、長按選單和瀏覽器拖曳，同時保留選單捲動與輸入欄位編輯。",
   "Aprender un movimiento nuevo mantiene el ataque activo. Puedes cambiarlo manualmente cuando quieras.": "學會新招式後保持目前的攻擊招式，可手動切換。",
   "El marcador de premios del gacha usa una fuente china nativa de 8 píxeles, sin negrita, para mantener los trazos legibles.": "抽獎機獎品顯示區改用原生 8 px 中文字型並取消粗體，避免筆畫擠在一起。",
