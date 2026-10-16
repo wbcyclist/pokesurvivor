@@ -1,5 +1,9 @@
 /* Simplified Chinese. Spanish source text is the key; {x} preserves argument order. */
 G.I18n.add({
+  "Actualización obligatoria: tu partida se guarda y el juego se recarga en {x} s…": "必要更新：本局进度将保存，游戏将在 {x} 秒后重新加载…",
+  "Actualizaciones obligatorias": "必要更新",
+  "Cuando una actualización sea obligatoria (por ejemplo, para arreglar un fallo importante), la partida en curso se termina tras un aviso de 10 s y el juego se recarga. No pierdes nada: las monedas, los tickets, los récords y el ranking de esa partida se guardan como al abandonarla.": "需要更新时（例如修复重大错误），正在进行的一局将在提示 10 秒后结束，游戏随后重新加载。本局的宝可币、抽奖券、纪录和排行榜成绩会按退出本局的流程保存。",
+  "Jugar en dos aparatos (PC y móvil) ya no hace perder monedas ni tickets: antes, si uno tenía la partida abierta con datos viejos y guardaba, borraba lo ganado en el otro. Ahora se suma lo de los dos. Y al volver al juego tras un rato fuera, se trae lo conseguido en el otro aparato (Pokémon, shinies...) sin recargar.": "在电脑和手机之间游玩时，不再因旧存档覆盖而丢失宝可币或抽奖券，两台设备的收支会合并。离开一段时间后返回游戏，也会自动同步另一台设备获得的宝可梦、异色等进度，无需重新加载。",
   "Las recompensas de monedas del resumen de partida se duplican.": "单局结算的宝可币奖励提高至 2 倍。",
   "Si tu Pokémon vuela o flota en su sprite, el agua y el pantano no lo ralentizan y el hielo no lo hace resbalar. La lava, el veneno y el suelo eléctrico mantienen su daño y sus inmunidades por tipo.": "处于飞行或悬浮姿态的伙伴免受水面和沼泽减速、冰面滑行影响；熔岩、毒地和电地的伤害及属性免疫规则保持不变。",
   "Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.": "游戏内屏蔽手势缩放、长按菜单和浏览器拖拽，同时保留菜单滚动与输入框编辑。",

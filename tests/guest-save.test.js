@@ -9,7 +9,7 @@ const SAVE = 'ps.guest.save', ACTIVE = 'ps.guest.active';
 
 function boot(data = new Map(), { cloud = false, user = null, remote = null, failSDK = false, transaction = null } = {}) {
   const events = {}, documentEvents = {}, requests = [], timers = new Map();
-  let timerId = 0;
+  let timerId = 0, now = Date.now(), read = null;
   let blocked = false;
   const storage = {
     getItem: key => data.get(key) ?? null,
@@ -27,23 +27,25 @@ function boot(data = new Map(), { cloud = false, user = null, remote = null, fai
     G: { FIREBASE_CONFIG: cloud ? { apiKey: 'test', projectId: 'test' } : null,
       DEX_BY: { 1: {}, 4: {} }, Upgrades: { BY: { hp: { max: 5 } } } },
     localStorage: storage, location: { protocol: 'http:', hostname: 'localhost' }, navigator: { onLine: true },
-    window: {}, TextEncoder, Uint8Array, console: { warn() {} },
+    window: {}, TextEncoder, Uint8Array, Date: class extends Date { static now() { return now; } }, console: { warn() {} },
     setTimeout(fn, ms) { timers.set(++timerId, { fn, ms }); return timerId; }, clearTimeout: id => timers.delete(id),
     addEventListener(name, fn) { (events[name] ||= []).push(fn); },
     document: { hidden: false, visibilityState: 'visible',
       addEventListener(name, fn) { (documentEvents[name] ||= []).push(fn); },
       createElement: () => ({}), head: { appendChild(el) { queueMicrotask(() => failSDK ? el.onerror() : el.onload()); } } },
     firebase: { initializeApp() {}, auth: authFactory, firestore: () => ({
-      settings() {}, collection: () => ({ doc: uid => ({ get: async () => { requests.push(['read', uid]); return { exists: !!remote, data: () => ({ save: JSON.parse(JSON.stringify(remote)) }) }; } }) }),
+      settings() {}, collection: () => ({ doc: uid => ({ get: async () => { requests.push(['read', uid]); return read ? read(uid) : { exists: !!remote, data: () => ({ save: JSON.parse(JSON.stringify(remote)) }) }; } }) }),
       runTransaction(fn) { requests.push(['write']); return transaction ? transaction(fn) : Promise.resolve(); }
     }) }
   });
   context.firebase.firestore.FieldValue = { serverTimestamp: () => 0 };
   vm.runInContext(source, context);
   return { db: context.G.DB, context, data, requests, timers,
+    advance(ms) { now += ms; }, setRemote(value) { remote = value; }, setRead(fn) { read = fn; },
     block(value = true) { blocked = value; },
     emit(name) { for (const fn of events[name] || []) fn(); },
-    hide() { context.document.hidden = true; context.document.visibilityState = 'hidden'; for (const fn of documentEvents.visibilitychange || []) fn(); } };
+    hide() { context.document.hidden = true; context.document.visibilityState = 'hidden'; for (const fn of documentEvents.visibilitychange || []) fn(); },
+    show() { context.document.hidden = false; context.document.visibilityState = 'visible'; for (const fn of documentEvents.visibilitychange || []) fn(); } };
 }
 
 function progress(db) {
@@ -226,4 +228,68 @@ test('an old completion cannot clear the next account upload lock', async () => 
   assert.equal(count, 2);
   done[1].resolve(); await newUpload; await duplicate;
   assert.equal(count, 2); assert.equal(app.db.fb.uid, 'account');
+});
+
+test('device ledgers merge earned and spent currency once across uploads and reloads', async () => {
+  const seed = boot(); await seed.db.ready(); seed.db.playAsGuest();
+  seed.db.save.tickets = { t1: 10, t10: 2 }; seed.db.commit();
+  let remote = JSON.parse(seed.data.get(SAVE));
+  const transaction = fn => fn({
+    get: async () => ({ exists: true, data: () => ({ save: structuredClone(remote), ban: true }) }),
+    set(ref, doc) { remote = structuredClone(doc.save); assert.equal(doc.ban, true); }
+  });
+  const device = id => boot(new Map([['ps.dev', JSON.stringify(id)]]), {
+    cloud: true, user: { uid: 'account' }, remote, transaction
+  });
+  const a = device('devicea'), b = device('deviceb');
+  await a.db.ready(); await b.db.ready();
+  a.db.save.coins += 100; a.db.save.tickets.t1 += 2; a.db.save.tickets.t10--;
+  b.db.save.coins -= 150; b.db.save.tickets.t1 -= 3; b.db.save.tickets.t10++;
+  a.db.commit(); b.db.commit();
+  await a.db.flush(); await b.db.flush();
+  assert.equal(remote.coins, 450);
+  assert.deepEqual(remote.tickets, { t1: 9, t10: 2 });
+  assert.deepEqual(remote.led.devicea.c, [100, 0]);
+  assert.deepEqual(remote.led.deviceb.c, [0, 150]);
+  a.advance(65001); await a.db.flush();
+  assert.equal(remote.coins, 450); assert.deepEqual(remote.tickets, { t1: 9, t10: 2 });
+  const next = boot(a.data, { cloud: true, user: { uid: 'account' }, remote });
+  await next.db.ready();
+  assert.equal(next.db.save.coins, 450); assert.equal(next.db.save.tickets.t1, 9);
+});
+
+test('returning after thirty minutes pulls cloud progress only after the run ends', async () => {
+  const app = await cloudFixture();
+  app.context.G.Game = { state: 'playing' };
+  const remote = JSON.parse(JSON.stringify(app.db.save)); remote.owned[4] = { at: 1, from: 'remote' };
+  app.setRemote(remote); app.hide(); app.advance(30 * 60000 + 1); app.show();
+  assert.equal(app.requests.filter(r => r[0] === 'read').length, 1);
+  const retry = [...app.timers.values()].find(t => t.ms === 20000);
+  assert.ok(retry); app.context.G.Game.state = 'ui'; retry.fn();
+  for (let i = 0; i < 5; i++) await Promise.resolve();
+  assert.equal(app.db.owns(4), true);
+  assert.equal(app.requests.filter(r => r[0] === 'read').length, 2);
+  app.show(); assert.equal(app.requests.filter(r => r[0] === 'read').length, 2);
+});
+
+test('a delayed cloud pull cannot change a new session for the same account', async () => {
+  const app = await cloudFixture(), gate = deferred();
+  await app.db.login('Trainer', 'secret');
+  const stale = JSON.parse(JSON.stringify(app.db.save)); stale.owned[4] = { at: 1, from: 'old-session' };
+  app.setRead(() => gate.promise);
+  app.hide(); app.advance(30 * 60000 + 1); app.show();
+  assert.equal(app.requests.filter(r => r[0] === 'read').length, 3);
+  app.setRead(null); await app.db.logout(); await app.db.login('Trainer', 'secret');
+  gate.resolve({ exists: true, data: () => ({ save: stale }) });
+  for (let i = 0; i < 5; i++) await Promise.resolve();
+  assert.equal(app.db.fb.uid, 'account'); assert.equal(app.db.owns(4), false);
+  assert.equal(JSON.parse(app.data.get('ps.cloud.account')).owned[4], undefined);
+});
+
+test('entering guest mode cancels a cloud pull waiting for the menu', async () => {
+  const app = await cloudFixture(); app.context.G.Game = { state: 'playing' };
+  app.hide(); app.advance(30 * 60000 + 1); app.show();
+  assert.equal([...app.timers.values()].some(t => t.ms === 20000), true);
+  app.db.playAsGuest();
+  assert.equal([...app.timers.values()].some(t => t.ms === 20000), false);
 });

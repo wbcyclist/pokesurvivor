@@ -14,6 +14,8 @@ Al publicar, todos los jugadores deben pasar a la versión nueva sin perder nada
 - **Fuera de partida** (menú, sala de cooperativo incluida): aviso de 5 s y la página se recarga.
   Si está en el gacha, la tienda de mejoras, los ajustes o escribiendo en un campo, espera a que termine.
 - **En partida**: no se toca. Al acabar, la run se guarda como siempre y, al volver al menú, se recarga.
+- **Versión obligatoria** (`node tools/build.js --forzar`): aviso de 10 s durante la partida,
+  se termina y se guarda como al abandonarla, y se recarga. Sin ese indicador, se espera al menú.
 - Antes de recargar se sube a la nube lo pendiente.
 No quitar `updater.js` ni la escritura de `version.json` en `tools/build.js`.
 
@@ -26,5 +28,7 @@ servidores, base de datos o costes NO van ahí.
 - Firebase: proyecto **pokesurvivor-free** (autenticación normal: cuentas gratis sin límite).
   **Nunca** activar "Identity Platform" ni nada que lo active (funciones de bloqueo, MFA,
   "Actualizar para habilitar"): cobra por usuario. El proyecto viejo pokesurvivor-jpter se borró el 13-10-2026 (con su facturación).
-- Cloudflare (Worker `cloudflare/turn-worker.js`, plan de 5 $): no debe pasar de 5 $ al mes (el TURN tiene tope).
+- Cloudflare: SÓLO el dominio pokesurvivor.com (comprado allí, DNS gratis). El Worker y el TURN
+  (Cloudflare Realtime) se quitaron el 15-10-2026: el cooperativo va sólo con conexión directa
+  (STUN gratis de Google). No volver a añadir nada de pago.
 - Mantenimiento: `MAINTENANCE` en `js/main.js` (con `?dev` se puede entrar para probar).
