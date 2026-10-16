@@ -10,8 +10,8 @@ G.CHANGELOG = [
     ['Ahora puedes jugar en red local con 2–4 personas mediante un código de sala, sin cuenta ni conexión a internet.',
      'You can now play on a local network with 2–4 people using a room code, without an account or internet connection.']
   ], chg: [
-    ["Las recompensas de monedas del resumen de partida se duplican.",
-     "Run summary coin rewards are doubled."],
+    ["Las recompensas de monedas del resumen de partida se multiplican por 5.",
+     "Run summary coin rewards are multiplied by 5."],
     ["Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.",
      "The game blocks gesture zoom, long-press menus, and browser dragging. Menus still scroll and text fields remain editable."],
     ["Aprender un movimiento nuevo mantiene el ataque activo. Puedes cambiarlo manualmente cuando quieras.",

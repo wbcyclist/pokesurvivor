@@ -8,7 +8,7 @@ G.I18n.add({
   "Actualizaciones obligatorias": "必要更新",
   "Cuando una actualización sea obligatoria (por ejemplo, para arreglar un fallo importante), la partida en curso se termina tras un aviso de 10 s y el juego se recarga. No pierdes nada: las monedas, los tickets, los récords y el ranking de esa partida se guardan como al abandonarla.": "需要更新時（例如修正重大錯誤），進行中的一局會在提示 10 秒後結束，遊戲隨後重新載入。本局的寶可幣、抽獎券、紀錄和排行榜成績會依退出本局的流程儲存。",
   "Jugar en dos aparatos (PC y móvil) ya no hace perder monedas ni tickets: antes, si uno tenía la partida abierta con datos viejos y guardaba, borraba lo ganado en el otro. Ahora se suma lo de los dos. Y al volver al juego tras un rato fuera, se trae lo conseguido en el otro aparato (Pokémon, shinies...) sin recargar.": "在電腦與手機之間遊玩時，不再因舊存檔覆蓋而遺失寶可幣或抽獎券，兩台裝置的收支會合併。離開一段時間後返回遊戲，也會自動同步另一台裝置獲得的寶可夢、異色等進度，無須重新載入。",
-  "Las recompensas de monedas del resumen de partida se duplican.": "單局結算的寶可幣獎勵提高至 2 倍。",
+  "Las recompensas de monedas del resumen de partida se multiplican por 5.": "單局結算的寶可幣獎勵提高至 5 倍。",
   "Si tu Pokémon vuela o flota en su sprite, el agua y el pantano no lo ralentizan y el hielo no lo hace resbalar. La lava, el veneno y el suelo eléctrico mantienen su daño y sus inmunidades por tipo.": "處於飛行或懸浮姿態的夥伴免受水面和沼澤減速、冰面滑行影響；熔岩、毒地和電地的傷害及屬性免疫規則保持不變。",
   "Se bloquean el zoom por gestos, los menús de pulsación larga y el arrastre del navegador en el juego. Los menús siguen desplazándose y los campos de texto se pueden editar.": "遊戲內停用手勢縮放、長按選單和瀏覽器拖曳，同時保留選單捲動與輸入欄位編輯。",
   "Aprender un movimiento nuevo mantiene el ataque activo. Puedes cambiarlo manualmente cuando quieras.": "學會新招式後保持目前的攻擊招式，可手動切換。",
