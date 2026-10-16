@@ -30,6 +30,7 @@
     }
 
     function render() {
+      $('scr-goals').dataset.gamepadView = '';
       document.querySelectorAll('#goals-tabs .tab').forEach(t => t.classList.toggle('on', t.dataset.tab === tab));
       const box = $('goals-body');
       box.innerHTML = '';
@@ -68,6 +69,7 @@
               <small>${Math.min(m.prog, m.goal).toLocaleString('es')} / ${m.goal.toLocaleString('es')}</small></div>
             <div class="m-rw">${G.Progress.rewardText(d.reward)}</div>`;
           const btn = document.createElement('button');
+          btn.dataset.gamepadKey = 'mission:' + (weekly ? 'weekly:' : 'daily:') + i;
           if (m.claimed) { btn.className = 'btn small'; btn.disabled = true; btn.textContent = 'Recogido'; }
           else if (done) {
             btn.className = 'btn small gold'; btn.textContent = 'Recoger'; btn.dataset.sfx = 'none';
@@ -98,6 +100,7 @@
         const n = list.filter(a => s.ach && s.ach[a.id]).length;
         const b = document.createElement('button');
         b.className = 'chip' + (k === cat ? ' on' : '');
+        b.dataset.gamepadKey = 'achievement-category:' + k;
         b.textContent = `${label} ${n}/${list.length}`;
         b.onclick = () => { cat = k; render(); };
         chips.appendChild(b);
@@ -159,6 +162,8 @@
         const f = P.favs[i];
         const slot = document.createElement('div');
         slot.className = 'fav-slot';
+        slot.dataset.gamepadKey = 'favorite-slot:' + i;
+        slot.setAttribute('role', 'button'); slot.tabIndex = 0;
         if (f && G.DEX_BY[f.dex]) {
           slot.appendChild(G.UI.spriteCanvas(f.dex, 120, 100, { scale: 2, lively: true, shiny: !!f.shiny }));
           slot.insertAdjacentHTML('beforeend', `<b>${f.shiny ? G.Icons.html('shiny', 12) + ' ' : ''}${esc(G.DEX_BY[f.dex].name)}</b>`);
@@ -172,6 +177,7 @@
       box.insertAdjacentHTML('beforeend', `<h3 style="margin-top:14px">Título</h3>`);
       const sel = document.createElement('select');
       sel.className = 'field';
+      sel.dataset.gamepadKey = 'profile-title';
       sel.style.maxWidth = '320px';
       sel.innerHTML = `<option value="">(sin título)</option>` + titles.map(t => `<option value="${esc(t)}" ${t === P.title ? 'selected' : ''}>${esc(t)}</option>`).join('');
       sel.onchange = () => { P.title = sel.value; save(); };
@@ -179,6 +185,7 @@
       if (!titles.length) box.insertAdjacentHTML('beforeend', '<p class="note">Consigue logros para desbloquear títulos.</p>');
 
       const prev = document.createElement('button');
+      prev.dataset.gamepadKey = 'profile-preview';
       prev.className = 'btn gold'; prev.style.marginTop = '16px';
       prev.textContent = 'Ver mi perfil público';
       prev.onclick = () => G.ProfileUI.showData(G.Social.profileData());
@@ -186,10 +193,11 @@
     }
 
     function pickFav(i) {
+      $('scr-goals').dataset.gamepadView = 'favorite';
       const s = G.DB.save;
       const box = $('goals-body');
       box.innerHTML = `<div class="row between"><h3>Elige el favorito ${i + 1}</h3>
-        <button class="btn small ghost" id="fav-back">Volver</button></div>
+        <button class="btn small ghost" id="fav-back" data-gamepad-back>Volver</button></div>
         <input class="field" id="fav-q" placeholder="Buscar por nombre" style="max-width:320px;margin:6px 0 10px">
         <div class="grid" id="fav-grid"></div>`;
       $('fav-back').onclick = () => { tab = 'profile'; render(); };
@@ -201,6 +209,8 @@
           for (const shiny of G.DB.ownsShiny(d) ? [false, true] : [false]) {
             const c = document.createElement('div');
             c.className = 'cell';
+            c.dataset.gamepadKey = 'favorite:' + d + ':' + shiny;
+            if (!g.children.length) c.dataset.gamepadDefault = '';
             c.appendChild(G.UI.spriteCanvas(d, 92, 80, { scale: 2, shiny }));
             c.insertAdjacentHTML('beforeend', `<b>${shiny ? G.Icons.html('shiny', 12) + ' ' : ''}${esc(G.DEX_BY[d].name)}</b>`);
             c.onclick = () => {

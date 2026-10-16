@@ -43,8 +43,11 @@ call a translation service. Both Chinese locales use local Fusion Pixel 12px
 proportional fonts: `zh_hans` for Simplified Chinese and `zh_tw` for Traditional
 Chinese. The original font files come from release `2026.09.25`; they are not
 subsetted or converted. Existing UI sizes stay unchanged. Other locales keep
-Pixelify. CSS and canvas share the active font stack. Startup loads the font
-at normal and bold UI weights before opening the game. Font loading failures
+Pixelify. The gacha prize display uses native Fusion Pixel 8px proportional
+fonts at regular weight, so Chinese strokes do not merge when a 12px glyph is
+scaled down. This font applies only to that display. CSS and canvas share the
+active font stack. Startup loads the normal and bold UI weights, plus the
+8px display font, before opening the game. Font loading failures
 fall back to system fonts. Static guides and Contact use the same Chinese
 fonts. See `THIRD_PARTY_NOTICES.md` for sources, hashes, and licenses.
 

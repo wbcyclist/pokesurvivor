@@ -176,7 +176,7 @@ G.Slots = (() => {
     // --- marcador ---
     R(36, 100, 90, 16, C.dark);
     R(37, 101, 88, 14, C.led);
-    ctx.font = G.Fonts.canvas(700, 8);
+    ctx.font = G.Fonts.canvasSmall();
     ctx.fillStyle = st.ledCol || C.bulbOn;
     if (!st.frenzy || Math.floor(t * 10) % 2 === 0) ctx.fillText(st.led, 81, 111);
     // Botoncitos decorativos.

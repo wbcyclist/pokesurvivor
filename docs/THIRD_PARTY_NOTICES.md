@@ -20,6 +20,19 @@ Its SHA-256 matches the GitHub release asset digest:
 | `fusion-pixel-12px-proportional-zh_hans.otf.woff2` | `0ebd99e6f1e9b650a793a3f759c1c3dfa99f0c5b6502e78569b48ddb43767e40` |
 | `fusion-pixel-12px-proportional-zh_tw.otf.woff2` | `3672c85ec9fdeb0024152acf8426fc6c6cd268852d7a8e7730fcf1c9a399083a` |
 
+The gacha prize display uses the same release's unmodified Fusion Pixel 8px
+proportional fonts, with the same locale mapping. The license and upstream
+notices are included in `assets/fonts/fusion-pixel-8px-2026.09.25/`.
+
+Source archive: `fusion-pixel-font-8px-proportional-otf.woff2-v2026.09.25.zip`.
+Its SHA-256 matches the GitHub release asset digest:
+`a3073a3c5bf576553436a846203ab9cd0753c9ba5a01c2b4793c07858dda6e0b`.
+
+| Font file | SHA-256 |
+| --- | --- |
+| `fusion-pixel-8px-proportional-zh_hans.otf.woff2` | `c68edc7ba14e595bd34d7bb9295c8364315dd275d561a61efe520c51b599da8a` |
+| `fusion-pixel-8px-proportional-zh_tw.otf.woff2` | `1d6bca1ea5092ae3f815ed23f5a057e7747dd5ef87acf03dec88c8c9d4274aa3` |
+
 ## Traditional Chinese translation reference
 
 `js/data/lang-zh-TW.js` adapts interface translations from the user-provided

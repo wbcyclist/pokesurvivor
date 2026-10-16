@@ -4,6 +4,16 @@
  * Spanish source keys and save identifiers stay unchanged.
  */
 G.I18n.add({
+  "El marcador de premios del gacha usa una fuente china nativa de 8 píxeles, sin negrita, para mantener los trazos legibles.": "抽獎機獎品顯示區改用原生 8 px 中文字型並取消粗體，避免筆畫擠在一起。",
+  "Estabilidad y rendimiento": "穩定性與效能最佳化",
+  "Al cambiar de cuenta o entrar como invitado, una sincronización anterior ya no mezcla el progreso de otra sesión.": "切換帳號或進入訪客模式後，舊工作階段的同步結果不會再混入目前存檔。",
+  "Los ataques de área ya no pueden golpear dos veces al mismo enemigo por una colisión en el índice espacial.": "修正空間索引衝突導致範圍攻擊重複命中同一敵人的問題。",
+  "Con pocos fotogramas por segundo, el tiempo y el movimiento mantienen su velocidad. Al volver de una pausa no se acumula tiempo pendiente.": "低影格率時，遊戲計時與移動速度保持正常；暫停後恢復不會補算暫停期間的時間。",
+  "La experiencia ya no se pierde cuando hay demasiados objetos en el suelo. En cooperativo, los valores fusionados se actualizan para todos.": "地面掉落過多時不再遺失經驗，連線隊友也會收到合併後的經驗值。",
+  "Los enemigos guardados durante una grieta se liberan al limpiar la partida.": "清理單局狀態時，會釋放裂隙暫存的敵人物件。",
+  "Se limita la memoria de los sprites y sus destellos, y se eliminan versiones antiguas de la caché del navegador.": "限制精靈圖集和受擊閃白圖的記憶體用量，並清理瀏覽器快取中的舊版本。",
+  "Los proyectiles teledirigidos buscan enemigos cercanos con menos trabajo por fotograma.": "追蹤彈改為搜尋附近敵人，減少每影格的計算量。",
+  "Los menús conservan la opción seleccionada y el desplazamiento al comprar, cambiar filtros o volver de una ventana. El mando también permite elegir tus Pokémon favoritos.": "購買、切換篩選條件或關閉彈窗後，選單會保留目前選項與捲動位置。也可以用控制器選擇喜愛的寶可夢。",
   "Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.": "自動識別已知型號。樣式決定按鍵符號及確認、取消鍵，招式按鍵的位置保持固定。箭頭表示右側四個按鍵的位置。",
   "Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.": "選單中使用 A / ○ 確認、B / × 取消。招式按鍵提示已移到圖示下方，採用更大的背景與外框標記。修改設定後，控制器焦點會保留在目前選項。",
   "Invitado: guardado en este navegador": "訪客：已儲存在此瀏覽器",

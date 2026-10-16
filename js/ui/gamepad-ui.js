@@ -3,7 +3,8 @@ G.GamepadUI = (() => {
   const TARGETS = 'button, a[href], input, select, .tab, .card, .cell, .answer, [role="button"], [tabindex]';
   const PANELS = '.scr, #boot, #tap-start, #pull-fx, #sound-panel, #invite-pop';
   let scope = null, selected = null, active = false, blocking = false;
-  let lastDirection = '', repeatAt = 0, waitDirection = false;
+  let lastDirection = '', repeatAt = 0, waitDirection = false, view = '';
+  const history = new WeakMap();
 
   function visible(el) {
     return !!el && !el.closest('.hidden, [hidden]') && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden';
@@ -19,6 +20,46 @@ G.GamepadUI = (() => {
   function pointerMode() { active = false; clearFocus(); }
   addEventListener('pointerdown', pointerMode);
   addEventListener('keydown', pointerMode);
+  document.addEventListener('scroll', event => {
+    if (active && selected && event.target.contains(selected) && enabled(selected)) remember();
+  }, true);
+
+  function identity(el) {
+    if (el.dataset.gamepadKey) return 'key:' + el.dataset.gamepadKey;
+    if (el.id) return 'id:' + el.id;
+    const { k, v } = el.dataset;
+    return k ? 'setting:' + k + ':' + (v || '') : null;
+  }
+  function remember() {
+    if (!scope || !selected) return;
+    const scroll = [];
+    for (let el = selected.parentElement; el; el = el.parentElement) {
+      scroll.push({ el, id: el.id, top: el.scrollTop, left: el.scrollLeft });
+    }
+    let states = history.get(scope);
+    if (!states) { states = new Map(); history.set(scope, states); }
+    states.set(view, { el: selected, key: identity(selected), rect: selected.getBoundingClientRect(), scroll });
+  }
+  function restore(list) {
+    const state = history.get(scope)?.get(view);
+    if (!state) { focus(initial(list)); return; }
+    for (const saved of state.scroll) {
+      const el = saved.el.isConnected ? saved.el : saved.id && document.getElementById(saved.id);
+      if (el) { el.scrollTop = saved.top; el.scrollLeft = saved.left; }
+    }
+    const same = list.includes(state.el) ? state.el : state.key && list.find(el => identity(el) === state.key);
+    if (same) { focus(same, false); return; }
+    // A purchase or claim may disappear or become disabled. Stay near that row.
+    const choices = list.filter(el => !el.matches('[data-gamepad-back], [data-back]'));
+    let next = null, distance = Infinity;
+    for (const el of choices.length ? choices : list) {
+      const r = el.getBoundingClientRect(), old = state.rect;
+      const d = Math.abs(r.left + r.width / 2 - old.left - old.width / 2)
+        + Math.abs(r.top + r.height / 2 - old.top - old.height / 2);
+      if (d < distance) { next = el; distance = d; }
+    }
+    focus(next);
+  }
 
   function topPanel() {
     let top = null, z = -Infinity;
@@ -36,7 +77,7 @@ G.GamepadUI = (() => {
     if (scope.id === 'scr-menu') list.push(...document.querySelectorAll('#topbar button, #user-pill, #credits-line a'));
     return list.filter(enabled);
   }
-  function focus(el) {
+  function focus(el, scroll = true) {
     if (selected === el) return;
     clearFocus();
     selected = el;
@@ -44,16 +85,11 @@ G.GamepadUI = (() => {
     if (!el.hasAttribute('tabindex') && !el.matches('button, a, input, select')) el.tabIndex = -1;
     el.classList.add('gamepad-focus');
     el.focus({ preventScroll: true });
-    el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    if (scroll) el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    remember();
   }
   function initial(list) {
     return list.find(el => el.matches('[data-gamepad-default], .card, .answer, .menu-item.play')) || list[0];
-  }
-  function replacement(list) {
-    if (!selected) return null;
-    if (selected.id) return list.find(el => el.id === selected.id);
-    const { k, v } = selected.dataset;
-    return k ? list.find(el => el.dataset.k === k && el.dataset.v === v) : null;
   }
   function adjust(el, direction) {
     if (!['left', 'right'].includes(direction)) return false;
@@ -77,6 +113,7 @@ G.GamepadUI = (() => {
   }
   function navigate(direction, list) {
     if (!selected || !list.includes(selected)) { focus(initial(list)); return; }
+    remember();
     if (adjust(selected, direction)) return;
     const rect = selected.getBoundingClientRect(), horizontal = ['left', 'right'].includes(direction);
     const sign = ['left', 'up'].includes(direction) ? -1 : 1;
@@ -95,7 +132,7 @@ G.GamepadUI = (() => {
   }
   function back(list) {
     if (scope.id === 'sound-panel') { scope.classList.add('hidden'); return; }
-    const button = list.find(el => el.matches('[data-gamepad-back], [data-back]'));
+    const button = list.find(el => el.matches('[data-gamepad-back]')) || list.find(el => el.matches('[data-back]'));
     if (button) button.click();
   }
 
@@ -112,10 +149,11 @@ G.GamepadUI = (() => {
       G.UI.toast('Mando desconectado. Puedes seguir con teclado o pantalla táctil.', 4000);
     }
     if (!pad.connected) { pointerMode(); scope = null; blocking = false; return; }
-    const next = topPanel();
+    const next = topPanel(), nextView = next?.dataset.gamepadView || '';
     blocking = !!next;
-    if (next !== scope) {
-      scope = next; clearFocus(); lastDirection = ''; repeatAt = 0;
+    if (next !== scope || nextView !== view) {
+      if (selected && visible(selected)) remember();
+      scope = next; view = nextView; clearFocus(); lastDirection = ''; repeatAt = 0;
       waitDirection = !!pad.direction;
     }
     if (!pad.mode) pointerMode();
@@ -141,7 +179,8 @@ G.GamepadUI = (() => {
     const move = direction && !waitDirection && (direction !== lastDirection || ts >= repeatAt);
     if (!needsFocus && !move && !['confirm', 'back', 'reroll'].some(action => pad.tap(action))) return;
     const list = targets();
-    if (needsFocus) focus(replacement(list) || initial(list));
+    if (needsFocus) restore(list);
+    if (selected) remember();
     if (pad.tap('back')) { back(list); return; }
     if (pad.tap('reroll') && scope.id === 'scr-levelup') { G.RunUI.reroll(); return; }
     if (move) {

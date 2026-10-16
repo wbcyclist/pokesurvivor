@@ -46,6 +46,7 @@ G.RankingUI = (() => {
       for (const [k, label] of items) {
         const b = document.createElement('button');
         b.className = cls + (k === cur ? ' on' : '');
+        b.dataset.gamepadKey = box.id + ':' + k;
         b.innerHTML = label;
         b.onclick = () => { set(k); tabs(); load(); };
         box.appendChild(b);
@@ -121,11 +122,12 @@ G.RankingUI = (() => {
     el.insertAdjacentHTML('beforeend',
       `<span class="who"><b translate="no">${r.names.map((n, i) => `<a href="#" class="plink" data-u="${esc(r.uids[i] || '')}">${esc(n)}</a>`).join(' · ')}</b><small>Nv. ${r.lv || 1} · ${(r.kills || 0).toLocaleString('es')} derrotados</small></span>
        <span class="time">${fmt(r.t)}</span>`);
-    el.querySelectorAll('.plink').forEach(a => { a.onclick = e => { e.preventDefault(); G.ProfileUI.show(a.dataset.u); }; });
+    el.querySelectorAll('.plink').forEach(a => { a.dataset.gamepadKey = 'rank:' + r.id + ':profile:' + a.dataset.u; a.onclick = e => { e.preventDefault(); G.ProfileUI.show(a.dataset.u); }; });
     // Reportar una marca sospechosa (no la tuya). Lo revisa el admin (mod-ui.js).
     if (!mine && G.Social.me) {
       const rep = document.createElement('button');
       const sent = done.has(b + '__' + r.id);
+      rep.dataset.gamepadKey = 'rank:' + r.id + ':report';
       rep.className = 'rk-rep' + (sent ? ' sent' : '');
       rep.title = sent ? 'Ya la has reportado' : 'Reportar marca sospechosa';
       rep.innerHTML = G.Icons.html('flag', 16);

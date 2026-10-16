@@ -111,26 +111,28 @@
         const dot = f.status !== 'ok' ? 'pend' : !f.online ? 'off' : f.play ? 'play' : 'on';
         const inRoom = room && room.members.some(m => m.uid === f.uid);
         el.innerHTML = `<i class="dot ${dot}"></i><b translate="no"><a href="#" class="plink" title="Ver su perfil">${esc(f.name)}</a></b><span class="st">${inRoom ? 'En tu sala' : stateText(f)}</span><span class="grow"></span>`;
+        el.querySelector('.plink').dataset.gamepadKey = 'friend:' + f.uid + ':profile';
         if (f.status === 'ok') el.querySelector('.plink').onclick = e => { e.preventDefault(); G.ProfileUI.show(f.uid); };
         else el.querySelector('.plink').onclick = e => e.preventDefault();
-        const btn = (txt, cls, fn) => {
+        const btn = (action, txt, cls, fn) => {
           const b = document.createElement('button');
+          b.dataset.gamepadKey = 'friend:' + f.uid + ':' + action;
           b.className = 'btn small ' + cls; b.textContent = txt; b.onclick = fn; el.appendChild(b); return b;
         };
         if (f.status === 'in') {
-          btn('Aceptar', 'gold', async () => { const r = await G.Social.accept(f.uid); msg(r.ok ? r.msg : r.error, !r.ok); });
-          btn('Rechazar', 'ghost', () => G.Social.remove(f.uid));
+          btn('accept', 'Aceptar', 'gold', async () => { const r = await G.Social.accept(f.uid); msg(r.ok ? r.msg : r.error, !r.ok); });
+          btn('reject', 'Rechazar', 'ghost', () => G.Social.remove(f.uid));
         } else if (f.status === 'out') {
-          btn('Cancelar', 'ghost', () => G.Social.remove(f.uid));
+          btn('cancel', 'Cancelar', 'ghost', () => G.Social.remove(f.uid));
         } else {
           if (f.online && !f.play && !inRoom && (!room || room.isHost)) {
-            btn('Invitar', 'gold', async () => {
+            btn('invite', 'Invitar', 'gold', async () => {
               const r = await G.Social.invite(f.uid);
               msg(r.ok ? r.msg : r.error, !r.ok);
               if (r.ok) G.LobbyUI.open();
             });
           }
-          btn('Quitar', 'ghost', () => { if (confirm('¿Quitar a ' + f.name + ' de tus amigos?')) G.Social.remove(f.uid); });
+          btn('remove', 'Quitar', 'ghost', () => { if (confirm('¿Quitar a ' + f.name + ' de tus amigos?')) G.Social.remove(f.uid); });
         }
         box.appendChild(el);
       }
@@ -236,6 +238,7 @@
           el.innerHTML = `<i class="dot ${f.play ? 'play' : 'on'}"></i><b translate="no">${esc(f.name)}</b><span class="st">${f.play ? 'Jugando' : 'En línea'}</span><span class="grow"></span>`;
           const b = document.createElement('button');
           b.className = 'btn small gold'; b.textContent = 'Invitar';
+          b.dataset.gamepadKey = 'lobby-invite:' + f.uid;
           b.onclick = async () => { const r = await G.Social.invite(f.uid); G.UI.toast(r.ok ? r.msg : r.error); };
           el.appendChild(b);
           inv.appendChild(el);

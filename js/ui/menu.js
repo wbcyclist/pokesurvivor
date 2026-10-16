@@ -117,6 +117,7 @@ G.MenuUI = (() => {
       const have = G.DEX.filter(p => p.gen === g && s.owned[p.dex]).length;
       const b = document.createElement('button');
       b.className = 'gen-tab' + (g === dexGen ? ' on' : '');
+      b.dataset.gamepadKey = 'dex-gen:' + g;
       b.innerHTML = `<b>${name}</b><small>${have}/${total}</small>`;
       b.onclick = () => { dexGen = g; openDex(); };
       tabs.appendChild(b);
@@ -129,6 +130,7 @@ G.MenuUI = (() => {
     for (const [k, label] of F) {
       const c = document.createElement('button');
       c.className = 'chip' + (k === dexFilter ? ' on' : '');
+      c.dataset.gamepadKey = 'dex-filter:' + k;
       c.innerHTML = k === 'shiny' ? G.Icons.html('shiny', 12) + ' Shiny'
                   : typeof label === 'number' ? G.Icons.rarity(label, 12) + ' ' + G.Gacha.RARITY_NAME[label] : label;
       c.onclick = () => { dexFilter = k; openDex(); };
@@ -152,6 +154,7 @@ G.MenuUI = (() => {
 
       const cell = document.createElement('div');
       cell.className = 'cell' + (own ? '' : ' locked') + (p.dex === dexSel ? ' on' : '');
+      cell.dataset.gamepadKey = 'dex:' + p.dex;
       cell.insertAdjacentHTML('beforeend', `<span class="no">${String(p.dex).padStart(3, '0')}</span>`);
       if (p.dex === s.partner) cell.insertAdjacentHTML('beforeend', `<span class="badge-r" title="Compañero">${G.Icons.html('crown', 14)}</span>`);
       else if (sh) cell.insertAdjacentHTML('beforeend', `<span class="badge-r" title="Tienes su shiny">${G.Icons.html('shiny', 12)}</span>`);
@@ -191,8 +194,8 @@ G.MenuUI = (() => {
     box.innerHTML = `
       <canvas id="dex-big" class="stage" width="220" height="190"></canvas>
       ${hasSh ? `<div class="seg">
-          <button class="${viewShiny ? '' : 'on'}" data-v="0">Normal</button>
-          <button class="${viewShiny ? 'on' : ''}" data-v="1">${G.Icons.html('shiny', 12)} Shiny</button></div>` : ''}
+          <button class="${viewShiny ? '' : 'on'}" data-gamepad-key="dex-normal" data-v="0">Normal</button>
+          <button class="${viewShiny ? 'on' : ''}" data-gamepad-key="dex-shiny" data-v="1">${G.Icons.html('shiny', 12)} Shiny</button></div>` : ''}
       <div class="center">
         <div style="color:var(--muted);font-size:13px">Nº ${String(p.dex).padStart(3, '0')} · ${GEN_NAMES[p.gen - 1]}</div>
         <h3>${own ? p.name : '???'}</h3>
@@ -269,8 +272,8 @@ G.MenuUI = (() => {
           <div class="pips">${Array.from({ length: u.max }, (_, i) => `<i class="${i < lvl ? 'on' : ''}"></i>`).join('')}</div>
         </div>
         <div class="upg-btns">
-          ${u.id === 'ban' && lvl > 0 ? `<button class="btn small" data-ban>Elegir (${banList().length}/${lvl})</button>` : ''}
-          <button class="btn small ${maxed ? '' : 'gold'}" data-buy data-sfx="none" ${maxed || s.coins < cost ? 'disabled' : ''}>
+          ${u.id === 'ban' && lvl > 0 ? `<button class="btn small" data-gamepad-key="upgrade:ban:picker" data-ban>Elegir (${banList().length}/${lvl})</button>` : ''}
+          <button class="btn small ${maxed ? '' : 'gold'}" data-gamepad-key="upgrade:${u.id}:buy" data-buy data-sfx="none" ${maxed || s.coins < cost ? 'disabled' : ''}>
           ${maxed ? 'Máx.' : `<span class="coin"></span> ${cost}`}</button></div>`;
       if (u.id === 'ban' && lvl > 0) el.querySelector('[data-ban]').onclick = () => { banOpen = !banOpen; renderUpgrades(); };
       el.querySelector('[data-buy]').onclick = () => {
@@ -307,7 +310,7 @@ G.MenuUI = (() => {
     el.innerHTML = `<b>Atajos de movimientos</b>
       <p class="sub" style="margin:2px 0 8px">Elige qué movimiento va siempre en cada hueco (teclas 1-4 o los iconos de abajo), para la memoria muscular. Si aún no tienes tantos movimientos, va al hueco más cercano.</p>
       <div class="bind-slots">${[0, 1, 2, 3].map(i => `<label class="bind-slot"><span>${i + 1}</span>
-        <select class="field" data-slot="${i}"><option value="">Libre</option>${ids.map(id =>
+        <select class="field" data-gamepad-key="move-slot:${i}" data-slot="${i}"><option value="">Libre</option>${ids.map(id =>
           `<option value="${id}" ${list[i] === id ? 'selected' : ''}>${G.I18n.moveName(G.Moves.BY_ID[id].name)}</option>`).join('')}</select></label>`).join('')}</div>`;
     el.querySelectorAll('select[data-slot]').forEach(sel => {
       sel.onchange = () => {
@@ -344,7 +347,7 @@ G.MenuUI = (() => {
     el.className = 'panel ban-picker';
     el.innerHTML = `<p class="sub" style="margin:0 0 8px">Toca los movimientos que no quieres que te salgan en las cartas (${list.length}/${max}). El movimiento de inicio no se puede vetar.</p>
       <div class="ban-moves">${ids.map(id => { const d = G.Moves.BY_ID[id]; const on = list.includes(id);
-        return `<button class="chip ${on ? 'on ban' : ''}" data-id="${id}">${G.Icons.html('move:' + id, 16)} ${G.I18n.moveName(d.name)}${on ? ' ' + G.Icons.html('ban', 14) : ''}</button>`; }).join('')}</div>`;
+        return `<button class="chip ${on ? 'on ban' : ''}" data-gamepad-key="ban:${id}" data-id="${id}">${G.Icons.html('move:' + id, 16)} ${G.I18n.moveName(d.name)}${on ? ' ' + G.Icons.html('ban', 14) : ''}</button>`; }).join('')}</div>`;
     el.querySelectorAll('[data-id]').forEach(b => {
       b.onclick = () => {
         const l = banList(), id = b.dataset.id, i = l.indexOf(id);

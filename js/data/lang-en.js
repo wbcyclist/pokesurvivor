@@ -4,6 +4,16 @@
  * son los oficiales en inglés.
  */
 G.I18n.add({
+  "El marcador de premios del gacha usa una fuente china nativa de 8 píxeles, sin negrita, para mantener los trazos legibles.": "The gacha prize display uses a native 8px Chinese font without bold, so strokes stay readable.",
+  "Estabilidad y rendimiento": "Stability and performance",
+  "Al cambiar de cuenta o entrar como invitado, una sincronización anterior ya no mezcla el progreso de otra sesión.": "Switching accounts or entering guest mode no longer lets an earlier sync merge progress from another session.",
+  "Los ataques de área ya no pueden golpear dos veces al mismo enemigo por una colisión en el índice espacial.": "Area attacks no longer hit the same enemy twice because of a spatial index collision.",
+  "Con pocos fotogramas por segundo, el tiempo y el movimiento mantienen su velocidad. Al volver de una pausa no se acumula tiempo pendiente.": "At low frame rates, game time and movement keep their speed. Resuming from a pause does not accumulate pending simulation time.",
+  "La experiencia ya no se pierde cuando hay demasiados objetos en el suelo. En cooperativo, los valores fusionados se actualizan para todos.": "XP is no longer lost when too many pickups are on the ground. In co-op, merged values update for everyone.",
+  "Los enemigos guardados durante una grieta se liberan al limpiar la partida.": "Enemies stored during a rift are released when the run is cleared.",
+  "Se limita la memoria de los sprites y sus destellos, y se eliminan versiones antiguas de la caché del navegador.": "Sprite and hit-flash memory is bounded, and old versions are removed from the browser cache.",
+  "Los proyectiles teledirigidos buscan enemigos cercanos con menos trabajo por fotograma.": "Homing projectiles search nearby enemies with less work per frame.",
+  "Los menús conservan la opción seleccionada y el desplazamiento al comprar, cambiar filtros o volver de una ventana. El mando también permite elegir tus Pokémon favoritos.": "Menus keep the selected option and scroll position after purchases, filter changes, and closing dialogs. You can also choose your favorite Pokemon with a controller.",
   "Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.": "Auto detects known models. The style sets symbols and confirm and back buttons. Attack positions stay fixed. Arrows show the positions of the four face buttons.",
   "Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.": "Menus use A / circle to confirm and B / cross to go back. Attack prompts are larger badges below the icons. Settings keep controller focus when an option changes.",
   "Invitado: guardado en este navegador": "Guest: saved in this browser",

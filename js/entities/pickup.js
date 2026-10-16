@@ -39,14 +39,17 @@ G.Pickups = (() => {
     if (G.Coop.isHost) G.Coop.pickupAdded(o);
     if (list.length > MAX) {
       // Fusiona los dos más antiguos de XP para no crecer sin límite.
-      const i = list.findIndex(p => p.kind === 'xp' || p.kind === 'xpBig');
-      if (i >= 0) {
-        const a = list.splice(i, 1)[0];
-        const j = list.findIndex(p => p.kind === 'xp' || p.kind === 'xpBig');
-        if (j >= 0) { list[j].value += a.value; list[j].kind = 'xpBig'; }
-        if (G.Coop.isHost) G.Coop.pickupGone(a.id);
+      const isXp = p => p.kind === 'xp' || p.kind === 'xpBig';
+      const i = list.findIndex(isXp);
+      const j = list.findIndex((p, index) => index > i && isXp(p));
+      if (i >= 0 && j >= 0) {
+        const a = list[i], b = list[j];
+        b.value += a.value; b.kind = 'xpBig';
+        list.splice(i, 1);
+        if (G.Coop.isHost) { G.Coop.pickupGone(a.id); G.Coop.pickupAdded(b); }
       } else {
-        const a = list.shift();
+        const index = list.findIndex(p => !isXp(p));
+        const a = list.splice(index, 1)[0];
         if (G.Coop.isHost) G.Coop.pickupGone(a.id);
       }
     }
@@ -54,7 +57,8 @@ G.Pickups = (() => {
 
   /** Copia de un objeto del anfitrión. */
   function addRemote(id, kind, x, y, value) {
-    if (list.some(p => p.id === id)) return;
+    const existing = list.find(p => p.id === id);
+    if (existing) { existing.kind = kind; existing.value = value; return; }
     const o = orb(kind, x, y, value);
     o.id = id;
     list.push(o);

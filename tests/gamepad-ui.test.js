@@ -7,14 +7,15 @@ const { test } = require('node:test');
 function element(id, { tags = ['button'], y = 0, z = 20 } = {}) {
   const classes = new Set();
   return {
-    id, tags, dataset: {}, children: [], disabled: false, clicks: 0, style: { zIndex: z, visibility: 'visible', pointerEvents: 'auto' },
+    id, tags, dataset: {}, children: [], parentElement: null, isConnected: true, scrollTop: 0, scrollLeft: 0, disabled: false, clicks: 0, style: { zIndex: z, visibility: 'visible', pointerEvents: 'auto' },
     classList: { add: c => classes.add(c), remove: c => classes.delete(c), contains: c => classes.has(c) },
     closest: () => classes.has('hidden') ? {} : null,
-    getClientRects: () => [1], getAttribute: () => null, hasAttribute: () => false,
+    getClientRects() { return this.isConnected ? [1] : []; }, getAttribute: () => null, hasAttribute: () => false,
     matches: selector => selector.split(',').some(s => tags.includes(s.trim())),
     getBoundingClientRect: () => ({ left: 0, top: y, width: 100, height: 30 }),
     querySelectorAll() { return this.children; },
-    focus() {}, scrollIntoView() {}, click() { this.clicks++; if (this.onclick) this.onclick(); }
+    contains(el) { return el === this || this.children.includes(el); },
+    focus() {}, scrollIntoView() { this.scrolls = (this.scrolls || 0) + 1; }, click() { this.clicks++; if (this.onclick) this.onclick(); }
   };
 }
 
@@ -29,14 +30,14 @@ function boot() {
       autoPause: () => calls.push(['autoPause']), togglePause: () => calls.push(['pause']) },
     Judgment: { cinematic: false, skip: () => calls.push(['skip']) },
     RunUI: { reroll: () => calls.push(['reroll']) }, UI: { toast: () => {} } },
-    document: { body: { classList: { toggle() {} } }, querySelectorAll: selector => selector.startsWith('.scr') ? panels : [] },
+    document: { body: { classList: { toggle() {} } }, addEventListener: (name, fn) => { listeners[name] = fn; }, getElementById: id => panels.find(p => p.id === id), querySelectorAll: selector => selector.startsWith('.scr') ? panels : [] },
     addEventListener: (name, fn) => { listeners[name] = fn; }, getComputedStyle: el => el.style
   });
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../js/ui/gamepad-ui.js'), 'utf8'), context);
   return {
     context, panels, pad, calls, listeners, ui: context.G.GamepadUI,
     update(ts = 0, action) { actions.clear(); if (action) actions.add(action); context.G.GamepadUI.update(ts); },
-    panel(id, children, z = 20) { const el = element(id, { z }); el.children = children; panels.push(el); return el; }
+    panel(id, children, z = 20) { const el = element(id, { z }); el.children = children; children.forEach(c => c.parentElement = el); panels.push(el); return el; }
   };
 }
 
@@ -135,4 +136,79 @@ test('pointer and keyboard interaction remove the gamepad focus until the next g
   app.update(2, 'confirm'); assert.equal(button.clicks, 1);
   app.listeners.keydown(); app.update(3);
   assert.equal(button.classList.contains('gamepad-focus'), false);
+});
+
+
+test('keeps keyed controls and nested scroll offsets after a menu rebuild', () => {
+  const app = boot(), close = element('close'), buy = element('', { y: 100 });
+  buy.dataset.gamepadKey = 'upgrade:hp:buy';
+  const panel = app.panel('scr-upgrades', [close, buy]);
+  app.update(0, 'reroll'); app.pad.direction = 'down'; app.update(1); app.pad.direction = '';
+  panel.scrollTop = 420; panel.scrollLeft = 20;
+  const next = element('', { y: 100 }); next.dataset.gamepadKey = buy.dataset.gamepadKey; next.parentElement = panel;
+  buy.onclick = () => { buy.isConnected = false; panel.children = [close, next]; panel.scrollTop = panel.scrollLeft = 0; };
+  app.update(2, 'confirm'); app.update(3);
+  assert.ok(next.classList.contains('gamepad-focus'));
+  assert.deepEqual([panel.scrollTop, panel.scrollLeft], [420, 20]);
+  assert.equal(next.scrolls || 0, 0, 'restoring a rebuilt control must not scroll it into view again');
+});
+
+test('restores focus and scroll when returning from a modal', () => {
+  const app = boot(), first = element('first'), chosen = element('chosen', { y: 100 });
+  const menu = app.panel('scr-dex', [first, chosen]);
+  app.update(0, 'reroll'); app.pad.direction = 'down'; app.update(1); app.pad.direction = '';
+  menu.scrollTop = 350;
+  const close = element('profile-close', { tags: ['button', '[data-gamepad-back]'] });
+  let modal;
+  chosen.onclick = () => { modal = app.panel('scr-profile', [close], 60); };
+  close.onclick = () => modal.classList.add('hidden');
+  app.update(2, 'confirm'); app.update(3); app.update(4, 'back'); menu.scrollTop = 0; app.update(5);
+  assert.ok(chosen.classList.contains('gamepad-focus'));
+  assert.equal(menu.scrollTop, 350);
+});
+
+test('uses a nearby enabled action when the selected purchase becomes disabled', () => {
+  const app = boot(), close = element('close', { tags: ['button', '[data-back]'] });
+  const buy = element('buy', { y: 300 }), other = element('other', { y: 350 });
+  app.panel('scr-upgrades', [close, buy, other]);
+  app.update(0, 'reroll'); app.pad.direction = 'down'; app.update(1); app.pad.direction = '';
+  buy.onclick = () => { buy.disabled = true; };
+  app.update(2, 'confirm'); app.update(3);
+  assert.ok(other.classList.contains('gamepad-focus'));
+  assert.equal(close.classList.contains('gamepad-focus'), false);
+});
+
+test('restores an asynchronously rebuilt row by identity after scrolling and reordering', () => {
+  const app = boot(), close = element('close'), row = element('', { y: 100 });
+  row.dataset.gamepadKey = 'friend:uid:invite';
+  const panel = app.panel('scr-friends', [close, row]);
+  app.update(0, 'reroll'); app.pad.direction = 'down'; app.update(1); app.pad.direction = '';
+  panel.scrollTop = 180; app.listeners.scroll({ target: panel });
+  const next = element('', { y: 200 }); next.dataset.gamepadKey = row.dataset.gamepadKey; next.parentElement = panel;
+  const newRow = element('new-row', { y: 100 }); newRow.parentElement = panel;
+  row.isConnected = false; panel.children = [close, newRow, next]; panel.scrollTop = 0;
+  app.update(2);
+  assert.ok(next.classList.contains('gamepad-focus'));
+  assert.equal(panel.scrollTop, 180);
+});
+
+test('keeps separate focus history for a nested view within the same screen', () => {
+  const app = boot(), close = element('close'), slot = element('favorite-slot', { y: 200 });
+  const pick = element('pick', { tags: ['.cell', '[data-gamepad-default]'], y: 100 });
+  const panel = app.panel('scr-goals', [close, slot]); pick.parentElement = panel;
+  slot.onclick = () => { panel.dataset.gamepadView = 'favorite'; panel.children = [close, pick]; slot.isConnected = false; panel.scrollTop = 0; };
+  pick.onclick = () => { panel.dataset.gamepadView = ''; panel.children = [close, slot]; slot.isConnected = true; pick.isConnected = false; };
+  app.update(0, 'reroll'); app.pad.direction = 'down'; app.update(1); app.pad.direction = ''; panel.scrollTop = 200;
+  app.update(2, 'confirm'); app.update(3); app.update(4, 'confirm'); app.update(5);
+  assert.ok(slot.classList.contains('gamepad-focus'));
+  assert.equal(panel.scrollTop, 200);
+});
+
+test('back returns from a nested picker before closing the containing screen', () => {
+  const app = boot(), close = element('close', { tags: ['button', '[data-back]'] });
+  const back = element('fav-back', { tags: ['button', '[data-gamepad-back]'] });
+  app.panel('scr-goals', [close, back]);
+  app.update(0, 'back');
+  assert.equal(back.clicks, 1);
+  assert.equal(close.clicks, 0);
 });

@@ -7,8 +7,9 @@ const { test } = require('node:test');
 const source = fs.readFileSync(path.join(__dirname, '../js/core/db.js'), 'utf8');
 const SAVE = 'ps.guest.save', ACTIVE = 'ps.guest.active';
 
-function boot(data = new Map(), { cloud = false, user = null, remote = null, failSDK = false } = {}) {
-  const events = {}, documentEvents = {}, requests = [];
+function boot(data = new Map(), { cloud = false, user = null, remote = null, failSDK = false, transaction = null } = {}) {
+  const events = {}, documentEvents = {}, requests = [], timers = new Map();
+  let timerId = 0;
   let blocked = false;
   const storage = {
     getItem: key => data.get(key) ?? null,
@@ -27,18 +28,19 @@ function boot(data = new Map(), { cloud = false, user = null, remote = null, fai
       DEX_BY: { 1: {}, 4: {} }, Upgrades: { BY: { hp: { max: 5 } } } },
     localStorage: storage, location: { protocol: 'http:', hostname: 'localhost' }, navigator: { onLine: true },
     window: {}, TextEncoder, Uint8Array, console: { warn() {} },
-    setTimeout: () => 1, clearTimeout() {},
+    setTimeout(fn, ms) { timers.set(++timerId, { fn, ms }); return timerId; }, clearTimeout: id => timers.delete(id),
     addEventListener(name, fn) { (events[name] ||= []).push(fn); },
     document: { hidden: false, visibilityState: 'visible',
       addEventListener(name, fn) { (documentEvents[name] ||= []).push(fn); },
       createElement: () => ({}), head: { appendChild(el) { queueMicrotask(() => failSDK ? el.onerror() : el.onload()); } } },
     firebase: { initializeApp() {}, auth: authFactory, firestore: () => ({
-      settings() {}, collection: () => ({ doc: uid => ({ get: async () => { requests.push(['read', uid]); return { exists: !!remote, data: () => ({ save: remote }) }; } }) }),
-      runTransaction() { requests.push(['write']); return Promise.resolve(); }
+      settings() {}, collection: () => ({ doc: uid => ({ get: async () => { requests.push(['read', uid]); return { exists: !!remote, data: () => ({ save: JSON.parse(JSON.stringify(remote)) }) }; } }) }),
+      runTransaction(fn) { requests.push(['write']); return transaction ? transaction(fn) : Promise.resolve(); }
     }) }
   });
+  context.firebase.firestore.FieldValue = { serverTimestamp: () => 0 };
   vm.runInContext(source, context);
-  return { db: context.G.DB, context, data, requests,
+  return { db: context.G.DB, context, data, requests, timers,
     block(value = true) { blocked = value; },
     emit(name) { for (const fn of events[name] || []) fn(); },
     hide() { context.document.hidden = true; context.document.visibilityState = 'hidden'; for (const fn of documentEvents.visibilitychange || []) fn(); } };
@@ -135,4 +137,93 @@ test('failed storage writes retain the last save, report failure, and can recove
   assert.equal(JSON.parse(app.data.get(SAVE)).coins, 734);
   app.block(false); assert.equal(app.db.commit(), true); assert.equal(app.db.storageOk, true);
   const next = boot(app.data); await next.db.ready(); assert.equal(next.db.save.coins, 999);
+});
+
+function deferred() {
+  let resolve, reject;
+  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  return { promise, resolve, reject };
+}
+
+async function cloudFixture(transaction) {
+  const seed = boot(); await seed.db.ready(); seed.db.playAsGuest(); seed.db.save.partner = 1; seed.db.commit();
+  const remote = JSON.parse(seed.data.get(SAVE));
+  const app = boot(new Map(), { cloud: true, user: { uid: 'old-account' }, remote, transaction });
+  await app.db.ready();
+  return app;
+}
+
+test('logout waits for an in-flight upload before opening a guest save', async () => {
+  const done = deferred();
+  const app = await cloudFixture(() => done.promise);
+  const upload = app.db.flush();
+  let loggedOut = false;
+  const logout = app.db.logout().then(() => { loggedOut = true; });
+  await Promise.resolve(); await Promise.resolve();
+  assert.equal(loggedOut, false);
+  done.resolve(); await upload; await logout;
+  app.db.playAsGuest(); assert.equal(app.db.syncState, 'local'); assert.equal(app.data.has('ps.cloud.null'), false);
+});
+
+test('an old transaction cannot read a new guest save or change its sync state', async () => {
+  const gate = deferred(), writes = [];
+  const app = await cloudFixture(fn => gate.promise.then(() => fn({
+    get: async () => ({ exists: false }), set: (ref, doc) => writes.push(doc)
+  })));
+  app.db.grant(4, 'old'); const upload = app.db.flush();
+  app.db.playAsGuest(); gate.resolve(); await upload;
+  assert.equal(writes.length, 0); assert.equal(app.db.owns(4), false);
+  assert.equal(app.db.syncState, 'local'); assert.equal(app.data.has('ps.cloud.null'), false);
+});
+
+test('an upload completion from a previous account cannot merge into the next account', async () => {
+  const done = deferred(), prepared = deferred();
+  const app = await cloudFixture(async fn => {
+    await fn({ get: async () => ({ exists: false }), set() {} });
+    prepared.resolve(); await done.promise;
+  });
+  app.db.grant(4, 'old'); const upload = app.db.flush(); await prepared.promise;
+  await app.db.login('Trainer', 'secret');
+  assert.equal(app.db.fb.uid, 'account'); assert.equal(app.db.owns(4), false);
+  done.resolve(); await upload;
+  assert.equal(app.db.owns(4), false); assert.equal(app.data.has('ps.cloudok.account'), false);
+  assert.equal(JSON.parse(app.data.get('ps.cloud.account')).owned[4], undefined);
+});
+
+test('upload retries use the original snapshot and preserve later local edits', async () => {
+  const read = deferred(), writes = [];
+  const app = await cloudFixture(fn => fn({ get: () => read.promise, set: (ref, doc) => writes.push(doc) }));
+  app.db.grant(1, 'before'); const upload = app.db.flush();
+  app.db.grant(4, 'during'); app.db.save.coins = 123; app.db.commit();
+  read.resolve({ exists: false }); await upload;
+  assert.equal(writes[0].save.owned[4], undefined);
+  assert.equal(app.db.owns(4), true); assert.equal(app.db.save.coins, 123);
+  assert.equal([...app.timers.values()].some(t => t.ms === 12000), false);
+});
+
+test('a timed-out transaction cannot write later or affect a new session', async () => {
+  const read = deferred(), writes = [];
+  const app = await cloudFixture(fn => fn({ get: () => read.promise, set: (ref, doc) => writes.push(doc) }));
+  const upload = app.db.flush();
+  [...app.timers.values()].find(t => t.ms === 12000).fn(); await upload;
+  app.db.playAsGuest(); read.resolve({ exists: false });
+  for (let i = 0; i < 5; i++) await Promise.resolve();
+  assert.equal(writes.length, 0); assert.equal(app.db.syncState, 'local');
+});
+
+test('an old completion cannot clear the next account upload lock', async () => {
+  const done = [deferred(), deferred()], prepared = [deferred(), deferred()]; let count = 0;
+  const app = await cloudFixture(async fn => {
+    const index = count++;
+    await fn({ get: async () => ({ exists: false }), set() {} });
+    prepared[index].resolve(); await done[index].promise;
+  });
+  const oldUpload = app.db.flush(); await prepared[0].promise;
+  await app.db.login('Trainer', 'secret');
+  const newUpload = app.db.flush(); await prepared[1].promise;
+  done[0].resolve(); await oldUpload;
+  const duplicate = app.db.flush(); await Promise.resolve();
+  assert.equal(count, 2);
+  done[1].resolve(); await newUpload; await duplicate;
+  assert.equal(count, 2); assert.equal(app.db.fb.uid, 'account');
 });

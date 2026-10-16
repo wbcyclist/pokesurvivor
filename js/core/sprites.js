@@ -25,10 +25,22 @@ G.Sprites = (() => {
    * que ctx.filter en cada dibujo, que era lo que más ralentizaba con muchos
    * enemigos a la vez.
    */
-  const whites = new WeakMap();
+  const whites = new Map();
+  const MAX_WHITE_BYTES = 32 * 1024 * 1024, MAX_WHITES = 64;
+  let whiteBytes = 0;
+  function dropWhite(img) {
+    const c = whites.get(img);
+    if (!c) return;
+    whiteBytes -= c.width * c.height * 4;
+    whites.delete(img);
+    c.width = c.height = 0;
+  }
   function white(img) {
     let c = whites.get(img);
-    if (c) return c;
+    if (c) { whites.delete(img); whites.set(img, c); return c; }
+    const bytes = img.width * img.height * 4;
+    if (!Number.isFinite(bytes) || bytes <= 0 || bytes > MAX_WHITE_BYTES) return img;
+    while ((whiteBytes + bytes > MAX_WHITE_BYTES || whites.size >= MAX_WHITES) && whites.size) dropWhite(whites.keys().next().value);
     c = document.createElement('canvas');
     c.width = img.width; c.height = img.height;
     const x = c.getContext('2d');
@@ -36,7 +48,7 @@ G.Sprites = (() => {
     x.globalCompositeOperation = 'source-in';
     x.fillStyle = '#ffffff';
     x.fillRect(0, 0, c.width, c.height);
-    whites.set(img, c);
+    whites.set(img, c); whiteBytes += bytes;
     return c;
   }
 
@@ -65,17 +77,19 @@ G.Sprites = (() => {
     return m.a[name] || null;
   }
 
-  // Hojas en memoria como mucho. Antes no se soltaba ninguna: en partidas de
-  // más de una hora pasaban cientos de especies, se llenaba la memoria gráfica
-  // y la pantalla se quedaba en negro hasta que el navegador recargaba la página.
-  const MAX_SHEETS = 200, IDLE_MS = 20000;   // ~0,66 MB cada una ya dibujada: ~130 MB
-  function evict(now) {
-    const old = [...sheets].filter(([, s]) => now - s.at > IDLE_MS).sort((a, b) => a[1].at - b[1].at);
-    const drop = old.slice(0, Math.max(sheets.size - Math.floor(MAX_SHEETS * 0.75), 0));
-    for (const [k, s] of drop) {
-      sheets.delete(k);
-      s.img.onload = s.img.onerror = null;
-      s.img.src = '';                 // suelta la imagen decodificada
+  const MAX_SHEETS = 200, MAX_SHEET_BYTES = 96 * 1024 * 1024;
+  let sheetBytes = 0;
+  function release(k, s) {
+    sheets.delete(k); sheetBytes -= s.bytes;
+    dropWhite(s.img);
+    s.ready = false; s.evicted = true;
+    s.img.onload = s.img.onerror = null;
+    s.img.src = '';
+  }
+  function evict(bytes = 0, count = 0, keep = null) {
+    for (const [k, s] of sheets) {
+      if (sheets.size + count <= MAX_SHEETS && sheetBytes + bytes <= MAX_SHEET_BYTES) break;
+      if (s !== keep) release(k, s);
     }
   }
 
@@ -86,20 +100,31 @@ G.Sprites = (() => {
     if (!name) return null;
     const k = dex + '/' + name + (shiny ? '/s' : '');
     let s = sheets.get(k);
-    const now = Date.now();
     if (s) {
-      s.at = now;
+      sheets.delete(k); sheets.set(k, s);
       // Si la descarga se cortó (red mala, servidor saturado), reintenta más tarde.
       if (s.failed && performance.now() > s.retryAt) { s.failed = false; s.img.src = s.src + '?r=' + s.tries; }
       return s;
     }
-    if (sheets.size >= MAX_SHEETS) evict(now);
-    s = { ready: false, failed: false, img: new Image(), tries: 0, retryAt: 0, at: now,
+    const geometry = animMeta(dex, name, shiny);
+    const bytes = geometry.w * geometry.n * geometry.h * geometry.r * 4;
+    if (!Number.isFinite(bytes) || bytes <= 0 || bytes > MAX_SHEET_BYTES) return null;
+    evict(bytes, 1);
+    s = { ready: false, failed: false, evicted: false, img: new Image(), tries: 0, retryAt: 0, bytes,
           src: `assets/pokemon/${dex}/${shiny ? 's/' : ''}${name}.png` };
-    s.img.onload = () => { s.ready = true; };
-    s.img.onerror = () => { s.failed = true; s.retryAt = performance.now() + 1000 * Math.min(8, 2 ** s.tries++); };
+    s.img.onload = () => {
+      if (sheets.get(k) !== s) return;
+      const actual = (s.img.naturalWidth || s.img.width) * (s.img.naturalHeight || s.img.height) * 4;
+      if (actual > 0) { sheetBytes += actual - s.bytes; s.bytes = actual; }
+      if (s.bytes > MAX_SHEET_BYTES) { release(k, s); return; }
+      evict(0, 0, s); s.ready = true;
+    };
+    s.img.onerror = () => {
+      if (sheets.get(k) !== s) return;
+      s.failed = true; s.retryAt = performance.now() + 1000 * Math.min(8, 2 ** s.tries++);
+    };
+    sheets.set(k, s); sheetBytes += bytes;
     s.img.src = s.src;
-    sheets.set(k, s);
     return s;
   }
 
@@ -112,7 +137,7 @@ G.Sprites = (() => {
     return new Promise(res => {
       const t0 = performance.now();
       (function check() {
-        if (hs.every(h => h.ready || h.failed) || performance.now() - t0 > timeout) return res();
+        if (hs.every(h => h.ready || h.failed || h.evicted) || performance.now() - t0 > timeout) return res();
         setTimeout(check, 50);
       })();
     });
@@ -259,5 +284,5 @@ G.Sprites = (() => {
   }
 
   return { PX, meta, hasShiny, hovers, white, animMeta, sheet, preload, dirFromAngle, bodyRadius, bodyHeight,
-           drawShadow, Animator, ANIMS, get sheetCount() { return sheets.size; } };
+           drawShadow, Animator, ANIMS, get sheetCount() { return sheets.size; }, get cacheBytes() { return sheetBytes + whiteBytes; } };
 })();

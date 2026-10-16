@@ -1,5 +1,15 @@
 /* Simplified Chinese. Spanish source text is the key; {x} preserves argument order. */
 G.I18n.add({
+  "El marcador de premios del gacha usa una fuente china nativa de 8 píxeles, sin negrita, para mantener los trazos legibles.": "抽奖机奖品显示区改用原生 8 px 中文字体并取消加粗，避免笔画挤在一起。",
+  "Estabilidad y rendimiento": "稳定性与性能优化",
+  "Al cambiar de cuenta o entrar como invitado, una sincronización anterior ya no mezcla el progreso de otra sesión.": "切换账号或进入游客模式后，旧会话的同步结果不会再混入当前存档。",
+  "Los ataques de área ya no pueden golpear dos veces al mismo enemigo por una colisión en el índice espacial.": "修复空间索引冲突导致范围攻击重复命中同一敌人的问题。",
+  "Con pocos fotogramas por segundo, el tiempo y el movimiento mantienen su velocidad. Al volver de una pausa no se acumula tiempo pendiente.": "低帧率时，游戏计时与移动速度保持正常；暂停后恢复不会补算暂停期间的时间。",
+  "La experiencia ya no se pierde cuando hay demasiados objetos en el suelo. En cooperativo, los valores fusionados se actualizan para todos.": "地面掉落过多时不再丢失经验，联机队友也会收到合并后的经验值。",
+  "Los enemigos guardados durante una grieta se liberan al limpiar la partida.": "清理单局状态时，会释放裂隙暂存的敌人对象。",
+  "Se limita la memoria de los sprites y sus destellos, y se eliminan versiones antiguas de la caché del navegador.": "限制精灵图集和受击闪白图的内存占用，并清理浏览器缓存中的旧版本。",
+  "Los proyectiles teledirigidos buscan enemigos cercanos con menos trabajo por fotograma.": "追踪弹改为搜索附近敌人，减少每帧的计算量。",
+  "Los menús conservan la opción seleccionada y el desplazamiento al comprar, cambiar filtros o volver de una ventana. El mando también permite elegir tus Pokémon favoritos.": "购买、切换筛选条件或关闭弹窗后，菜单会保留当前选项与滚动位置。也可以用手柄选择喜爱的宝可梦。",
   "Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.": "自动识别已知型号。样式决定按键符号和确认、取消键，招式按键的位置保持固定。箭头表示右侧四个按键的位置。",
   "Los menús usan A / ○ para confirmar y B / × para volver. Las teclas de ataque son más grandes y aparecen debajo de los iconos, con fondo y borde. Los ajustes conservan el foco del mando al cambiar una opción.": "菜单中使用 A / ○ 确认、B / × 取消。招式按键提示已移到图标下方，采用更大的带背景和边框徽标。修改设置后，手柄焦点会保留在当前选项。",
   "Invitado: guardado en este navegador": "游客：已保存在此浏览器",

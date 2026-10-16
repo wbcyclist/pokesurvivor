@@ -585,20 +585,26 @@ G.Game = (() => {
   }
 
   function frame(ts) {
-    const real = (ts - last) / 1000 || 0;
-    const dt = Math.min(1 / 30, real) * speedK;
+    const real = Math.max(0, (ts - last) / 1000 || 0);
+    const dt = Math.min(0.25, real * speedK), wasPlaying = state === 'playing';
     last = ts;
     if (state === 'playing') G.Settings.sample(real);
     fpsAcc += real; fpsN++;
     if (fpsAcc >= 0.5) { fpsShown = Math.round(fpsN / fpsAcc); fpsAcc = 0; fpsN = 0; }
-    frameDt = state === 'playing' ? dt : 0;
+    frameDt = 0;
 
     G.Gamepad.poll();
     G.GamepadUI.update(ts);
     handleKeys();
 
-    if (state === 'playing') update(dt);
-    else if (pl && state !== 'ui') { G.FX.update(dt * 0.25); pl.anim.update(dt * 0.25); }
+    if (state === 'playing' && wasPlaying) {
+      let remaining = dt;
+      while (remaining > 1e-8 && state === 'playing') {
+        const step = Math.min(1 / 30, remaining);
+        update(step);
+        frameDt += step; remaining -= step;
+      }
+    } else if (pl && state !== 'ui') { G.FX.update(dt * 0.25); pl.anim.update(dt * 0.25); }
     // La red se atiende siempre (también con las cartas de nivel abiertas).
     if (G.Coop.active && pl && state !== 'ui' && state !== 'over') G.Coop.tick(dt);
 
@@ -658,7 +664,7 @@ G.Game = (() => {
     G.EnemyMgr.update(dt, all);
     G.EnemyMgr.rebuildGrid();
     G.Combat.tick(dt, pl, time);
-    G.Projectiles.update(dt, pl, G.EnemyMgr.all());
+    G.Projectiles.update(dt, pl);
     G.Combat.resolve(dt, pl, time);
     G.Combat.updateFields(dt);
     G.Pickups.update(dt, all, onCollect);

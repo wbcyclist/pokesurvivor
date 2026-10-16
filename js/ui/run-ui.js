@@ -43,6 +43,7 @@ G.RunUI = (() => {
     list.forEach((c, i) => {
       const el = document.createElement('div');
       el.className = 'card';
+      el.dataset.gamepadKey = 'reward:' + i;
       const tag = c.type === 'new'
         ? `<span class="tag-chip" style="background:${c.color}">Nuevo · ${c.tag}</span>`
         : c.type === 'up' || c.type === 'evo'
@@ -148,6 +149,7 @@ G.RunUI = (() => {
       const it = G.Items.BY[id];
       const el = document.createElement('div');
       el.className = 'card' + (i === 1 ? ' evo' : '');
+      el.dataset.gamepadKey = 'item:' + i;
       el.innerHTML = `<div class="ico">${G.Icons.html(id, 36)}</div>
         <div class="txt"><div class="nm">${verb} ${it.name}</div><div class="ds">${it.desc}</div></div>
         <div class="key">${i + 1}</div>`;
@@ -189,6 +191,7 @@ G.RunUI = (() => {
         : m.desc || '';
       const el = document.createElement('div');
       el.className = 'card' + (opt.mode === 'add' || step2 ? ' bond' : '');
+      el.dataset.gamepadKey = 'bond:' + m.id;
       el.innerHTML =
         `<div class="ico" style="background:${col}33">${G.Icons.html('move:' + m.id, 32)}</div>
          <div class="txt"><div class="nm">${G.I18n.moveName(m.name)} <span class="tag-chip" style="background:${col}">Nv.${m.lvl}</span></div><div class="ds">${desc}</div></div>

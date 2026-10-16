@@ -743,7 +743,7 @@
     const grid = new Map();
 
     const byId = new Map();
-    function clear() { list = []; corpses = []; grid.clear(); byId.clear(); }
+    function clear() { list = []; corpses = []; stashed = null; grid.clear(); byId.clear(); }
     function all() { return list; }
     function add(e) {
       list.push(e);
@@ -804,7 +804,7 @@
       if (died) corpses.push(e);
     }
 
-    function key(cx, cy) { return cx * 73856093 ^ cy * 19349663; }
+    function key(cx, cy) { return cx + ',' + cy; }
 
     function rebuildGrid() {
       grid.clear();

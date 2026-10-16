@@ -68,7 +68,6 @@ G.SettingsUI = (() => {
   function render() {
     document.querySelectorAll('#set-tabs .gen-tab').forEach(b => b.classList.toggle('on', b.dataset.t === tab));
     const box = $('set-body');
-    const scrollTop = box.querySelector('.gamepad-focus') ? box.scrollTop : 0;
     if (tab === 'sound') {
       box.innerHTML = section('Sonido') + '<div id="set-sound" class="sound-inline"></div>';
       G.UI.soundControls($('set-sound'));
@@ -136,7 +135,6 @@ G.SettingsUI = (() => {
            </div>`;
     }
     wire(box);
-    box.scrollTop = scrollTop;
   }
 
   function renderAccount(box) {

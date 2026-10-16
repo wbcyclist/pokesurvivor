@@ -88,7 +88,7 @@ G.UI = (() => {
         <input type="range" min="0" max="100" value="${Math.round(st.music * 100)}" data-k="music"></div>
       <div class="snd-row">${G.Icons.html('sound', 18)}<span>Efectos</span>
         <input type="range" min="0" max="100" value="${Math.round(st.sfx * 100)}" data-k="sfx"></div>
-      <button class="btn small ${st.muted ? 'gold' : ''}" data-mute>${st.muted ? 'Activar sonido' : 'Silenciar todo'}</button>`;
+      <button class="btn small ${st.muted ? 'gold' : ''}" data-gamepad-key="sound-mute" data-mute>${st.muted ? 'Activar sonido' : 'Silenciar todo'}</button>`;
     box.querySelectorAll('input[type=range]').forEach(r => {
       r.oninput = () => G.Audio.setVolume(r.dataset.k, r.value / 100);
       r.onchange = () => G.Audio.sfx('click');

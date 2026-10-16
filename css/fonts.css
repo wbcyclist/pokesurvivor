@@ -1,4 +1,18 @@
-/* Fusion Pixel 12px proportional, release 2026.09.25 (OFL-1.1). */
+/* Fusion Pixel 8px and 12px proportional, release 2026.09.25 (OFL-1.1). */
+@font-face {
+  font-family: 'Fusion Pixel Small SC';
+  src: url('../assets/fonts/fusion-pixel-8px-2026.09.25/fusion-pixel-8px-proportional-zh_hans.otf.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Fusion Pixel Small TC';
+  src: url('../assets/fonts/fusion-pixel-8px-2026.09.25/fusion-pixel-8px-proportional-zh_tw.otf.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 @font-face {
   font-family: 'Fusion Pixel SC';
   src: url('../assets/fonts/fusion-pixel-12px-2026.09.25/fusion-pixel-12px-proportional-zh_hans.otf.woff2') format('woff2');
@@ -16,8 +30,10 @@
 
 :lang(zh-CN) {
   --font-chinese: 'Fusion Pixel SC', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
+  --font-small: 'Fusion Pixel Small SC', var(--font-chinese);
 }
 :lang(zh-TW) {
   --font-chinese: 'Fusion Pixel TC', 'PingFang TC', 'Microsoft JhengHei', 'Noto Sans CJK TC', system-ui, sans-serif;
+  --font-small: 'Fusion Pixel Small TC', var(--font-chinese);
 }
 [lang|='zh'] { font-family: var(--font-chinese); }

@@ -39,7 +39,7 @@ G.Projectiles = (() => {
   /** Borra los orbes de un jugador (o todos) al cambiar de movimiento activo. */
   function clearOrbs(owner) { list = list.filter(p => !p.orb || (owner && p.owner !== owner)); }
 
-  function update(dt, player, enemies) {
+  function update(dt, player) {
     for (let i = list.length - 1; i >= 0; i--) {
       const p = list[i];
       p.t += dt;
@@ -70,7 +70,14 @@ G.Projectiles = (() => {
 
       // Teledirigido: curva la velocidad hacia el enemigo más cercano.
       if (p.homing > 0 && p.friendly) {
-        const tg = nearest(enemies, p.x, p.y, 340);
+        p.targetT = (p.targetT || 0) - dt;
+        const old = p.target;
+        const invalid = old && (old.dead || G.EnemyMgr.get(old.id) !== old || G.U.dist2(p.x, p.y, old.x, old.cy()) >= 340 * 340);
+        if (p.targetT <= 0 || invalid) {
+          p.target = nearest(G.EnemyMgr.queryCircle(p.x, p.y, 340), p.x, p.y, 340);
+          p.targetT = 0.12;
+        }
+        const tg = p.target;
         if (tg) {
           const [dx, dy] = G.U.norm(tg.x - p.x, tg.cy() - p.y);
           const sp = Math.hypot(p.vx, p.vy);

@@ -261,6 +261,7 @@ G.DB = (() => {
   }
 
   function beginLocal(k, name) {
+    resetSync();
     key = k; user = name; guest = false;
     save = loadLocal(k, name);
     write(K_SES, k);
@@ -313,7 +314,7 @@ G.DB = (() => {
   // =====================================================================
 
   let auth = null, fs = null, rtdb = null, uid = null, unlisten = null;
-  let pushT = 0, retryT = 0, pending = false, pushing = null, lastPush = 0;
+  let pushT = 0, retryT = 0, pending = false, pushing = null, lastPush = 0, syncSession = 0;
   // Como mucho una subida cada 30 min (con miles de jugadores, cada 5 min
   // eran decenas de miles de escrituras por hora); lo que cuesta algo
   // (gacha, mejoras), a los 30 s. La copia local se guarda siempre al momento (y se fusiona con la
@@ -408,17 +409,21 @@ G.DB = (() => {
 
   /** Abre la partida de la nube de un usuario recién autenticado. */
   async function openCloud(u, opts = {}) {
-    uid = u.uid;
+    resetSync();
+    const session = syncSession, account = u.uid;
+    uid = null;
     if (G.Signups) G.Signups.report(u);          // tope de cuentas del mes (net/signups.js)
-    const cached = read(K_CLOUD + uid);
+    const cached = read(K_CLOUD + account);
     let remote = null, online = true;
     try {
-      const snap = await docRef().get();
+      const snap = await fs.collection('saves').doc(account).get();
       remote = snap.exists ? snap.data().save : null;
     } catch (e) {
       if (!cached) throw e;                // sin conexión y sin copia: no hay nada que abrir
       online = false;
     }
+    if (session !== syncSession) throw new Error('Session changed');
+    uid = account;
     let s = merge(cached && migrate(cached), remote && migrate(remote));
     if (!s) s = newSave(opts.name || displayNameOf(u));
     if (opts.legacy) {
@@ -460,7 +465,11 @@ G.DB = (() => {
   function pushNow() {
     if (mode !== 'cloud' || guest || !save || !uid) return Promise.resolve();
     // Si ya hay una subida en marcha, se hace otra justo después (para lo que haya cambiado mientras).
-    if (pushing) { pending = true; return pushing.then(() => (pending ? pushNow() : undefined)); }
+    if (pushing) {
+      const session = syncSession;
+      pending = true;
+      return pushing.then(() => (session === syncSession && pending ? pushNow() : undefined));
+    }
     clearTimeout(pushT); pushT = 0; pushDue = 0;
     if (navigator.onLine === false) {
       pending = true; setSync('offline'); scheduleRetry();
@@ -474,33 +483,45 @@ G.DB = (() => {
     pending = false;
     lastPush = Date.now();
     setSync('syncing');
-    let merged = null;
+    const session = syncSession, account = uid, local = save, snapshot = plain(save), ref = docRef();
+    const current = () => session === syncSession && account === uid && local === save && !guest;
+    let merged = null, expired = false, timeoutId;
+    const checkSession = () => {
+      if (expired || !current()) throw { code: 'cancelled' };
+    };
     const tr = fs.runTransaction(async tx => {
-      const ref = docRef();
+      checkSession();
       const snap = await tx.get(ref);
+      checkSession();
       const remote = snap.exists ? migrate(snap.data().save) : null;
-      merged = remote ? merge(plain(save), remote) : plain(save);
+      merged = remote ? merge(plain(snapshot), remote) : plain(snapshot);
       const doc = { save: merged, updatedAt: firebase.firestore.FieldValue.serverTimestamp(), v: VERSION };
       if (snap.exists && snap.data().ban === true) doc.ban = true;
       tx.set(ref, doc);
     });
     // Si la red se cae a medias, Firestore puede quedarse esperando: tope de 12 s.
-    const timeout = new Promise((_, rej) => setTimeout(() => rej({ code: 'unavailable' }), 12000));
+    const timeout = new Promise((_, rej) => {
+      timeoutId = setTimeout(() => { expired = true; rej({ code: 'unavailable' }); }, 12000);
+    });
     let failed = false;
     pushing = Promise.race([tr, timeout]).then(() => {
+      if (!current()) return;
       fails = 0;
-      write(K_OK + uid, Date.now());
+      write(K_OK + account, Date.now());
       // Se FUSIONA con lo de ahora (no se sobrescribe): si has cambiado algo
       // mientras se subía (elegir compañero, una compra...), no se pierde.
       if (merged && save) { applyInPlace(merge(plain(save), merged)); write(K_CLOUD + uid, save); }
       setSync(pending ? 'pending' : 'ok');
       if (G.UI && G.UI.refreshCoins) G.UI.refreshCoins();
     }).catch(e => {
+      if (!current()) return;
       console.warn('[DB] no se pudo sincronizar:', e.code || e.message);
       pending = true; failed = true;
       setSync(navigator.onLine === false || e.code === 'unavailable' ? 'offline' : 'pending');
       scheduleRetry();
     }).finally(() => {
+      clearTimeout(timeoutId);
+      if (!current()) return;
       pushing = null;
       // (Si ha fallado, el reintento ya está programado con su espera creciente.)
       if (!failed && pending && syncState === 'pending') schedulePush(Math.max(1500, PUSH_GAP - (Date.now() - lastPush)));
@@ -510,6 +531,12 @@ G.DB = (() => {
 
   // Si ya había una subida programada antes, se respeta (una compra no espera a la siguiente partida).
   let pushDue = 0;
+  function resetSync() {
+    syncSession++;
+    clearTimeout(pushT); clearTimeout(retryT);
+    pushT = retryT = pushDue = 0;
+    pending = false; pushing = null; fails = 0;
+  }
   function schedulePush(ms) {
     const due = Date.now() + ms;
     if (pushT && pushDue && pushDue <= due) return;
@@ -641,6 +668,7 @@ G.DB = (() => {
   }
 
   function beginGuest(s) {
+    resetSync();
     user = 'Invitado'; key = null; guest = true; uid = null;
     save = s;
     setSync('local');
@@ -676,6 +704,7 @@ G.DB = (() => {
       return storageOk;
     }
     if (mode === 'local') return write(K_SAVE + key, save);
+    if (!uid) return false;
     write(K_CLOUD + uid, save);
     pending = true;
     setSync('pending');
@@ -691,14 +720,14 @@ G.DB = (() => {
     for (const fn of leaveHooks) { try { await fn('logout'); } catch (e) { /* nada */ } }
     if (guest) commit();
     if (mode === 'cloud' && !guest && save) {
-      if (pending) { try { await pushNow(); } catch (e) { /* queda la copia local */ } }
+      if (pending || pushing) { try { await (pending ? pushNow() : pushing); } catch (e) { /* queda la copia local */ } }
       stopListening();
       try { await auth.signOut(); } catch (e) { /* nada */ }
     } else if (mode === 'local' && !guest) {
       commit();
       remove(K_SES);
     }
-    clearTimeout(pushT); clearTimeout(retryT);
+    resetSync();
     remove(K_GUEST_ACTIVE);
     user = key = save = uid = null; guest = false; pending = false;
     setSync(mode === 'cloud' ? 'ok' : 'local');
@@ -757,7 +786,8 @@ G.DB = (() => {
       } else {
         await cu.reauthenticateWithPopup(new firebase.auth.GoogleAuthProvider());
       }
-      clearTimeout(pushT); clearTimeout(retryT); pending = false;
+      if (pushing) await pushing;
+      resetSync();
       stopListening();
       for (const fn of leaveHooks) await fn('delete');
       await docRef().delete();
