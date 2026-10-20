@@ -126,3 +126,24 @@ test('manual aim returns to automatic targeting after the right stick is release
   G.Gamepad.aim = () => null; assert.equal(player.handAim(), null);
   G.Input.mouseMovedAt = 1500; assert.equal(player.handAim(), -Math.PI / 2);
 });
+
+test('touch devices ignore manual aim saved by another input mode', () => {
+  const { G, player } = boot();
+  G.Settings = { touch: true, get: () => true };
+  G.Gamepad = { aim: () => { assert.fail('touch mode must use automatic targeting'); } };
+  assert.equal(player.handAim(), null);
+});
+
+test('new projectile moves gain projectiles and keep evolved shots facing forward', () => {
+  const { G } = boot();
+  for (const id of ['acid-spray', 'electro-ball', 'seed-bomb', 'signal-beam', 'power-gem',
+    'mist-ball', 'energy-ball', 'ice-shard', 'shadow-sneak', 'draining-kiss']) {
+    const move = G.Moves.instance(id);
+    assert.equal(move.count, 1, id);
+    while (G.Moves.levelUp(move)) {}
+    assert.ok(move.count > 1, id + ' must gain projectiles');
+    G.Moves.evolve(move);
+    const outerAngle = 0.5 * move.spread * move.count;
+    assert.ok(outerAngle < Math.PI / 2, id + ' must fire forward');
+  }
+});

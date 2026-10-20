@@ -43,6 +43,11 @@ que elijas jugar como invitado. Las cuentas tienen su propia partida; no se fusi
 con la de invitado. El guardado local depende del navegador y de la dirección web:
 borrar los datos del sitio o cambiar de navegador o de dirección no conserva esa copia.
 
+Con una cuenta en la nube, pulsa **Guardar** antes de cambiar de aparato o borrar
+los datos del navegador. También se intenta subir antes de una actualización y al
+cerrar sesión; no hay guardado periódico ni subida al cerrar la pestaña. Esta rama
+conserva la fusión por transacción para no perder progreso de otros aparatos.
+
 | Tecla | Acción |
 |---|---|
 | `W` `A` `S` `D` / flechas | Moverse |

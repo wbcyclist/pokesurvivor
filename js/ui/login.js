@@ -70,12 +70,10 @@ G.LoginUI = (() => {
    */
   const cloud = () => G.DB.mode === 'cloud' && !G.DB.guest;
   const NOTES = [
-    { key: 'ps.savenote.1', when: cloud,              // botón Guardar (18-10-2026)
+    { key: 'ps.savenote.2', when: cloud,              // guardado manual (20-10-2026)
       title: ['Importante: guarda tu partida', 'Important: save your game'],
-      body: ['<p>Debido a problemas con el guardado, a partir de ahora la partida se guarda en la nube automáticamente <b>cada 30 minutos</b>.</p>' +
-             '<p>Hemos incorporado un botón <b class="gold">Guardar</b> arriba a la derecha. Úsalo antes de cerrar el juego o de cambiar de aparato: <b>es muy importante para no perder tu partida</b>.</p>',
-             '<p>Because of problems with saving, from now on your game is saved to the cloud automatically <b>every 30 minutes</b>.</p>' +
-             '<p>We have added a <b class="gold">Save</b> button at the top right. Use it before closing the game or switching devices: <b>it is very important so you don’t lose your progress</b>.</p>'] },
+      body: ['Guardado en la nube: ahora la partida sólo se sube a la nube cuando pulsas el botón Guardar de arriba (y antes de una actualización del juego). En este navegador se sigue guardando todo al momento. Si juegas en otro aparato o vas a borrar los datos del navegador, pulsa Guardar antes.',
+             'Cloud saves: your progress is now uploaded only when you press Save at the top (and before a game update). This browser still saves all progress immediately. Press Save before switching devices or clearing browser data.'] },
     { key: 'ps.ranknote.1', when: () => cloud() && ((G.DB.save.stats || {}).runs || 0) > 0,   // rankings desde cero (18-10-2026)
       title: ['Los rankings se han reiniciado', 'The leaderboards have been reset'],
       body: ['<p>Hemos ajustado la <b>Sentencia de Arceus</b>: huir corriendo con toda la velocidad subida y el veneno ya no sirven para aguantar para siempre.</p>' +

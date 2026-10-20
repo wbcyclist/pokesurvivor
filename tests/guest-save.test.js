@@ -270,51 +270,51 @@ test('device ledgers merge earned and spent currency once across uploads and rel
   assert.equal(next.db.save.coins, 450); assert.equal(next.db.save.tickets.t1, 9);
 });
 
-test('returning after thirty minutes pulls cloud progress only after the run ends', async () => {
+test('cloud progress stays local until an explicit save, including page hide and long tab absence', async () => {
   const app = await cloudFixture();
-  app.context.G.Game = { state: 'playing' };
-  const remote = JSON.parse(JSON.stringify(app.db.save)); remote.owned[4] = { at: 1, from: 'remote' };
-  app.setRemote(remote); app.hide(); app.advance(30 * 60000 + 1); app.show();
-  assert.equal(app.requests.filter(r => r[0] === 'read').length, 1);
-  const retry = [...app.timers.values()].find(t => t.ms === 20000);
-  assert.ok(retry); app.context.G.Game.state = 'ui'; retry.fn();
-  for (let i = 0; i < 5; i++) await Promise.resolve();
-  assert.equal(app.db.owns(4), true);
-  assert.equal(app.requests.filter(r => r[0] === 'read').length, 2);
-  app.show(); assert.equal(app.requests.filter(r => r[0] === 'read').length, 2);
-});
-
-test('a delayed cloud pull cannot change a new session for the same account', async () => {
-  const app = await cloudFixture(), gate = deferred();
-  await app.db.login('Trainer', 'secret');
-  const stale = JSON.parse(JSON.stringify(app.db.save)); stale.owned[4] = { at: 1, from: 'old-session' };
-  app.setRead(() => gate.promise);
-  app.hide(); app.advance(30 * 60000 + 1); app.show();
-  assert.equal(app.requests.filter(r => r[0] === 'read').length, 3);
-  app.setRead(null); await app.db.logout(); await app.db.login('Trainer', 'secret');
-  gate.resolve({ exists: true, data: () => ({ save: stale }) });
-  for (let i = 0; i < 5; i++) await Promise.resolve();
-  assert.equal(app.db.fb.uid, 'account'); assert.equal(app.db.owns(4), false);
-  assert.equal(JSON.parse(app.data.get('ps.cloud.account')).owned[4], undefined);
-});
-
-test('entering guest mode cancels a cloud pull waiting for the menu', async () => {
-  const app = await cloudFixture(); app.context.G.Game = { state: 'playing' };
-  app.hide(); app.advance(30 * 60000 + 1); app.show();
-  assert.equal([...app.timers.values()].some(t => t.ms === 20000), true);
-  app.db.playAsGuest();
-  assert.equal([...app.timers.values()].some(t => t.ms === 20000), false);
-});
-
-test('cloud changes wait 30 minutes without tab-hide uploads; manual save stays available', async () => {
-  const app = await cloudFixture();
-  const before = app.requests.filter(r => r[0] === 'write').length;
   app.db.grant(4, 'test'); app.db.commit(true);
-  const scheduled = [...app.timers.values()].find(t => t.ms === 30 * 60 * 1000);
-  assert.ok(scheduled);
-  app.advance(5 * 60 * 1000); app.db.commit(true); app.hide();
-  assert.equal(app.requests.filter(r => r[0] === 'write').length, before);
-  assert.equal([...app.timers.values()].includes(scheduled), true);
+  app.hide(); app.emit('pagehide'); app.advance(2 * 3600000); app.show();
+  assert.equal(app.requests.filter(r => r[0] === 'write').length, 0);
+  assert.equal(app.requests.filter(r => r[0] === 'read').length, 1);
+  assert.equal(app.timers.size, 0);
+  assert.ok(JSON.parse(app.data.get('ps.cloud.old-account')).owned[4]);
+  assert.equal(app.db.syncState, 'pending');
+  assert.equal((await app.db.saveNow()).ok, true);
+  assert.equal(app.requests.filter(r => r[0] === 'write').length, 1);
+  assert.equal(app.timers.size, 0);
+});
+
+test('new cloud accounts do not upload automatically on login', async () => {
+  const app = boot(new Map(), { cloud: true, user: { uid: 'account' } });
+  assert.equal(await app.db.ready(), true);
+  assert.equal(app.db.syncState, 'pending'); assert.equal(app.timers.size, 0);
+  assert.deepEqual(app.requests, [['read', 'account']]);
   await app.db.saveNow();
-  assert.equal(app.requests.filter(r => r[0] === 'write').length, before + 1);
+  assert.equal(app.requests.filter(r => r[0] === 'write').length, 1);
+});
+
+test('offline account restore waits for an explicit save before retrying', async () => {
+  const seed = await cloudFixture(); seed.db.grant(4, 'cached'); seed.db.commit();
+  const app = boot(seed.data, { cloud: true, user: { uid: 'old-account' } });
+  app.setRead(() => Promise.reject({ code: 'unavailable' }));
+  assert.equal(await app.db.ready(), true);
+  assert.equal(app.db.syncState, 'offline'); assert.equal(app.timers.size, 0);
+  app.context.navigator.onLine = false;
+  assert.equal((await app.db.saveNow()).why, 'offline');
+  assert.equal(app.timers.size, 1);
+  app.db.playAsGuest(); assert.equal(app.timers.size, 0);
+});
+
+test('a requested save respects the write gap and retains changes made while waiting', async () => {
+  const app = await cloudFixture(); app.db.grant(4, 'first'); app.db.commit();
+  await app.db.saveNow();
+  app.db.save.coins += 10; app.db.commit();
+  const result = await app.db.saveNow();
+  assert.equal(result.why, 'wait'); assert.ok(result.secs >= 65);
+  const timer = [...app.timers.values()][0];
+  assert.ok(timer.ms >= 65000);
+  app.advance(timer.ms); timer.fn();
+  for (let i = 0; i < 8; i++) await Promise.resolve();
+  assert.equal(app.requests.filter(r => r[0] === 'write').length, 2);
+  assert.equal(app.db.syncState, 'ok');
 });

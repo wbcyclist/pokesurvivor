@@ -32,11 +32,11 @@ G.UI = (() => {
     $('coins').textContent = s ? s.coins.toLocaleString(G.I18n.locale) : '0';
     const t = (s && s.tickets) || { t1: 0, t10: 0 };
     $('tickets-pill').innerHTML = `${G.Icons.html('ticket', 18)} ${t.t1} &nbsp;${G.Icons.html('ticket10', 18)} ${t.t10}`;
-    // Punto de sincronización: verde = guardado en la nube, amarillo = guardando,
-    // rojo = sin conexión (se guarda en local y se sube al volver).
+    // Punto de sincronización: verde = guardado en la nube, amarillo = pendiente,
+    // rojo = sin conexión. El progreso local se guarda al momento.
     const st = G.DB.guest ? (G.DB.storageOk ? 'guest' : 'offline') : G.DB.syncState;
-    const TIP = { ok: 'Guardado en la nube', syncing: 'Guardando…', pending: 'Guardando…',
-                  offline: 'Sin conexión: se subirá al volver', local: 'Guardado sólo en este navegador', guest: 'Invitado: guardado en este navegador' };
+    const TIP = { ok: 'Guardado en la nube', syncing: 'Guardando…', pending: 'Sin guardar en la nube: pulsa Guardar',
+                  offline: 'Sin conexión: pulsa Guardar cuando vuelva', local: 'Guardado sólo en este navegador', guest: 'Invitado: guardado en este navegador' };
     if (G.DB.guest && !G.DB.storageOk) TIP.offline = 'No se pudo guardar en este navegador. Revisa el almacenamiento antes de cerrar.';
     $('user-pill').innerHTML = G.Icons.html(G.DB.guest ? 'user' : 'crown', 18) + ' <span translate="no">' + (G.DB.guest ? G.T('Invitado') : (G.DB.user || '')) + '</span>' +
       `<i class="sync ${st}" title="${TIP[st] || ''}"></i>`;

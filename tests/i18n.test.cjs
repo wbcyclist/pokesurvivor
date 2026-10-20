@@ -63,14 +63,16 @@ for (const [i, lang] of langs.entries()) {
       setAttribute(k, v) { this.attrs[k] = v; }, replaceChildren() { this.children = []; }, appendChild(n) { this.children.push(n); } };
     b.G.UI = { $: node }; b.G.DB = { mode: 'cloud', guest: false, save: { stats: {} } };
     b.ctx.document.createElement = () => ({});
+    b.storage['ps.savenote.1'] = '1';
     b.load('js/ui/login.js');
     assert.equal(b.G.LoginUI.updateNotices(), true);
-    // El aviso del dueño, entero y con sus negritas: "cada 30 minutos" en todos los idiomas.
+    // The new notice must replace the old automatic-save notice in every language.
     const body = node('savenote-body');
-    assert.ok(body.innerHTML.includes('30') && !body.innerHTML.includes('10'));
-    assert.equal((body.innerHTML.match(/<b[ >]/g) || []).length, 3);
+    assert.ok(body.innerHTML.includes(save[i]));
+    assert.equal(/30|10|automatically/.test(body.innerHTML), false);
+    assert.equal(b.storage['ps.savenote.2'], '1');
     if (lang !== 'es') assert.ok(!body.innerHTML.includes('Debido a problemas'));
-    if (lang !== 'es' && lang !== 'en') assert.ok(!body.innerHTML.includes('Because of problems') && body.attrs.translate === 'no');
+    if (lang !== 'es' && lang !== 'en') assert.ok(!body.innerHTML.startsWith('Cloud saves:') && body.attrs.translate === 'no');
     if (lang === 'es' || lang === 'en') assert.equal(node('savenote-title').textContent, lang === 'es' ? 'Importante: guarda tu partida' : 'Important: save your game');
     else assert.equal(node('savenote-title').textContent, 'Importante: guarda tu partida');
     assert.equal(b.G.LoginUI.updateNotices(), false);

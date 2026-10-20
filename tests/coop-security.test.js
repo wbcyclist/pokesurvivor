@@ -4,18 +4,18 @@ const path = require('node:path');
 const vm = require('node:vm');
 const { test } = require('node:test');
 
-function boot(host = true) {
+function boot(host = true, callbacks = {}) {
   let receive;
   const rings = [];
   const G = {
-    Net: { uid: host ? 'host' : 'guest', on: fn => { receive = fn; }, onPeer() {} },
+    Net: { uid: host ? 'host' : 'guest', on: fn => { receive = fn; }, onPeer() {}, slow: () => false, send() {}, toHost() {} },
     DEX_BY: { 25: { dex: 25 } }, Player: class { constructor() { this.maxHp = 100; } },
     Sprites: { preload() {} }, baseStartOf: () => 'tackle', FX: { ring: (...args) => rings.push(args) }
   };
   const context = vm.createContext({ G, performance: { now: () => 1000 }, document: { addEventListener() {} } });
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../js/net/coop.js'), 'utf8'), context);
   G.Coop.begin({ host: 'host', members: [{ uid: 'host', dex: 25 }, { uid: 'guest', dex: 25 }] },
-    { xpMul: 1 }, { syncTeam() {} });
+    { xpMul: 1, activeGroup: () => [] }, { syncTeam() {}, ...callbacks });
   return { G, rings, receive: (sender, frame) => receive(sender, frame) };
 }
 
@@ -35,4 +35,20 @@ test('co-op bounds remote rings and ignores invalid colors', () => {
   receive('host', { k: 'f', ev: [['fxr', Infinity, NaN, 1e100, '#fff'], ['fxr', 0, 0, 10, {}]] });
   assert.equal(rings.length, 1);
   assert.deepEqual(rings[0], [0, 0, 8, 2000, '#fff', 0.5, 3]);
+});
+
+test('co-op reopens unchosen level cards but never reopens a completed round', () => {
+  let showing = false, opened = 0;
+  const { G, receive } = boot(false, {
+    inLevelUp: () => showing,
+    levelStart(level) { assert.equal(level, 2); showing = true; opened++; },
+    resume() { showing = false; }
+  });
+  const frame = { k: 'f', ho: [], lu: [1, 2], ev: [] };
+  receive('host', frame); assert.equal(opened, 1);
+  receive('host', frame); assert.equal(opened, 1);
+  showing = false;
+  receive('host', frame); assert.equal(opened, 2);
+  G.Coop.localPicked(); showing = false;
+  receive('host', frame); assert.equal(opened, 2);
 });

@@ -408,33 +408,9 @@ G.DB = (() => {
 
   let auth = null, fs = null, rtdb = null, uid = null, unlisten = null;
   let pushT = 0, retryT = 0, pending = false, pushing = null, lastPush = 0, syncSession = 0;
-  // Como mucho una subida cada 30 min (con miles de jugadores, cada 5 min
-  // eran decenas de miles de escrituras por hora); lo que cuesta algo
-  // (gacha, mejoras), a los 30 s. La copia local se guarda siempre al momento (y se fusiona con la
-  // nube al volver a entrar), y al ocultar o cerrar la pestaña se sube lo pendiente.
-  // Tras tiradas y compras se sube a los 3 min (era 30 s: quien hacía muchas tiradas
-  // guardaba 2 veces por minuto y eran millones de escrituras al día). Lo hecho sigue
-  // en la copia del navegador al momento, y se sube al salir de la pestaña.
-  // Desde el 13-10-2026, lo normal cada 2 h (era 30 min: 216.000 jugadores al día
-  // guardaban unas 12 millones de veces); al cerrar la pestaña, siempre; al
-  // cambiar de pestaña, si hace más de 30 min.
-  // Lo que vale algo (tiradas, compras, Pokémon nuevos, shinies, premios,
-  // récords que entran en un top) se sube enseguida, y al acabar cada partida
-  // como mucho cada 30 min:
-  // con 2 h, quien abría el juego en otro aparato (o en el navegador de otra
-  // app) veía la copia vieja de la nube y creía que lo había perdido.
-  // Desde el 18-10-2026, lo urgente como mucho cada 30 min (era 15 s, y con el
-  // mínimo de 65 s entre subidas quien hacía tiradas o mejoras guardaba casi
-  // cada minuto). Al cerrar la pestaña se intenta subir lo pendiente, y para
-  // no depender de eso está el botón Guardar de la barra de arriba (saveNow).
-  // Desde el 19-10-2026 (para gastar aún menos), a la nube SÓLO se sube:
-  //   - cada 30 min, si hay algo sin subir (30 min después del primer cambio)
-  //   - con el botón Guardar
-  //   - al entrar, si lo de este aparato es más nuevo que lo de la nube
-  //   - al cerrar o recargar la pestaña, y antes de recargar por una actualización
-  // Nada más: ni al hacer gacha, ni al acabar una partida, ni al cambiar de
-  // pestaña. Todo se guarda al momento en este navegador igualmente.
-  const PUSH_EVERY = 30 * 60 * 1000;
+  // La copia local se guarda al momento. La nube sólo se actualiza con Guardar,
+  // antes de una actualización o al cerrar sesión; no al entrar o cerrar la pestaña.
+  // Cada subida conserva la transacción para fusionar el progreso de varios aparatos.
   let syncState = 'local';           // 'ok' | 'syncing' | 'pending' | 'offline' | 'local'
   const listeners = new Set();
 
@@ -485,39 +461,7 @@ G.DB = (() => {
     }
     await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     auth.languageCode = 'es';
-    // Al volver al juego tras un rato fuera, se trae lo del otro aparato (pullSoon).
-    // (Al salir de la pestaña ya no se sube nada: ver PUSH_EVERY. Sin conexión,
-    // los reintentos de scheduleRetry lo suben al volver.)
-    let hiddenAt = 0;
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'hidden') hiddenAt = Date.now();
-      else if (hiddenAt && Date.now() - hiddenAt > PULL_GAP) pullSoon();
-    });
-    // Al cerrar o recargar la página, lo pendiente se sube siempre.
-    addEventListener('pagehide', () => { if (pending) pushNow(); });
     return true;
-  }
-
-  /*
-   * Al volver al juego tras más de 30 min fuera (el móvil con la pestaña
-   * abierta de ayer), se baja la partida de la nube y se junta con la de aquí
-   * (1 lectura): así se ve lo conseguido en el otro aparato. En plena partida
-   * se espera a volver al menú.
-   */
-  const PULL_GAP = 30 * 60 * 1000;
-  let lastPull = 0, pullT = 0;
-  function pullSoon() {
-    clearTimeout(pullT);
-    if (mode !== 'cloud' || guest || !save || !uid || Date.now() - lastPull < PULL_GAP) return;
-    if (pushing || (G.Game && G.Game.state && G.Game.state !== 'ui')) { pullT = setTimeout(pullSoon, 20000); return; }
-    lastPull = Date.now();
-    const session = syncSession, account = uid, local = save;
-    docRef().get().then(snap => {
-      if (!snap.exists || session !== syncSession || account !== uid || local !== save || guest) return;
-      applyInPlace(merge(plain(fold(save)), migrate(snap.data().save)));
-      write(K_CLOUD + uid, save);
-      if (G.UI && G.UI.refreshCoins) G.UI.refreshCoins();
-    }).catch(e => console.warn('[DB] no se pudo bajar la partida:', e.code || e.message));
   }
 
   /** Firebase pide email: el nombre se codifica en uno interno, único y válido. */
@@ -560,17 +504,13 @@ G.DB = (() => {
     key = uid; user = save.name; guest = false;
     remove(K_GUEST_ACTIVE);
     write(K_CLOUD + uid, save);
-    lastPull = Date.now();
-    // Sólo se sube si hay algo que la nube no tenga (cuenta nueva, progreso de
-    // este ordenador sin subir...), y SIN esperar: antes el menú no salía hasta
-    // terminar la subida, y con Firebase lento se tardaba hasta 9 s en entrar.
-    // (Comparar el texto entero daba "distinto" casi siempre y se subía en cada
-    // entrada: ahora sólo si esta copia es más nueva que la de la nube.)
+    // Si esta copia tiene algo que la nube no (cuenta nueva, progreso sin subir),
+    // se queda pendiente hasta que pulses Guardar (ya no se sube sola al entrar).
     const same = remote && !opts.legacy && (!cached || (cached.updated || 0) <= (remote.updated || 0));
-    lastPush = Date.now();       // la primera compra o ticket no sube al momento: espera como las demás
-    if (!online) { pending = true; setSync('offline'); scheduleRetry(); }
+    lastPush = Date.now();
+    if (!online) { pending = true; setSync('offline'); }
     else if (same) setSync('ok');
-    else pushNow();
+    else { pending = true; setSync('pending'); }
   }
 
   /*
@@ -582,7 +522,8 @@ G.DB = (() => {
 
   /*
    * Si el admin ha baneado la cuenta del ranking (ban = true en la nube, ver
-   * firestore.rules), cada guardado tiene que conservarlo: se copia de la nube.
+   * firestore.rules), cada guardado tiene que conservarlo: se copia de la nube
+   * dentro de la transacción que fusiona las partidas.
    * Nunca se sube dos veces en menos de 65 s; mientras, todo está en el navegador.
    */
   const K_OK = 'ps.cloudok.', MIN_GAP = 65000;
@@ -630,7 +571,6 @@ G.DB = (() => {
     const timeout = new Promise((_, rej) => {
       timeoutId = setTimeout(() => { expired = true; rej({ code: 'unavailable' }); }, 12000);
     });
-    let failed = false;
     pushing = Promise.race([tr, timeout]).then(() => {
       if (!current()) return;
       fails = 0;
@@ -643,15 +583,14 @@ G.DB = (() => {
     }).catch(e => {
       if (!current()) return;
       console.warn('[DB] no se pudo sincronizar:', e.code || e.message);
-      pending = true; failed = true;
+      pending = true;
       setSync(navigator.onLine === false || e.code === 'unavailable' ? 'offline' : 'pending');
+      // Lo pediste tú (Guardar o una actualización): se reintenta solo, con espera creciente.
       scheduleRetry();
     }).finally(() => {
       clearTimeout(timeoutId);
       if (!current()) return;
       pushing = null;
-      // (Si ha fallado, el reintento ya está programado con su espera creciente.)
-      if (!failed && pending && syncState === 'pending') schedulePush(PUSH_EVERY);
     });
     return pushing;
   }
@@ -680,9 +619,8 @@ G.DB = (() => {
   let pushDue = 0;
   function resetSync() {
     syncSession++;
-    clearTimeout(pushT); clearTimeout(retryT); clearTimeout(pullT);
-    pushT = retryT = pushDue = pullT = 0;
-    lastPull = 0;
+    clearTimeout(pushT); clearTimeout(retryT);
+    pushT = retryT = pushDue = 0;
     pending = false; pushing = null; fails = 0;
   }
   function schedulePush(ms) {
@@ -826,8 +764,8 @@ G.DB = (() => {
 
   /**
    * Guarda el progreso, también el del invitado. En el navegador,
-   * al momento; en la nube, 30 min después del primer cambio sin subir (ver
-   * PUSH_EVERY). urgent ya no cambia nada (se queda por si vuelve a hacer falta).
+   * al momento; en la nube, al pulsar Guardar, antes de actualizar o al salir
+   * de la cuenta. urgent se conserva para los módulos que lo pasan.
    */
   function commit(urgent = false) {
     if (!save || (!guest && !key)) return false;
@@ -842,8 +780,7 @@ G.DB = (() => {
     if (!uid) return false;
     write(K_CLOUD + uid, save);
     pending = true;
-    setSync('pending');
-    schedulePush(PUSH_EVERY);          // si ya había una subida programada, se queda la de antes
+    setSync('pending');                // se sube al pulsar Guardar
     return true;
   }
 
@@ -924,7 +861,8 @@ G.DB = (() => {
       resetSync();
       stopListening();
       for (const fn of leaveHooks) await fn('delete');
-      await docRef().delete();
+      // (Una cuenta baneada no puede borrar su guardado, ver firestore.rules: se queda.)
+      await docRef().delete().catch(() => {});
       remove(K_CLOUD + uid);
       await auth.currentUser.delete();
       user = key = save = uid = null;
