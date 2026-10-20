@@ -7,6 +7,15 @@ const args = process.argv.slice(2);
 const watchers = [];
 let child = null, pending = null, timer = null, killTimer = null;
 let restarting = false, stopping = false;
+let languagesDirty = true;
+
+function buildLanguages() {
+  if (!languagesDirty) return;
+  const modulePath = require.resolve('./build_langs.js');
+  delete require.cache[modulePath];
+  require(modulePath).build();
+  languagesDirty = false;
+}
 
 function launch() {
   child = fork(path.join(ROOT, 'server/lan-server.js'), ['--dev', ...args], { stdio: 'inherit' });
@@ -29,10 +38,13 @@ function stopChild() {
 
 function changed(file, action) {
   if (stopping) return;
+  if (/^js\/data\/(?:lang-|names-)/.test(file) || file === 'tools/build_langs.js') languagesDirty = true;
   if (!pending || action === 'restart') pending = { file, action };
   clearTimeout(timer);
   timer = setTimeout(() => {
     const update = pending; pending = null;
+    try { buildLanguages(); }
+    catch (error) { console.error('[LAN dev] Cannot build languages:', error.message); return; }
     if (update.action === 'restart' || !child) {
       console.log('[LAN dev] Restarting after ' + update.file);
       if (child) { restarting = true; stopChild(); }
@@ -68,11 +80,13 @@ function shutdown() {
 
 for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, shutdown);
 try {
+  buildLanguages();
   // Watch directories so editor saves that replace a file keep working.
   watch('', false, file => file === 'version.json' ? 'restart' : file === 'dev.html' ? 'reload' : null);
   watch('server', true, file => file.endsWith('.js') ? 'restart' : null);
+  watch('tools', false, file => file === 'tools/build_langs.js' ? 'reload' : null);
   watch('js', true, file => file === 'js/data/pokedex.js' ? 'restart'
-    : file.endsWith('.js') && file !== 'js/app.min.js' ? 'reload' : null);
+    : file.endsWith('.js') && file !== 'js/app.min.js' && !file.startsWith('js/lang/') ? 'reload' : null);
   watch('css', true, file => file.endsWith('.css') ? 'reload' : null);
   watch('assets', true, file => /\.(png|svg|ico|woff2?|ttf)$/.test(file) ? 'reload' : null);
   console.log('[LAN dev] Watching frontend sources and server code. Edits end active runs and rooms.');

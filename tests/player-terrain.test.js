@@ -8,6 +8,7 @@ function boot(dex, liquid) {
   let axis = [1, 0], onLiquid = true, collisions = 0;
   const effects = [];
   const G = {
+    Settings: { get: () => false }, Gamepad: { rumble() {} },
     Tiles: { T: 16, BIOMES: [{ liquid }] },
     Weather: { speedFor: () => 1 },
     Input: { axis: () => axis },
@@ -20,7 +21,7 @@ function boot(dex, liquid) {
   math.random = () => 0;
   const context = vm.createContext({ G, window: { G }, Math: math });
   for (const file of ['js/core/util.js', 'js/data/pokedex.js', 'js/data/sprites-meta.js',
-    'js/core/sprites.js', 'js/world/world.js', 'js/entities/player.js']) {
+    'js/core/sprites.js', 'js/systems/stats.js', 'js/world/world.js', 'js/entities/player.js']) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context, { filename: file });
   }
   G.World.isLiquid = () => onLiquid;

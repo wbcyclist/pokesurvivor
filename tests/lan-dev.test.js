@@ -145,7 +145,8 @@ test('the dev command watches sources, restarts server data, recovers from error
   fs.mkdirSync(path.join(ROOT, 'work_tmp'), { recursive: true });
   const root = fs.mkdtempSync(path.join(ROOT, 'work_tmp/lan-dev-'));
   for (const directory of ['tools', 'server', 'js/data', 'css', 'assets']) fs.mkdirSync(path.join(root, directory), { recursive: true });
-  for (const file of ['tools/dev-lan.js', 'server/lan-server.js', 'server/lan-dev-client.js', 'version.json', 'js/data/pokedex.js']) {
+  for (const file of ['tools/dev-lan.js', 'tools/build_langs.js', ...require('../tools/build_langs.js').SOURCES,
+    'server/lan-server.js', 'server/lan-dev-client.js', 'version.json', 'js/data/pokedex.js']) {
     fs.copyFileSync(path.join(ROOT, file), path.join(root, file));
   }
   fs.writeFileSync(path.join(root, 'dev.html'), '<html><head></head><body>Initial</body></html>');
@@ -178,6 +179,10 @@ test('the dev command watches sources, restarts server data, recovers from error
   fs.appendFileSync(css, '\nbody { color: blue; }');
   const updateAgain = await next();
   assert.notEqual(updateAgain.revision, revision); revision = updateAgain.revision;
+  fs.appendFileSync(path.join(root, 'js/data/lang-zh-CN.js'), '\nG.I18n.add({"Merge probe":"合并验证"}, "zh-CN");\n');
+  const languageUpdate = await next();
+  assert.notEqual(languageUpdate.revision, revision); revision = languageUpdate.revision;
+  assert.match(fs.readFileSync(path.join(root, 'js/lang/zh-Hans.js'), 'utf8'), /合并验证/);
   for (const file of ['dev.html', 'js/source.js', 'assets/probe.svg']) {
     fs.appendFileSync(path.join(root, file), '\n');
     const update = await next();
@@ -185,6 +190,7 @@ test('the dev command watches sources, restarts server data, recovers from error
   }
   assert.equal((output.match(/development is ready/g) || []).length, 1, 'Frontend edits must not restart the server');
   fs.writeFileSync(path.join(root, 'js/app.min.js'), '// Generated bundle.');
+  fs.appendFileSync(path.join(root, 'js/lang/zh-Hans.js'), '\n');
   fs.writeFileSync(path.join(root, 'unrelated.log'), 'Unrelated output.');
   await delay(350);
   assert.equal(await read(), revision, 'Generated files and logs must not trigger a reload');

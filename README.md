@@ -8,6 +8,15 @@ HTML + CSS + JavaScript vanilla sobre Canvas 2D. El juego en solitario funciona
 sin instalar dependencias y no necesita internet. El servidor de red local usa
 Node.js y `ws`.
 
+> **Autoría / Authorship**
+>
+> PokéSurvivor (su código y su música original) lo ha escrito y es de
+> **Jonathan Piera Torregrosa**, dueño de esta cuenta (JPTER78) y de pokesurvivor.com.
+> The source code and original music of PokéSurvivor are written and owned by
+> **Jonathan Piera Torregrosa**, owner of this GitHub account (JPTER78) and of
+> pokesurvivor.com. Google copyright removal request **4-2352000042234**
+> (against pokesurvivor.co) was submitted by me.
+
 > **Aviso sobre criptomonedas / Crypto disclaimer**
 >
 > PokéSurvivor **no tiene ninguna criptomoneda, token ni NFT oficial**, y yo no
@@ -143,7 +152,8 @@ Configuración, pruebas y solución de problemas: [LAN.md](docs/LAN.md).
 
 ## Idiomas
 
-El juego está disponible en español, inglés, chino simplificado y chino tradicional. Detecta el
+El juego está disponible en español, inglés, francés, italiano, portugués de Brasil,
+chino simplificado y chino tradicional. Detecta el
 idioma del navegador; se puede cambiar en **Ajustes > Gráficos > Idioma**.
 La elección se guarda en este dispositivo. Los nombres chinos de Pokémon,
 movimientos y objetos siguen la terminología oficial de los juegos.

@@ -27,6 +27,7 @@ function boot() {
     window: { devicePixelRatio: 3 },
     innerWidth: 440, innerHeight: 894,
     performance: { now: () => 0 },
+    setTimeout: () => 1, clearTimeout() {},
     requestAnimationFrame(callback) { frames.push(callback); },
     addEventListener(name, fn) { events.set(name, fn); },
     ResizeObserver: class {

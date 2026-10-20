@@ -11,13 +11,16 @@
  *   pad         { bar, pause, stick } | null      dónde van los botones en móvil (centro, en
  *                                                 proporción a la pantalla); lo pone layout-ui.js
  *   padPortrait igual que pad, para la pantalla vertical
+ *   gamepad     true/false                        jugar con mando (gamepad.js)
+ *   padRumble   true/false                        que el mando vibre al recibir daño
+ *   aimManual   true/false                        apuntar a mano (ratón o stick derecho) en vez de solo
  *
  *   G.Settings.get('quality')  ·  G.Settings.set('fps', true)  ·  G.Settings.on(fn)
  *   G.Settings.fx   nivel efectivo 0 (bajo) .. 2 (alto), ya resuelto el 'auto'
  */
 G.Settings = (() => {
   const KEY = 'ps.settings';
-  const DEF = { quality: 'auto', dmgNumbers: true, calm: false, fps: false, stick: 1, stickMode: 'float', pad: null, padPortrait: null, gamepadLayout: 'auto' };
+  const DEF = { quality: 'auto', dmgNumbers: true, calm: false, fps: false, stick: 1, stickMode: 'float', pad: null, padPortrait: null, gamepadLayout: 'auto', gamepad: true, padRumble: true, aimManual: false };
   let s = Object.assign({}, DEF);
   try { Object.assign(s, JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { /* nada */ }
   const fns = new Set();

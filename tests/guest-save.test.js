@@ -305,3 +305,16 @@ test('entering guest mode cancels a cloud pull waiting for the menu', async () =
   app.db.playAsGuest();
   assert.equal([...app.timers.values()].some(t => t.ms === 20000), false);
 });
+
+test('cloud changes wait 30 minutes without tab-hide uploads; manual save stays available', async () => {
+  const app = await cloudFixture();
+  const before = app.requests.filter(r => r[0] === 'write').length;
+  app.db.grant(4, 'test'); app.db.commit(true);
+  const scheduled = [...app.timers.values()].find(t => t.ms === 30 * 60 * 1000);
+  assert.ok(scheduled);
+  app.advance(5 * 60 * 1000); app.db.commit(true); app.hide();
+  assert.equal(app.requests.filter(r => r[0] === 'write').length, before);
+  assert.equal([...app.timers.values()].includes(scheduled), true);
+  await app.db.saveNow();
+  assert.equal(app.requests.filter(r => r[0] === 'write').length, before + 1);
+});

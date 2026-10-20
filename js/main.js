@@ -3,15 +3,17 @@
   // Si un archivo no llega a cargarse (conexión móvil que se corta), mejor
   // avisar que arrancar a medias.
   const NEED = ['U', 'I18n', 'Fonts', 'Settings', 'DB', 'Audio', 'Input', 'Gamepad', 'GamepadUI', 'Touch', 'Sprites', 'Camera', 'Moves', 'Enemies', 'Upgrades', 'Items',
-                'World', 'FX', 'Projectiles', 'EnemyMgr', 'Pickups', 'Player', 'Combat', 'Spawner', 'LevelUp', 'Gacha',
-                'Rift', 'Weather', 'Progress', 'Hazards', 'Lan', 'Social', 'Net', 'Coop', 'Ranking', 'Icons', 'UI', 'HUD',
+                'Stats', 'World', 'FX', 'Projectiles', 'EnemyMgr', 'Pickups', 'Player', 'Combat', 'Spawner', 'LevelUp', 'Gacha',
+                'Rift', 'Weather', 'Progress', 'Hazards', 'Lan', 'Social', 'NetCodec', 'Net', 'Coop', 'Ranking', 'Icons', 'UI', 'HUD',
                 'MenuUI', 'LanUI', 'RunUI', 'SettingsUI', 'Funding', 'SupportUI', 'Game', 'Flow'];
   function broken() {
     // (En la versión publicada G no está en window: va encerrado, ver tools/build.js.)
     const miss = NEED.filter(k => typeof G !== 'object' || !G[k]);
     if (!miss.length) return false;
     const el = document.getElementById('boot');
-    el.innerHTML = 'No se pudo cargar todo el juego (¿se cortó la conexión?).<br><button class="btn gold" style="margin-top:12px" onclick="location.reload()">Recargar</button>';
+    el.innerHTML = 'No se pudo cargar todo el juego (¿se cortó la conexión?).<br><button class="btn gold" style="margin-top:12px">Recargar</button>';
+    el.querySelector('button').onclick = () => location.reload();
+    if (typeof G === 'object' && G.I18n) G.I18n.walk(el);
     console.warn('[Arranque] faltan:', miss.join(', '));
     return true;
   }
@@ -29,11 +31,14 @@
         'Your account, your save and your Pokémon are safe. Please come back in a few hours!</p>'
       : '<p><b>Estamos en mantenimiento.</b></p><p>Estamos mudando el juego a servidores nuevos para que siga siendo gratis para todos. ' +
         'Tu cuenta, tu partida y tus Pokémon están a salvo. ¡Vuelve en unas horas!</p>') +
-      '<button class="btn gold" style="margin-top:12px" onclick="location.reload()">' + (en ? 'Try again' : 'Volver a intentarlo') + '</button></div>';
+      '<button class="btn gold" style="margin-top:12px">' + (en ? 'Try again' : 'Volver a intentarlo') + '</button></div>';
+    el.querySelector('button').onclick = () => location.reload();
+    if (typeof G === 'object' && G.I18n && !en) { el.removeAttribute('translate'); G.I18n.walk(el); }
     return true;
   }
 
   function boot() {
+    if (window.PS_FRAMED) return;            // dentro de otra web: ver noframe.js
     if (typeof G === 'object' && G.I18n) G.I18n.startDom();
     if (maintenance()) return;
     if (broken()) return;

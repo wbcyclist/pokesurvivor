@@ -131,3 +131,7 @@ ordered frame delivery, disconnects, and repeated runs. Browser checks should al
 cover guest entry, movement and enemies on both sides, level choices, run summaries,
 and mobile layout. A same-computer browser test does not verify a physical phone's
 Wi-Fi, touch controls, background suspension, or firewall access.
+
+Language source edits rebuild `js/lang/` before reloading clients. Generated
+language files do not trigger another reload. A dictionary syntax error keeps
+the current page open until the source is fixed.

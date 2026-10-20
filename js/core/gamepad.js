@@ -15,6 +15,7 @@ G.Gamepad = (() => {
   };
   const DEAD_ZONE = 0.2;
   let current = null, previous = [], pressed = new Set();
+  let aimVector = [0, 0], aimAt = 0, aimActivity = [0, 0];
   let vector = [0, 0], direction = '', focused = true, armed = false, disconnected = false;
   let usingGamepad = false, activity = false, detectedLayout = 'generic', activityVector = [0, 0];
 
@@ -51,6 +52,7 @@ G.Gamepad = (() => {
   });
 
   function suspend() {
+    aimVector = [0, 0]; aimActivity = [0, 0];
     vector = [0, 0]; direction = ''; pressed.clear(); previous = []; armed = false;
     usingGamepad = false; activity = false; activityVector = [0, 0];
   }
@@ -60,6 +62,10 @@ G.Gamepad = (() => {
 
   function poll() {
     activity = false;
+    aimVector = [0, 0];
+    if (G.Settings && G.Settings.get('gamepad') === false) {
+      suspend(); current = null; disconnected = false; return;
+    }
     pressed.clear(); disconnected = false; vector = [0, 0]; direction = '';
     let pads = [];
     try { pads = Array.from(navigator.getGamepads ? navigator.getGamepads() : []); } catch (e) { /* API can be blocked by policy. */ }
@@ -78,12 +84,21 @@ G.Gamepad = (() => {
     const x = Number.isFinite(pad.axes[0]) ? pad.axes[0] : 0;
     const y = Number.isFinite(pad.axes[1]) ? pad.axes[1] : 0;
     const length = Math.hypot(x, y);
+    const ax = Number.isFinite(pad.axes[2]) ? pad.axes[2] : 0;
+    const ay = Number.isFinite(pad.axes[3]) ? pad.axes[3] : 0;
+    const aimLength = Math.hypot(ax, ay);
     // Reconnection and focus changes must not turn a held button into a new action.
     if (!armed) {
-      armed = !buttons.some(Boolean) && length <= DEAD_ZONE;
+      armed = !buttons.some(Boolean) && length <= DEAD_ZONE && aimLength <= DEAD_ZONE;
       previous = buttons;
       return;
     }
+    if (aimLength > DEAD_ZONE) {
+      aimVector = [ax / Math.max(1, aimLength), ay / Math.max(1, aimLength)];
+      aimAt = performance.now();
+    }
+    const aiming = Math.hypot(aimVector[0] - aimActivity[0], aimVector[1] - aimActivity[1]) > 0.08;
+    aimActivity = aimVector;
     buttons.forEach((down, index) => { if (down && !previous[index]) pressed.add(index); });
     previous = buttons;
     const dx = Number(!!buttons[15]) - Number(!!buttons[14]);
@@ -98,12 +113,24 @@ G.Gamepad = (() => {
     const nx = dx || (Math.abs(x) >= 0.55 ? x : 0);
     const ny = dy || (Math.abs(y) >= 0.55 ? y : 0);
     if (nx || ny) direction = Math.abs(nx) > Math.abs(ny) ? (nx > 0 ? 'right' : 'left') : (ny > 0 ? 'down' : 'up');
-    activity = pressed.size > 0 || (Math.hypot(...vector) > 0 && Math.hypot(vector[0] - activityVector[0], vector[1] - activityVector[1]) > 0.08);
+    activity = aiming || pressed.size > 0 || (Math.hypot(...vector) > 0 && Math.hypot(vector[0] - activityVector[0], vector[1] - activityVector[1]) > 0.08);
     if (activity) { usingGamepad = true; activityVector = vector; }
     else if (!vector[0] && !vector[1]) activityVector = vector;
   }
 
+  function rumble(strength = 0.4, duration = 120) {
+    if (!current || !G.Settings || G.Settings.get('padRumble') === false) return;
+    const motor = current.vibrationActuator;
+    if (!motor || !motor.playEffect) return;
+    const magnitude = Math.max(0, Math.min(1, strength));
+    try {
+      Promise.resolve(motor.playEffect('dual-rumble', { duration, strongMagnitude: magnitude, weakMagnitude: magnitude * 0.6 })).catch(() => {});
+    } catch (e) { /* Vibration can be blocked by the browser. */ }
+  }
+
   return {
+    aim: () => aimVector[0] || aimVector[1] ? aimVector : null, rumble, get aimAt() { return aimAt; },
+    get name() { return current ? current.id : ''; },
     poll, axis: () => vector, tap: action => pressed.has(button(action)),
     faceTap: index => index >= 0 && index < 4 && pressed.has(index),
     faceLabel: index => LABELS[layout()].face[index],

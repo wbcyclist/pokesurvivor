@@ -9,6 +9,7 @@ function boot() {
   let pads = [];
   const context = vm.createContext({
     G: { U: { norm: (x, y) => { const n = Math.hypot(x, y); return n ? [x / n, y / n] : [0, 0]; } } },
+    performance: { now: () => 1234 },
     navigator: { getGamepads: () => pads },
     document: { hidden: false, addEventListener: (name, fn) => { documentEvents[name] = fn; } },
     addEventListener: (name, fn) => { (events[name] ||= []).push(fn); }
@@ -206,4 +207,32 @@ test('recognizes a slow stick movement without treating neutral drift as input',
   assert.equal(app.pad.mode, false);
   for (let x = 0.19; x < 0.4; x += 0.01) { pad.axes[0] = x; app.pad.poll(); }
   assert.equal(app.pad.mode, true);
+});
+
+test('right-stick aiming is separate from movement and clears on blur or disable', () => {
+  const app = boot(), pad = device();
+  app.connect(pad);
+  pad.axes = [0, 0, 0.7, -0.7]; app.pad.poll();
+  assert.deepEqual(Array.from(app.pad.aim()), [0.7, -0.7]);
+  assert.deepEqual(Array.from(app.input.axis()), [0, 0]);
+  assert.equal(app.pad.aimAt, 1234); assert.equal(app.pad.mode, true);
+  app.emit('blur'); assert.equal(app.pad.aim(), null);
+  app.emit('focus'); app.pad.poll(); assert.equal(app.pad.aim(), null);
+  pad.axes = [0, 0, 0, 0]; app.pad.poll();
+  pad.axes[2] = 1; app.pad.poll(); assert.equal(app.pad.aim()[0], 1);
+  app.context.G.Settings = { get: key => key !== 'gamepad' };
+  app.pad.poll(); assert.equal(app.pad.connected, false);
+  assert.equal(app.pad.aim(), null);
+});
+
+test('rumble follows its setting and tolerates unsupported browser actuators', async () => {
+  const app = boot(), pad = device(), effects = [];
+  app.context.G.Settings = { get: () => true };
+  app.connect(pad); app.pad.rumble();
+  pad.vibrationActuator = { playEffect: (kind, options) => { effects.push([kind, options]); return Promise.reject(Error('blocked')); } };
+  app.pad.rumble(3, 140); await Promise.resolve();
+  assert.equal(effects.length, 1); assert.equal(effects[0][0], 'dual-rumble');
+  assert.equal(effects[0][1].strongMagnitude, 1);
+  app.context.G.Settings = { get: key => key !== 'padRumble' };
+  app.pad.rumble(); assert.equal(effects.length, 1);
 });

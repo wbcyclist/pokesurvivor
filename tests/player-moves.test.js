@@ -7,9 +7,9 @@ const { test } = require('node:test');
 function boot() {
   const effects = [];
   const G = {
-    LIFT: 8,
+    LIFT: 8, Game: { st: { time: 0 } },
     U: { TYPE_COLOR: {} },
-    Sprites: { Animator: class {}, hovers: () => false, bodyRadius: () => 8, bodyHeight: () => 16 },
+    Sprites: { Animator: class {}, hovers: () => false, playerScale: () => 1, playerRadius: () => 8, bodyRadius: () => 8, bodyHeight: () => 16 },
     Projectiles: { clearOrbs: () => effects.push('clearOrbs') },
     Audio: { sfx: sound => effects.push(sound) },
     FX: { ring: () => effects.push('ring'), dmgText: () => effects.push('dmgText') }
@@ -18,7 +18,7 @@ function boot() {
   for (const file of ['js/data/moves.js', 'js/entities/player.js']) {
     vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context, { filename: file });
   }
-  return { player: new G.Player({ dex: 1, hp: 100, spd: 100, atk: 10 }), effects };
+  return { G, player: new G.Player({ dex: 1, hp: 100, spd: 100, atk: 10 }), effects };
 }
 
 test('the first learned move is active without a switch effect', () => {
@@ -106,4 +106,23 @@ test('duplicate moves and full slots leave the learned moves and selection uncha
   assert.deepEqual(Array.from(player.moves), moves);
   assert.equal(player.activeGroup(), selected);
   assert.deepEqual(effects, []);
+});
+
+test('experience rejects non-finite input and bounds large level bursts', () => {
+  const { player } = boot();
+  const level = player.level;
+  for (const amount of [Infinity, NaN, -1]) assert.equal(player.gainXp(amount), 0);
+  assert.equal(player.level, level); assert.equal(player.xp, 0);
+  assert.equal(player.gainXp(1e20), 50); assert.equal(player.level, level + 50);
+});
+
+test('manual aim returns to automatic targeting after the right stick is released', () => {
+  const { G, player } = boot();
+  G.Settings = { get: () => true }; G.Touch = { active: false };
+  G.Gamepad = { aim: () => null, aimAt: 1000 };
+  G.Input = { mouseMovedAt: 500, mouseWorld: () => ({ x: player.x, y: player.y - 100 }) };
+  assert.equal(player.handAim(), null);
+  G.Gamepad.aim = () => [0, 1]; assert.equal(player.handAim(), Math.PI / 2);
+  G.Gamepad.aim = () => null; assert.equal(player.handAim(), null);
+  G.Input.mouseMovedAt = 1500; assert.equal(player.handAim(), -Math.PI / 2);
 });

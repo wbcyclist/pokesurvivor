@@ -26,7 +26,11 @@ function boot({ saved = null, language = 'zh-CN', pathname = '/', blocked = fals
     CanvasRenderingContext2D: Canvas,
     window: { confirm(text) { calls.push(['confirm', text]); return true; }, alert(text) { calls.push(['alert', text]); } }
   });
-  const files = ['js/core/i18n.js'];
+  context.window = Object.assign(context, context.window);
+  context.document.write = html => {
+    if (translations) vm.runInContext(read(/src="(js\/lang\/[^"?]+)/.exec(html)[1]), context);
+  };
+  const files = ['js/core/locales.js', 'js/core/i18n.js'];
   if (translations) files.push('js/data/lang-en.js', 'js/data/lang-zh-CN.js', 'js/data/names-zh-CN.js', 'js/data/lang-zh-TW.js', 'js/data/names-zh-TW.js');
   for (const file of files) {
     vm.runInContext(read(file), context, { filename: file });
@@ -54,7 +58,7 @@ test('detects Chinese and honors an explicit saved language before the path or b
   assert.equal(detect({ pathname: '/zh/', saved: 'es' }).G.I18n.lang, 'es');
   assert.equal(detect({ saved: 'invalid' }).G.I18n.lang, 'zh-CN');
   assert.equal(detect({ language: 'es-MX' }).G.I18n.lang, 'es');
-  assert.equal(detect({ language: 'fr-FR' }).G.I18n.lang, 'en');
+  assert.equal(detect({ language: 'fr-FR' }).G.I18n.lang, 'fr');
   assert.equal(detect({ blocked: true }).document.documentElement.lang, 'zh-CN');
 });
 
@@ -87,8 +91,13 @@ test('Chinese covers every English dictionary key and preserves template argumen
   const dictionaries = {};
   const context = { G: { I18n: { add(dict, locale = 'en') { dictionaries[locale] = { ...dictionaries[locale], ...dict }; } } } };
   for (const file of ['js/data/lang-en.js', 'js/data/lang-zh-CN.js', 'js/data/lang-zh-TW.js']) vm.runInNewContext(read(file), context);
-  for (const key of Object.keys(dictionaries.en)) assert.ok(dictionaries['zh-CN'][key], key);
-  for (const locale of ['zh-CN', 'zh-TW']) for (const key of Object.keys(dictionaries['zh-CN'])) {
+  const localKeys = Object.keys(dictionaries['zh-CN']);
+  for (const [dict, lang, c] of require('../tools/build_langs.js').capture(require('../tools/build_langs.js').SOURCES, '?')) {
+    const locale = { 'zh-Hans': 'zh-CN', 'zh-Hant': 'zh-TW' }[lang];
+    if (locale && !c) dictionaries[locale] = { ...dictionaries[locale], ...dict };
+  }
+  for (const locale of ['zh-CN', 'zh-TW']) for (const key of Object.keys(dictionaries.en)) assert.ok(dictionaries[locale][key], `${locale}: ${key}`);
+  for (const locale of ['zh-CN', 'zh-TW']) for (const key of localKeys) {
     const value = dictionaries[locale][key];
     assert.ok(value, `Missing translation: ${key}`);
     assert.equal((value.match(/\{x\}/g) || []).length, (key.match(/\{x\}/g) || []).length, key);
@@ -182,7 +191,11 @@ test('early boot and contact detect the same language as the game', () => {
         const paragraphs = [{}, {}];
         const document = {documentElement: {}, querySelectorAll: () => paragraphs, querySelector: () => ({})};
         const context = {document, URLSearchParams, navigator: {language, languages:[language]}, location:{pathname:'/',search:''}, localStorage:{getItem:()=>saved}};
-        vm.runInNewContext(script, context);
+        if (file === 'dev.html') {
+          context.window = context; document.write = () => {};
+          vm.runInNewContext(read('js/core/locales.js'), context);
+          vm.runInNewContext(read('js/boot.js'), context);
+        } else vm.runInNewContext(script, context);
         assert.equal(document.documentElement.lang, boot({language,saved,translations:false}).G.I18n.lang, `${file}: ${language}, ${saved}`);
       }
     }

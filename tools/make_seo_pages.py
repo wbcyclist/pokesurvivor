@@ -158,6 +158,7 @@ def page(pid, lang, title, desc, body, ld=None):
 <link rel="icon" type="image/png" sizes="144x144" href="{up}assets/icons/icon-144.png">
 <link rel="apple-touch-icon" href="{up}assets/icons/icon-180.png">
 <link rel="stylesheet" href="{up}css/pages.css">
+<script src="{up}js/noframe.js"></script>
 {ldj}
 </head>
 <body>
@@ -598,6 +599,14 @@ KIND['zh-CN'] = {'projectile': '弹丸', 'melee': '近战', 'beam': '光束', 'o
                  'boomerang': '回旋', 'chain': '连锁', 'mine': '地雷', 'meteor': '流星', 'turret': '炮台', 'dash': '突进', 'trail': '轨迹', 'cone': '扇形'}
 KIND['zh-TW'] = {'projectile': '彈丸', 'melee': '近戰', 'beam': '光束', 'orbit': '環繞', 'nova': '爆發', 'aura': '光環', 'buff': '強化',
                  'boomerang': '迴旋', 'chain': '連鎖', 'mine': '地雷', 'meteor': '流星', 'turret': '炮臺', 'dash': '突進', 'trail': '軌跡', 'cone': '扇形'}
+for lang, labels in {
+    'es': ['Carga', 'Giro', 'Remolino', 'Rebote', 'Persecución', 'Aturdimiento', 'Empuje', 'Onda sísmica'],
+    'en': ['Charge', 'Spin', 'Vortex', 'Bounce', 'Homing', 'Stun', 'Push', 'Shockwave'],
+    'zh-CN': ['蓄力', '旋转', '漩涡', '弹跳', '追踪', '眩晕', '击退', '地震波'],
+    'zh-TW': ['蓄力', '旋轉', '漩渦', '彈跳', '追蹤', '暈眩', '擊退', '地震波'],
+}.items():
+    KIND[lang].update(zip(['charge', 'spin', 'vortex', 'bounce', 'homing', 'stun', 'shove', 'quake'], labels))
+
 def moves_page(lang):
     pid = 'moves'
     rows = []
@@ -825,8 +834,12 @@ def game(lang):
     dev = open(os.path.join(ROOT, 'dev.html'), encoding='utf-8').read()
     idx = open(os.path.join(ROOT, 'index.html'), encoding='utf-8').read()
     app = re.search(r'<script defer src="js/app\.min\.js\?v=[^"]+"></script>', idx).group(0)
+    loc = re.search(r'<script src="js/core/locales\.js\?v=[^"]+"></script>', idx).group(0)
+    css = re.search(r'<link rel="stylesheet" href="css/style\.css\?v=[^"]+">', idx).group(0)
     a, b = dev.index('<!-- scripts:begin -->'), dev.index('<!-- scripts:end -->') + len('<!-- scripts:end -->')
     src = dev[:a] + app + dev[b:]
+    src = src.replace('<script src="js/core/locales.js"></script>', loc)
+    src = src.replace('<link rel="stylesheet" href="css/style.css">', css)
     src = re.sub(r'<!-- seo:(begin|end) -->\n?', '', src)
     src = re.sub(r'<meta name="robots" content="noindex">\s*', '', src)
     src = re.sub(r'<!-- dev\.html: página fuente[^>]*-->\n?', '', src)

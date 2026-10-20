@@ -81,7 +81,7 @@ test('Chinese guides render without JavaScript and FAQ metadata matches visible 
   for (const route of routes['zh-CN'].slice(1)) {
     const html = read(route + 'index.html');
     assert.match(html.match(/<main>([\s\S]*?)<\/main>/)[1], /[\u3400-\u9fff]/, route);
-    assert.equal(tags(html, 'script').filter(s => s.src).length, 0, route);
+    assert.equal(tags(html, 'script').filter(s => s.src && !s.src.endsWith('/js/noframe.js')).length, 0, route);
     assert.equal(tags(html, 'meta').find(m => m.property === 'og:locale').content, 'zh_CN');
   }
   const guide = read('zh/guide/index.html');
@@ -128,7 +128,7 @@ test('Traditional Chinese references use regional official names and localized F
   for (const route of routes['zh-TW'].slice(1)) {
     const html = read(route + 'index.html');
     assert.match(html.match(/<main>([\s\S]*?)<\/main>/)[1], /[\u3400-\u9fff]/, route);
-    assert.equal(tags(html, 'script').filter(s => s.src).length, 0, route);
+    assert.equal(tags(html, 'script').filter(s => s.src && !s.src.endsWith('/js/noframe.js')).length, 0, route);
     assert.equal(tags(html, 'meta').find(m => m.property === 'og:locale').content, 'zh_TW');
   }
   const guide = read('zh-tw/guide/index.html');
@@ -138,4 +138,13 @@ test('Traditional Chinese references use regional official names and localized F
   assert.equal(faq.mainEntity.length, 10);
   for (const question of faq.mainEntity) assert.ok(guide.includes(`<h3>${question.name}</h3><p>${question.acceptedAnswer.text}</p>`));
   assert.match(read('zh-tw/index.html').match(/<noscript>([\s\S]*?)<\/noscript>/)[1], /遊戲指南/);
+});
+
+test('move guides translate all new attack kinds', () => {
+  for (const route of ['movimientos/', 'en/moves/', 'zh/moves/', 'zh-tw/moves/']) {
+    const html = read(route + 'index.html');
+    for (const kind of ['charge', 'spin', 'vortex', 'bounce', 'homing', 'stun', 'shove', 'quake']) {
+      assert.ok(!html.includes(`<td>${kind}</td>`), `${route}: ${kind}`);
+    }
+  }
 });

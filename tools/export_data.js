@@ -17,10 +17,15 @@ sandbox.window = sandbox;
 vm.createContext(sandbox);
 const load = f => vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), sandbox, { filename: f });
 const EN = {}, ZH = {}, ZHT = {};
-for (const f of ['js/core/util.js', 'js/core/i18n.js']) load(f);
+for (const f of ['js/core/locales.js', 'js/core/util.js', 'js/core/i18n.js']) load(f);
 // Captura los diccionarios inglés y chino (clave en español).
 const add = G.I18n.add;
-G.I18n.add = (d, locale = 'en') => { Object.assign(locale === 'zh-TW' ? ZHT : locale === 'zh-CN' ? ZH : EN, d); add(d, locale); };
+G.I18n.add = (d, locale = 'en', context = '') => {
+  const target = locale === 'zh-TW' || locale === 'zh-Hant' ? ZHT : locale === 'zh-CN' || locale === 'zh-Hans' ? ZH : locale === 'en' ? EN : null;
+  if (target && !context) Object.assign(target, d);
+  add(d, locale, context);
+};
+for (const [d, l, c] of require('./build_langs.js').capture(require('./build_langs.js').SOURCES, '?')) G.I18n.add(d, l, c);
 for (const f of ['js/data/lang-en.js', 'js/data/lang-zh-CN.js', 'js/data/names-zh-CN.js', 'js/data/lang-zh-TW.js', 'js/data/names-zh-TW.js', 'js/core/settings.js', 'js/data/pokedex.js', 'js/data/sprites-meta.js', 'js/data/moves.js', 'js/data/types.js',
                  'js/data/items.js', 'js/data/achievements.js', 'js/world/tiles.js', 'js/data/funding.js']) {
   try { load(f); } catch (e) { console.warn('aviso', f, e.message); }

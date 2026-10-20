@@ -4,6 +4,7 @@ G.GamepadUI = (() => {
   const PANELS = '.scr, #boot, #tap-start, #pull-fx, #sound-panel, #invite-pop';
   let scope = null, selected = null, active = false, blocking = false;
   let lastDirection = '', repeatAt = 0, waitDirection = false, view = '';
+  let lastTick = null;
   const history = new WeakMap();
 
   function visible(el) {
@@ -138,6 +139,8 @@ G.GamepadUI = (() => {
 
   function update(ts) {
     const pad = G.Gamepad;
+    const dt = lastTick === null ? 0 : Math.max(0, Math.min(0.05, (ts - lastTick) / 1000));
+    lastTick = ts;
     document.body.classList.toggle('gamepad-mode', pad.mode);
     for (const el of document.querySelectorAll('[data-gamepad-label]')) {
       const key = el.dataset.gamepadLabel;
@@ -171,6 +174,17 @@ G.GamepadUI = (() => {
       return;
     }
     if (!active) return;
+    const aim = (pad.aim && pad.aim()) || [0, 0];
+    if (aim[1] && selected) {
+      for (let el = selected.parentElement; el; el = el.parentElement) {
+        if (el.scrollHeight > el.clientHeight) {
+          el.scrollTop += aim[1] * 600 * dt;
+          remember();
+          break;
+        }
+        if (el === scope) break;
+      }
+    }
     if (pad.tap('pause') && scope.id === 'scr-pause') { G.Game.togglePause(); return; }
     // Query large collections only when navigation or a screen change needs them.
     const needsFocus = !selected || !enabled(selected);

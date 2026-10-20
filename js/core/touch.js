@@ -169,6 +169,7 @@ G.Touch = (() => {
   }
   addEventListener('resize', () => { safe = null; });
   addEventListener('orientationchange', () => { safe = null; });
+  function resetSafe() { safe = null; }
 
   /** El HUD vacía y vuelve a registrar sus botones cada fotograma. */
   function clearButtons() { buttons = []; }
@@ -199,6 +200,6 @@ G.Touch = (() => {
     ctx.restore();
   }
 
-  return { init, vector, padKey, layout, draw, drawStick, clearButtons, addButton, reset, safeArea, spot, stickBase, R, STICK_DEF,
+  return { init, vector, padKey, layout, draw, drawStick, clearButtons, addButton, reset, safeArea, resetSafe, spot, stickBase, R, STICK_DEF,
            get active() { return active; }, get stick() { return stick; } };
 })();

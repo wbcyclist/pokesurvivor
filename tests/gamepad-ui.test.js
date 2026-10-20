@@ -212,3 +212,13 @@ test('back returns from a nested picker before closing the containing screen', (
   assert.equal(back.clicks, 1);
   assert.equal(close.clicks, 0);
 });
+
+test('right-stick scrolling uses elapsed time and leaves the active move unchanged', () => {
+  const app = boot(), card = element('card');
+  const panel = app.panel('scr-dex', [card]);
+  panel.clientHeight = 300; panel.scrollHeight = 900;
+  app.pad.aim = () => [0, 1];
+  app.update(0, 'reroll'); app.update(1000 / 60);
+  assert.equal(panel.scrollTop, 10);
+  assert.deepEqual(app.calls, []);
+});

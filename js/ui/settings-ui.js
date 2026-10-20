@@ -1,6 +1,6 @@
 /* ============ settings-ui.js — pantalla de Ajustes (PC y móvil) ============
  * Se abre por encima de lo que haya (menú o pausa) y al cerrar vuelve ahí.
- * Pestañas: Sonido · Gráficos · Controles · Cuenta · Acerca de.
+ * Pestañas: Sonido · Gráficos · Controles · Accesibilidad · Cuenta · Acerca de.
  * Los ajustes son de este dispositivo (G.Settings / G.Audio en el navegador).
  */
 G.SettingsUI = (() => {
@@ -12,6 +12,8 @@ G.SettingsUI = (() => {
 
   function init() {
     document.querySelectorAll('#set-tabs .gen-tab').forEach(b => { b.onclick = () => { tab = b.dataset.t; render(); }; });
+    // Al conectar o quitar un mando con Controles abierto, se ve al momento.
+    for (const ev of ['gamepadconnected', 'gamepaddisconnected']) addEventListener(ev, () => { if (isOpen() && tab === 'ctl') render(); });
     $('set-close').onclick = close;
     $('btn-settings').innerHTML = G.Icons.html('gear', 20);
     $('btn-settings').onclick = () => open();
@@ -74,7 +76,7 @@ G.SettingsUI = (() => {
     } else if (tab === 'gfx') {
       const auto = ['baja', 'media', 'alta'][G.Settings.autoLevel];
       box.innerHTML = section('Idioma', 'El juego se recarga al cambiarlo.')
-        + `<div class="chips set-chips" translate="no">${[['es', 'Español'], ['en', 'English'], ['zh-CN', '简体中文'], ['zh-TW', '繁體中文']].map(([v, l]) =>
+        + `<div class="chips set-chips" translate="no">${G.I18n.choices.map(([v, l]) =>
              `<button class="chip ${G.I18n.lang === v ? 'on' : ''}" data-lang="${v}">${l}</button>`).join('')}</div>`
         + section('Calidad', 'Cuántos efectos y partículas se dibujan. <b>Auto</b> la baja sola si el juego va a tirones (ahora: ' + auto + ').')
         + choice('quality', [['auto', 'Auto'], ['high', 'Alta'], ['mid', 'Media'], ['low', 'Baja']])
@@ -87,11 +89,14 @@ G.SettingsUI = (() => {
            : iosTip() ? `<div class="set-row"><div class="grow"><b>Pantalla completa</b><small>${esc(IOS_TIP)}</small></div></div>` : '');
     } else if (tab === 'ctl') {
       box.innerHTML = section('Mando')
+        + toggle('gamepad', 'Usar mando', 'Moverte, cambiar de ataque y manejar los menús con el mando.')
+        + toggle('padRumble', 'Vibración', 'El mando vibra al recibir daño (si el mando y el navegador lo permiten).')
         + section('Estilo de botones', 'Auto detecta modelos conocidos. El estilo define los símbolos y los botones de confirmar y volver. Los ataques mantienen sus posiciones. Las flechas indican las posiciones de los cuatro botones derechos.')
         + choice('gamepadLayout', [['auto', 'Auto'], ['xbox', 'Xbox'], ['playstation', 'PlayStation'], ['nintendo', 'Nintendo'], ['generic', 'Posiciones']])
         + `<p class="sub">Conecta un mando compatible con el mapeo estándar del navegador y pulsa un botón. Usa HTTPS o localhost.</p>
            <div class="keys">
              <div>Stick izquierdo / cruceta</div><span>Moverse / navegar</span>
+             <div>Stick der.</div><span>desplazar las listas · apuntar (si activas Apuntar a mano en Accesibilidad)</span>
              <div data-gamepad-label="faces" translate="no">${[0, 1, 2, 3].map(i => G.Gamepad.faceLabel(i)).join(' / ')}</div><span>Elegir ataque 1–4</span>
              <div><span data-gamepad-label="previous" translate="no">${G.Gamepad.label('previous')}</span> / <span data-gamepad-label="next" translate="no">${G.Gamepad.label('next')}</span></div><span>ataque anterior / siguiente</span>
              <div data-gamepad-label="confirm" translate="no">${G.Gamepad.label('confirm')}</div><span>Confirmar</span>
@@ -114,6 +119,9 @@ G.SettingsUI = (() => {
              <div><kbd>Esc</kbd> o <kbd>P</kbd></div><span>pausa</span>
              <div><kbd>1</kbd>–<kbd>3</kbd></div><span>elegir carta al subir de nivel</span>
            </div>`;
+    } else if (tab === 'a11y') {
+      box.innerHTML = section('Apuntado')
+        + toggle('aimManual', 'Apuntar a mano', 'Tus ataques van hacia el ratón (o hacia donde empujes el stick derecho del mando) en vez de al enemigo más cercano. Si sueltas el stick y no mueves el ratón, vuelve a apuntar solo. La cadena y los meteoros siguen buscando a los enemigos solos.');
     } else if (tab === 'acc') {
       renderAccount(box);
     } else {

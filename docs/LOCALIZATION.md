@@ -1,12 +1,15 @@
 # Localization
 
-The game supports Spanish (`es`), English (`en`), Simplified Chinese (`zh-CN`),
-and Traditional Chinese (`zh-TW`). The saved `ps.lang` choice takes priority.
+The game supports Spanish (`es`), English (`en`), French (`fr`), Italian (`it`),
+Brazilian Portuguese (`pt-BR`), Simplified Chinese (`zh-CN`), and Traditional
+Chinese (`zh-TW`). The saved `ps.lang` choice takes priority.
 Without a saved choice, `/en/`, `/zh/`, and `/zh-tw/` select their respective
 languages. Other entries use the browser language: `zh-Hant`, `zh-TW`, `zh-HK`,
 and `zh-MO` select Traditional Chinese; `zh-Hans` and other `zh` variants select
 Simplified Chinese. An explicit script tag takes priority over the region.
-Spanish browser locales select Spanish, with English as the fallback.
+Spanish, French, Italian, and Portuguese browser locales select their language,
+with English as the fallback. Saved `zh-Hans` and `zh-Hant` preferences also work;
+the local IDs and static routes remain `zh-CN` and `zh-TW`.
 Change the language in Settings > Graphics > Language. A change reloads the game.
 
 `js/core/i18n.js` translates Spanish source text in the DOM, canvas text and
@@ -38,8 +41,18 @@ Name sources:
 
 Regenerate Pokemon names with `python3 tools/fetch_zh_names.py`. This reads the
 local Pokedex and downloads PokeAPI CSV files into `tools/cache/` only when they
-are absent. All translations ship in the local game bundle. Gameplay does not
-call a translation service. Both Chinese locales use local Fusion Pixel 12px
+are absent. Translations ship as local assets. Gameplay does not call a translation service.
+`js/core/locales.js` selects the language before startup and loads only its
+generated dictionary from `js/lang/`. Spanish source text and the English
+fallback remain in the game bundle. `tools/build_langs.js` combines upstream
+dictionaries with the local Chinese dictionaries and names; local terminology
+takes priority. The upstream Simplified Chinese source is `lang-zh-hans.js` to
+avoid a filename collision with `lang-zh-CN.js` on macOS.
+
+Keep `{name}` placeholders unchanged: they preserve player nicknames. The
+`move` translation context distinguishes Psychic moves from Psychic types.
+French, Italian, and Portuguese use English for local-only strings without a
+translation. Both Chinese dictionaries cover the complete English key set. Both Chinese locales use local Fusion Pixel 12px
 proportional fonts: `zh_hans` for Simplified Chinese and `zh_tw` for Traditional
 Chinese. The original font files come from release `2026.09.25`; they are not
 subsetted or converted. Existing UI sizes stay unchanged. Other locales keep
@@ -104,5 +117,5 @@ play button saves that explicit language choice for the game. Merely reading
 a static page does not change the saved choice. Game links follow the active
 game language, including links created in Settings and Support.
 
-Run `node --test tests/*.test.js` after generating pages to check all language
+Run `npm test` after generating pages to check all language
 routes, local links, official names, data coverage, and sitemap alternates.
