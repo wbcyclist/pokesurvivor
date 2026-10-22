@@ -27,7 +27,7 @@ function boot() {
     get active() { return !!this.direction || actions.size > 0; } };
   const context = vm.createContext({
     G: { Gamepad: pad, Game: { state: 'playing', player: { cycle: n => calls.push(['cycle', n]), setActive: i => calls.push(['slot', i]) },
-      autoPause: () => calls.push(['autoPause']), togglePause: () => calls.push(['pause']) },
+      autoPause: () => calls.push(['autoPause']), togglePause: () => calls.push(['pause']), cycleWatch: n => calls.push(['watch', n]) },
     Judgment: { cinematic: false, skip: () => calls.push(['skip']) },
     RunUI: { reroll: () => calls.push(['reroll']) }, UI: { toast: () => {} } },
     document: { body: { classList: { toggle() {} } }, addEventListener: (name, fn) => { listeners[name] = fn; }, getElementById: id => panels.find(p => p.id === id), querySelectorAll: selector => selector.startsWith('.scr') ? panels : [] },
@@ -63,6 +63,16 @@ test('face buttons select the four combat slots but never pass through a modal o
   assert.deepEqual(app.calls, []);
   app.context.G.Judgment.cinematic = false; app.context.G.Game.state = 'paused';
   app.update(30, 'face0'); assert.deepEqual(app.calls, []);
+});
+
+test('shoulder buttons change the spectator target while down and switch moves after revival', () => {
+  const app = boot();
+  app.context.G.Game.player.dead = true;
+  app.update(0, 'previous'); app.update(1, 'next');
+  assert.deepEqual(app.calls, [['watch', -1], ['watch', 1]]);
+  app.context.G.Game.player.dead = false;
+  app.update(2, 'next');
+  assert.deepEqual(app.calls.at(-1), ['cycle', 1]);
 });
 
 test('only the top modal receives confirm and back; hidden and disabled controls are skipped', () => {

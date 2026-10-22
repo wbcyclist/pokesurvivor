@@ -284,6 +284,63 @@ test('cloud progress stays local until an explicit save, including page hide and
   assert.equal(app.timers.size, 0);
 });
 
+test('uploads advance the server revision on each transaction retry, including legacy saves', async () => {
+  for (const initial of [undefined, 8]) {
+    let remote, revision = initial;
+    const writes = [];
+    const app = await cloudFixture(async fn => {
+      const tx = {
+        get: async () => ({ exists: true, data: () => ({ save: structuredClone(remote), rev: revision, ban: true }) }),
+        set(ref, doc) { writes.push(structuredClone(doc)); }
+      };
+      await fn(tx);
+      // Another device wins the first attempt. Firestore runs the callback again.
+      revision = (revision || 0) + 1;
+      remote.owned[4] = { at: 2, from: 'other-device' };
+      await fn(tx);
+    });
+    remote = structuredClone(app.db.save);
+    app.db.grant(1, 'local');
+    await app.db.flush();
+    assert.deepEqual(writes.map(doc => doc.rev), [(initial || 0) + 1, (initial || 0) + 2]);
+    assert.equal(writes[1].ban, true);
+    assert.ok(writes[1].save.owned[1]); assert.ok(writes[1].save.owned[4]);
+    assert.equal(app.db.owns(4), true);
+  }
+});
+
+test('shop inventories and per-Pokemon choices merge without restoring spent items', async () => {
+  const seed = boot(); await seed.db.ready(); seed.db.playAsGuest();
+  Object.assign(seed.db.save, { bag: { mint: 2, cap: 1 }, tms: { shadowball: 2 }, partner: 1 });
+  seed.db.commit();
+  let remote = JSON.parse(seed.data.get(SAVE)), rev = 9;
+  const transaction = fn => fn({
+    get: async () => ({ exists: true, data: () => ({ save: structuredClone(remote), rev }) }),
+    set(ref, doc) { assert.equal(doc.rev, rev + 1); rev = doc.rev; remote = structuredClone(doc.save); }
+  });
+  const device = id => boot(new Map([['ps.dev', JSON.stringify(id)]]), { cloud: true, user: { uid: 'account' }, remote, transaction });
+  const a = device('devicea'), b = device('deviceb');
+  await a.db.ready(); await b.db.ready();
+  a.db.save.bag.mint--; a.db.save.bag.cap--;
+  a.db.save.tms.shadowball--; a.db.save.ptm[1] = ['shadowball'];
+  a.db.save.pnat[1] = ['modest', 10]; a.db.save.pabil[1] = [2, 10];
+  b.db.save.bag.mint--; b.db.save.tms.shadowball--;
+  b.db.save.ptm[1] = ['psychic']; b.db.save.pnat[1] = ['timid', 20];
+  b.db.save.pabil[1] = [0, 20]; b.db.save.pstart2[1] = 'psychic';
+  a.db.commit(); b.db.commit(); await a.db.flush(); await b.db.flush();
+  assert.deepEqual(remote.bag, {}); assert.deepEqual(remote.tms, {});
+  assert.deepEqual(remote.ptm[1].sort(), ['psychic', 'shadowball']);
+  assert.deepEqual(remote.pnat[1], ['timid', 20]); assert.deepEqual(remote.pabil[1], [0, 20]);
+  assert.equal(remote.pstart2[1], 'psychic');
+  a.advance(65001); await a.db.flush();
+  assert.deepEqual(remote.bag, {}); assert.deepEqual(remote.tms, {});
+  assert.equal(rev, 12);
+  const next = boot(a.data, { cloud: true, user: { uid: 'account' }, remote });
+  await next.db.ready();
+  assert.equal(next.db.save.pnat[1][0], 'timid');
+  assert.deepEqual(Object.keys(next.db.save.bag), []);
+});
+
 test('new cloud accounts do not upload automatically on login', async () => {
   const app = boot(new Map(), { cloud: true, user: { uid: 'account' } });
   assert.equal(await app.db.ready(), true);

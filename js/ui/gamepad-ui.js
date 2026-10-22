@@ -168,8 +168,9 @@ G.GamepadUI = (() => {
       } else if (pad.tap('pause')) G.Game.togglePause();
       else if (G.Game.state === 'playing' && G.Game.player) {
         for (let i = 0; i < 4; i++) if (pad.faceTap(i)) G.Game.player.setActive(i);
-        if (pad.tap('previous')) G.Game.player.cycle(-1);
-        if (pad.tap('next')) G.Game.player.cycle(1);
+        const cycle = dir => G.Game.player.dead ? G.Game.cycleWatch(dir) : G.Game.player.cycle(dir);
+        if (pad.tap('previous')) cycle(-1);
+        if (pad.tap('next')) cycle(1);
       }
       return;
     }
