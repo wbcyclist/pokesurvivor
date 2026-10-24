@@ -1,11 +1,11 @@
 /* Standard Gamepad API input. Poll once before each game frame. */
 G.Gamepad = (() => {
-  const BUTTONS = { confirm: 0, back: 1, reroll: 5, previous: 4, next: 5, pause: 9 };
+  const BUTTONS = { confirm: 0, back: 1, reroll: 5, previous: 4, next: 5, pause: 9, orbUse: 6, orbNext: 7 };
   const LABELS = {
-    xbox: { face: ['A', 'B', 'X', 'Y'], previous: 'LB', next: 'RB', pause: 'Start' },
-    playstation: { face: ['×', '○', '□', '△'], previous: 'L1', next: 'R1', pause: 'Options' },
-    nintendo: { face: ['B', 'A', 'Y', 'X'], previous: 'L', next: 'R', pause: '+' },
-    generic: { face: ['↓', '→', '←', '↑'], previous: 'L', next: 'R', pause: '☰' }
+    xbox: { face: ['A', 'B', 'X', 'Y'], previous: 'LB', next: 'RB', orbUse: 'LT', orbNext: 'RT', pause: 'Start' },
+    playstation: { face: ['×', '○', '□', '△'], previous: 'L1', next: 'R1', orbUse: 'L2', orbNext: 'R2', pause: 'Options' },
+    nintendo: { face: ['B', 'A', 'Y', 'X'], previous: 'L', next: 'R', orbUse: 'ZL', orbNext: 'ZR', pause: '+' },
+    generic: { face: ['↓', '→', '←', '↑'], previous: 'L', next: 'R', orbUse: 'LT', orbNext: 'RT', pause: '☰' }
   };
   // Known USB/Bluetooth pairs from Chromium's gamepad_id_list.h.
   const DEVICES = {

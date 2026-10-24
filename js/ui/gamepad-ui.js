@@ -171,6 +171,10 @@ G.GamepadUI = (() => {
         const cycle = dir => G.Game.player.dead ? G.Game.cycleWatch(dir) : G.Game.player.cycle(dir);
         if (pad.tap('previous')) cycle(-1);
         if (pad.tap('next')) cycle(1);
+        if (!G.Game.player.dead) {
+          if (pad.tap('orbUse')) G.Orbs.useSelected(G.Game.player);
+          if (pad.tap('orbNext')) G.Orbs.next(G.Game.player);
+        }
       }
       return;
     }

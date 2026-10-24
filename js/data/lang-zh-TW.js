@@ -4,6 +4,9 @@
  * Spanish source keys and save identifiers stay unchanged.
  */
 G.I18n.add({
+  "Usar esfera": "使用寶玉",
+  "Cambiar esfera": "切換寶玉",
+
   "Actualización obligatoria: tu partida se guarda y el juego se recarga en {x} s…": "必要更新：本局進度將儲存，遊戲將在 {x} 秒後重新載入…",
   "Actualizaciones obligatorias": "必要更新",
   "Cuando una actualización sea obligatoria (por ejemplo, para arreglar un fallo importante), la partida en curso se termina tras un aviso de 10 s y el juego se recarga. No pierdes nada: las monedas, los tickets, los récords y el ranking de esa partida se guardan como al abandonarla.": "需要更新時（例如修正重大錯誤），進行中的一局會在提示 10 秒後結束，遊戲隨後重新載入。本局的寶可幣、抽獎券、紀錄和排行榜成績會依退出本局的流程儲存。",

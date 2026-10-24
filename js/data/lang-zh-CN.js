@@ -1,5 +1,8 @@
 /* Simplified Chinese. Spanish source text is the key; {x} preserves argument order. */
 G.I18n.add({
+  "Usar esfera": "使用宝玉",
+  "Cambiar esfera": "切换宝玉",
+
   "Actualización obligatoria: tu partida se guarda y el juego se recarga en {x} s…": "必要更新：本局进度将保存，游戏将在 {x} 秒后重新加载…",
   "Actualizaciones obligatorias": "必要更新",
   "Cuando una actualización sea obligatoria (por ejemplo, para arreglar un fallo importante), la partida en curso se termina tras un aviso de 10 s y el juego se recarga. No pierdes nada: las monedas, los tickets, los récords y el ranking de esa partida se guardan como al abandonarla.": "需要更新时（例如修复重大错误），正在进行的一局将在提示 10 秒后结束，游戏随后重新加载。本局的宝可币、抽奖券、纪录和排行榜成绩会按退出本局的流程保存。",

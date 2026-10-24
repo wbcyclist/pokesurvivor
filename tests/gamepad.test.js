@@ -30,6 +30,22 @@ function device(index = 0) {
     buttons: Array.from({ length: 17 }, () => ({ pressed: false, value: 0 })) };
 }
 
+test('orb triggers have device labels and do not select move slots', () => {
+  const app = boot(), controller = device(); app.connect(controller);
+  for (const [layout, use, next] of [['xbox', 'LT', 'RT'], ['playstation', 'L2', 'R2'], ['nintendo', 'ZL', 'ZR']]) {
+    app.context.G.Settings = { get: () => layout };
+    assert.equal(app.pad.label('orbUse'), use);
+    assert.equal(app.pad.label('orbNext'), next);
+    for (const [button, action] of [[6, 'orbUse'], [7, 'orbNext']]) {
+      controller.buttons[button].pressed = true; app.pad.poll();
+      assert.equal(app.pad.tap(action), true);
+      assert.equal([0, 1, 2, 3].some(i => app.pad.faceTap(i)), false);
+      app.pad.poll(); assert.equal(app.pad.tap(action), false);
+      controller.buttons[button].pressed = false; app.pad.poll();
+    }
+  }
+});
+
 test('applies a radial dead zone, preserves analog speed, and caps diagonal movement', () => {
   const app = boot(), pad = device();
   app.connect(pad);

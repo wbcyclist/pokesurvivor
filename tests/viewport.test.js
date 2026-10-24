@@ -111,6 +111,19 @@ test('keeps the same minimum world area when rotating between portrait and lands
   }
 });
 
+test('orb zoom preserves viewport proportions through rotation and returns to normal', () => {
+  const { context, canvas, events } = boot(), camera = context.G.Camera;
+  for (const [w, h] of [[390, 844], [844, 390]]) {
+    canvas.clientWidth = w; canvas.clientHeight = h; events.get('resize')();
+    const base = camera.scale;
+    camera.zoom = 1.35; camera.fit();
+    assert.equal(camera.scale, base / 1.35);
+    assert.ok(Math.abs(camera.w / camera.h - w / h) < 1e-9);
+    camera.zoom = 1; camera.fit();
+    assert.equal(camera.scale, base);
+  }
+});
+
 test('uses the full canvas size when an installed app reports a shorter window height', () => {
   const app = boot();
   app.canvas.clientHeight = 956;

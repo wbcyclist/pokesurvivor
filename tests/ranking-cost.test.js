@@ -55,6 +55,26 @@ function boot() {
 const run = t => ({ t, dex: 25, lv: 20, kills: 100, shiny: false });
 const settle = async () => { for (let i = 0; i < 15; i++) await Promise.resolve(); };
 
+test('time and damage records improve independently and share one summary read', async () => {
+  const app = boot(), board = app.ranking.board('s', 'w');
+  const entry = 'lb/' + board + '/e/me', summary = 'lbs/' + board;
+  await app.ranking.submitSolo({ ...run(2000), dmg: 500 });
+  await app.ranking.submitSolo({ ...run(1900), lv: 15, dmg: 1000 });
+  assert.equal(app.docs.get(entry).t, 2000);
+  assert.equal(app.docs.get(entry).lv, 20);
+  assert.equal(app.docs.get(entry).dmg, 1000);
+  assert.equal(app.docs.get(summary).top.me.t, 2000);
+  assert.equal(app.docs.get(summary).dtop.me.d, 1000);
+  await app.ranking.submitSolo({ ...run(2100), dmg: 100 });
+  assert.equal(app.docs.get(entry).t, 2100);
+  assert.equal(app.docs.get(entry).dmg, 1000);
+  assert.equal(app.docs.get(summary).dtop.me.d, 1000);
+  app.reads.length = 0;
+  assert.equal((await app.ranking.top('s', 'w'))[0].t, 2100);
+  assert.equal((await app.ranking.topDmg('s', 'w')).rows[0].d, 1000);
+  assert.deepEqual(app.reads, []);
+});
+
 test('ranking skips run-start writes and requires five minutes for Pokemon boards', async () => {
   const app = boot();
   app.ranking.runStarted('solo'); await settle();

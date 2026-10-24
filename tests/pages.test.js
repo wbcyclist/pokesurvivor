@@ -69,7 +69,7 @@ test('Chinese reference pages include every playable Pokemon with its official n
   for (const pokemon of G.DEX) {
     assert.ok(html.includes(`<span class="nm">${names[pokemon.name]}</span>`), pokemon.name);
   }
-  assert.match(read('zh/moves/index.html'), /大字爆炎/);
+  assert.match(read('zh/moves/index.html'), /<td class="evo"><b>火花 \+<\/b>/);
   assert.match(read('zh/moves/index.html'), /十万伏特/);
   assert.match(read('zh/items/index.html'), /气势披带/);
   assert.match(read('zh/items/index.html'), /吃剩的东西/);
@@ -123,6 +123,7 @@ test('Traditional Chinese references use regional official names and localized F
   assert.match(dex, /多邊獸Ｚ/);
   assert.doesNotMatch(dex, /謎擬丘|多邊獸乙型/);
   assert.match(read('zh-tw/moves/index.html'), /<b>精神強念<\/b>/);
+  assert.match(read('zh-tw/moves/index.html'), /<td class="evo"><b>精神強念 \+<\/b>/);
   assert.match(read('zh-tw/moves/index.html'), /十萬伏特/);
   assert.match(read('zh-tw/items/index.html'), /氣勢披帶/);
   for (const route of routes['zh-TW'].slice(1)) {

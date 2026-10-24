@@ -13,7 +13,7 @@ function boot() {
     Upgrades: { perks: value => value }, UI: { hideAll: noop, chrome: noop },
     FX: { clear: noop }, Projectiles: { clear: noop }, Combat: { clearFields: noop },
     EnemyMgr: { clear: noop }, Pickups: { clear: noop }, Spawner: { reset: noop },
-    Rift: { reset: noop }, Judgment: { reset: noop }, Events: { reset: noop },
+    Orbs: { reset: noop }, Rift: { reset: noop }, Judgment: { reset: noop }, Events: { reset: noop },
     Weather: { reset: noop }, Path: { clear: noop }, Hazards: { clear: noop },
     World: { reset: noop, setBiome: noop }, U: { pick: noop },
     Player: class { constructor(mon, perks, shiny) { Object.assign(this, { mon, perks, shiny, x: 0, y: 0 }); } addMove() {} setAbility(id) { this.abilId = id; } },

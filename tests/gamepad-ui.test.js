@@ -29,6 +29,7 @@ function boot() {
     G: { Gamepad: pad, Game: { state: 'playing', player: { cycle: n => calls.push(['cycle', n]), setActive: i => calls.push(['slot', i]) },
       autoPause: () => calls.push(['autoPause']), togglePause: () => calls.push(['pause']), cycleWatch: n => calls.push(['watch', n]) },
     Judgment: { cinematic: false, skip: () => calls.push(['skip']) },
+    Orbs: { useSelected: () => calls.push(['orbUse']), next: () => calls.push(['orbNext']) },
     RunUI: { reroll: () => calls.push(['reroll']) }, UI: { toast: () => {} } },
     document: { body: { classList: { toggle() {} } }, addEventListener: (name, fn) => { listeners[name] = fn; }, getElementById: id => panels.find(p => p.id === id), querySelectorAll: selector => selector.startsWith('.scr') ? panels : [] },
     addEventListener: (name, fn) => { listeners[name] = fn; }, getComputedStyle: el => el.style
@@ -48,6 +49,22 @@ test('routes combat actions and cinematic skip without opening menus', () => {
   app.context.G.Judgment.cinematic = true;
   app.update(3, 'confirm');
   assert.deepEqual(app.calls.at(-1), ['skip']);
+});
+
+test('orb triggers are blocked by death, pause, cinematics and modal screens', () => {
+  const app = boot();
+  app.update(0, 'orbUse'); app.update(1, 'orbNext');
+  assert.deepEqual(app.calls, [['orbUse'], ['orbNext']]);
+  app.calls.length = 0;
+  app.context.G.Game.player.dead = true;
+  app.update(2, 'orbUse'); app.update(3, 'orbNext');
+  app.context.G.Game.player.dead = false; app.context.G.Game.state = 'paused';
+  app.update(4, 'orbUse'); app.update(5, 'orbNext');
+  app.context.G.Game.state = 'playing'; app.context.G.Judgment.cinematic = true;
+  app.update(6, 'orbUse'); app.update(7, 'orbNext');
+  app.context.G.Judgment.cinematic = false; app.panel('scr-levelup', []);
+  app.update(8, 'orbUse'); app.update(9, 'orbNext');
+  assert.deepEqual(app.calls, []);
 });
 
 test('face buttons select the four combat slots but never pass through a modal or cinematic', () => {
